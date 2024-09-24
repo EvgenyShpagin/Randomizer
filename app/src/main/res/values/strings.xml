@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Randomizer</string>
+    <string name="button_spin">Spin</string>
+    <string name="home_screen_title">Wheel</string>
 </resources>
