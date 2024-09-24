@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.random.randomizer.presentation.core.WheelItemUiState
 import com.random.randomizer.presentation.core.WheelItemsList
-import com.random.randomizer.presentation.wheel_spin.HomeTopBar
 
 @Composable
 fun HomeScreen(
