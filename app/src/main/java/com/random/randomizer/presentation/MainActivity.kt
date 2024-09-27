@@ -5,14 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.random.randomizer.presentation.home.HomeScreen
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.theme.RandomizerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AppTheme {
+            RandomizerTheme {
                 HomeScreen()
             }
         }
