@@ -36,7 +36,6 @@ dependencies {
     implementation(project(path = ":domain"))
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
-    androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.mockk.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
