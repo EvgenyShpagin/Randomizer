@@ -13,9 +13,8 @@
         android:theme="@style/Theme.Randomizer"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.core.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Randomizer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
