@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation
+package com.random.randomizer.presentation.core
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RandomizerApp()
+            App()
         }
     }
 }

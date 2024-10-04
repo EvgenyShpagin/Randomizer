@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.home
+package com.random.randomizer.presentation.screen.home
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.home
+package com.random.randomizer.presentation.screen.home
 
 import com.random.randomizer.presentation.core.WheelItemUiState
 
