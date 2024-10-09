@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.screen.home
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -10,8 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.random.randomizer.presentation.core.WheelItemUiState
-import com.random.randomizer.presentation.core.WheelItemsList
+import com.random.randomizer.presentation.core.WheelSegmentList
+import com.random.randomizer.presentation.core.WheelSegmentUiState
 
 @Composable
 fun HomeScreen(
@@ -21,31 +20,30 @@ fun HomeScreen(
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
-        wheelItems = uiState.wheelItems,
+        wheelItems = uiState.wheelSegments,
         modifier = modifier
     )
 }
 
 @Composable
 private fun HomeScreen(
-    wheelItems: List<WheelItemUiState>,
+    wheelItems: List<WheelSegmentUiState>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
-            SpinButton(onClick = {}) // TODO: implement
-        },
         topBar = {
             HomeTopBar()
         },
-        content = { innerPadding ->
-            WheelItemsList(
-                wheelItems = wheelItems,
-                listState = listState,
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
-    )
+        floatingActionButton = {
+            SpinButton(onClick = {}) // TODO: implement
+        },
+        modifier = modifier
+    ) { innerPadding ->
+        WheelSegmentList(
+            wheelItems = wheelItems,
+            listState = listState,
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }

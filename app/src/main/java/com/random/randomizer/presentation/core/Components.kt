@@ -22,11 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WheelItem(
-    itemUiState: WheelItemUiState,
+fun WheelSegment(
+    itemUiState: WheelSegmentUiState,
     modifier: Modifier = Modifier
 ) {
-    WheelItem(
+    WheelSegment(
         title = itemUiState.title,
         description = itemUiState.description,
         containerColor = itemUiState.customColor
@@ -38,7 +38,7 @@ fun WheelItem(
 }
 
 @Composable
-private fun WheelItem(
+private fun WheelSegment(
     title: String,
     description: String?,
     image: ImageBitmap?,
@@ -80,8 +80,8 @@ private fun WheelItem(
 }
 
 @Composable
-fun WheelItemsList(
-    wheelItems: List<WheelItemUiState>,
+fun WheelSegmentList(
+    wheelItems: List<WheelSegmentUiState>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
@@ -96,15 +96,15 @@ fun WheelItemsList(
             items = wheelItems,
             key = { it.id }
         ) { item ->
-            WheelItem(itemUiState = item)
+            WheelSegment(itemUiState = item)
         }
     }
 }
 
 @Preview
 @Composable
-private fun WheelItemPreview() {
-    WheelItem(
+private fun WheelSegmentPreview() {
+    WheelSegment(
         title = "My title",
         description = "My description",
         image = null,

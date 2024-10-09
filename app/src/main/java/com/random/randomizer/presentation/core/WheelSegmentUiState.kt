@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 
 @Immutable
-data class WheelItemUiState(
+data class WheelSegmentUiState(
     val id: Int,
     val title: String,
     val description: String? = null,
