@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
 
 @Composable
@@ -30,7 +31,15 @@ fun RandomizerNavHost(
             )
         }
         composable<Destination.Edit> {
-            // TODO: implement
+            EditScreen(
+                onClickAddSegment = {
+                    /*TODO: implement*/
+                },
+                navigateBack = {
+                    navController.navigateUp()
+                },
+                editViewModel = viewModel()
+            )
         }
         composable<Destination.SpinWheel> {
             // TODO: implement
