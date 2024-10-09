@@ -19,24 +19,21 @@ import com.random.randomizer.R
 @Composable
 fun SpinButton(
     onClick: () -> Unit,
-    show: Boolean,
     modifier: Modifier = Modifier
 ) {
-    if (show) {
-        ExtendedFloatingActionButton(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = null
-                )
-            },
-            text = {
-                Text(stringResource(R.string.button_spin))
-            },
-            onClick = onClick,
-            modifier = modifier
-        )
-    }
+    ExtendedFloatingActionButton(
+        icon = {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = null
+            )
+        },
+        text = {
+            Text(stringResource(R.string.button_spin))
+        },
+        onClick = onClick,
+        modifier = modifier
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

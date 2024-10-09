@@ -44,10 +44,9 @@ private fun HomeScreen(
             HomeTopBar(onClickEdit = navigateToEdit)
         },
         floatingActionButton = {
-            SpinButton(
-                onClick = navigateToSpin,
-                show = wheelItems.isNotEmpty()
-            )
+            if (wheelItems.isNotEmpty()) {
+                SpinButton(onClick = navigateToSpin)
+            }
         },
         modifier = modifier
     ) { innerPadding ->
