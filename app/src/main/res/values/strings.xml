@@ -2,4 +2,6 @@
     <string name="app_name">Randomizer</string>
     <string name="button_spin">Spin</string>
     <string name="home_screen_title">Wheel of Fortune</string>
+    <string name="cd_edit_wheel_segments">Edit wheel segments</string>
+    <string name="label_no_wheel_segments">No wheel segments</string>
 </resources>

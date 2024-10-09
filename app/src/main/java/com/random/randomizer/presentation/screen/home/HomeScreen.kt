@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.home
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -9,17 +10,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 
 @Composable
 fun HomeScreen(
+    navigateToSpin: () -> Unit,
+    navigateToEdit: () -> Unit,
     homeViewModel: HomeViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
+        navigateToSpin = navigateToSpin,
+        navigateToEdit = navigateToEdit,
         wheelItems = uiState.wheelSegments,
         modifier = modifier
     )
@@ -27,23 +33,36 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreen(
+    navigateToSpin: () -> Unit,
+    navigateToEdit: () -> Unit,
     wheelItems: List<WheelSegmentUiState>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
-            HomeTopBar()
+            HomeTopBar(onClickEdit = navigateToEdit)
         },
         floatingActionButton = {
-            SpinButton(onClick = {}) // TODO: implement
+            SpinButton(
+                onClick = navigateToSpin,
+                show = wheelItems.isNotEmpty()
+            )
         },
         modifier = modifier
     ) { innerPadding ->
-        WheelSegmentList(
-            wheelItems = wheelItems,
-            listState = listState,
-            modifier = Modifier.padding(innerPadding)
-        )
+        if (wheelItems.isEmpty()) {
+            NoWheelSegmentsPlaceholder(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            )
+        } else {
+            WheelSegmentList(
+                wheelItems = wheelItems,
+                listState = listState,
+                modifier = Modifier.padding(innerPadding)
+            )
+        }
     }
 }
