@@ -1,6 +1,6 @@
 package com.random.randomizer.domain.core.model
 
-data class WheelItem(
+data class WheelSegment(
     val id: Int,
     val title: String,
     val description: String?,
