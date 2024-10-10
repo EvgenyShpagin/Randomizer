@@ -1,13 +1,12 @@
 package com.random.randomizer.presentation.screen.home
 
-import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.test.platform.app.InstrumentationRegistry
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.test_util.testStringResource
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +25,7 @@ class HomeScreenTest {
         )
         setHomeScreen(emptyListViewModel)
 
-        val emptyListText = stringTestResource(R.string.label_no_wheel_segments)
+        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
 
         composeTestRule.onNodeWithText(emptyListText)
             .assertIsDisplayed()
@@ -43,7 +42,7 @@ class HomeScreenTest {
             .onNodeWithText("fake")
             .assertIsDisplayed()
 
-        val emptyListText = stringTestResource(R.string.label_no_wheel_segments)
+        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
 
         composeTestRule
             .onNodeWithText(emptyListText)
@@ -57,7 +56,7 @@ class HomeScreenTest {
         )
         setHomeScreen(emptyListViewModel)
 
-        val spinButtonText = stringTestResource(R.string.button_spin)
+        val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsNotDisplayed()
@@ -70,7 +69,7 @@ class HomeScreenTest {
         )
         setHomeScreen(nonEmptyListViewModel)
 
-        val spinButtonText = stringTestResource(R.string.button_spin)
+        val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsDisplayed()
@@ -90,10 +89,5 @@ class HomeScreenTest {
         return mockk<HomeViewModel>().also { viewModel ->
             every { viewModel.uiState } returns MutableStateFlow(uiState)
         }
-    }
-
-    private fun stringTestResource(@StringRes id: Int): String {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        return context.getString(id)
     }
 }
