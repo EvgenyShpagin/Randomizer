@@ -10,6 +10,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,10 +41,10 @@ fun SpinButton(
 @Composable
 fun HomeTopBar(
     onClickEdit: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier,
         title = {
             Text(text = stringResource(R.string.home_screen_title))
         },
@@ -55,6 +56,8 @@ fun HomeTopBar(
                     modifier = Modifier.padding(end = 16.dp)
                 )
             }
-        }
+        },
+        scrollBehavior = scrollBehavior,
+        modifier = modifier
     )
 }
