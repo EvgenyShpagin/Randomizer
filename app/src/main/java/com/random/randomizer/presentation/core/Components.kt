@@ -4,7 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,8 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
 
@@ -101,14 +107,21 @@ fun WheelSegmentList(
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+    val displayCutout = WindowInsets.displayCutout.asPaddingValues()
+    val cutoutStartPadding = displayCutout.calculateStartPadding(layoutDirection)
+    val cutoutEndPadding = displayCutout.calculateEndPadding(layoutDirection)
+
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = modifier,
         state = listState,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(
+            start = cutoutStartPadding.coerceAtLeast(16.dp),
+            end = cutoutEndPadding.coerceAtLeast(16.dp)
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        this.items(
+        items(
             items = wheelItems,
             key = { it.id }
         ) { item ->
