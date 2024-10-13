@@ -1,5 +1,7 @@
 package com.random.randomizer.presentation.screen.home
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
@@ -50,18 +52,21 @@ private fun HomeScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        if (wheelItems.isEmpty()) {
-            NoWheelSegmentsPlaceholder(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            )
-        } else {
-            WheelSegmentList(
-                wheelItems = wheelItems,
-                listState = listState,
-                modifier = Modifier.padding(innerPadding)
-            )
+        Box(
+            modifier = Modifier
+                .consumeWindowInsets(innerPadding)
+                .padding(innerPadding)
+        ) {
+            if (wheelItems.isEmpty()) {
+                NoWheelSegmentsPlaceholder(
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                WheelSegmentList(
+                    wheelItems = wheelItems,
+                    listState = listState
+                )
+            }
         }
     }
 }
