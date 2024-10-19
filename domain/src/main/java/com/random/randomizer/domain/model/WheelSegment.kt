@@ -1,4 +1,4 @@
-package com.random.randomizer.domain.core.model
+package com.random.randomizer.domain.model
 
 data class WheelSegment(
     val id: Int,
