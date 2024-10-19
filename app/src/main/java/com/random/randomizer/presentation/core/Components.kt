@@ -34,6 +34,7 @@ import com.random.randomizer.R
 @Composable
 fun WheelSegment(
     itemUiState: WheelSegmentUiState,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     WheelSegment(
@@ -42,7 +43,7 @@ fun WheelSegment(
         containerColor = itemUiState.customColor
             ?: MaterialTheme.colorScheme.surface,
         image = itemUiState.image,
-        onClick = itemUiState.onClick,
+        onClick = onClick,
         modifier = modifier
     )
 }
@@ -104,6 +105,7 @@ private fun WheelSegmentPreview() {
 @Composable
 fun WheelSegmentList(
     wheelItems: List<WheelSegmentUiState>,
+    onClickWheelSegment: (WheelSegmentUiState) -> Unit,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +127,10 @@ fun WheelSegmentList(
             items = wheelItems,
             key = { it.id }
         ) { item ->
-            WheelSegment(itemUiState = item)
+            WheelSegment(
+                itemUiState = item,
+                onClick = { onClickWheelSegment(item) }
+            )
         }
     }
 }

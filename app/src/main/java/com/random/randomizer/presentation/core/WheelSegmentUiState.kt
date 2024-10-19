@@ -10,6 +10,5 @@ data class WheelSegmentUiState(
     val title: String,
     val description: String? = null,
     val image: ImageBitmap? = null,
-    val customColor: Color? = null,
-    val onClick: () -> Unit
+    val customColor: Color? = null
 )

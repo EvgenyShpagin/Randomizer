@@ -76,6 +76,7 @@ private fun HomeScreen(
             } else {
                 WheelSegmentList(
                     wheelItems = wheelItems,
+                    onClickWheelSegment = {},
                     listState = listState
                 )
             }

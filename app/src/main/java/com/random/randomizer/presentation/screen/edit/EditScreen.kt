@@ -74,7 +74,8 @@ private fun EditScreen(
             } else {
                 WheelSegmentList(
                     wheelItems = wheelSegments,
-                    listState = listState
+                    listState = listState,
+                    onClickWheelSegment = onClickWheelSegment
                 )
             }
         }

@@ -34,7 +34,7 @@ class HomeScreenTest {
     @Test
     fun homeScreen_showsWheelSegmentList_whenSegmentsPresent() {
         val nonEmptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake") {}))
+            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake")))
         )
         setHomeScreen(nonEmptyListViewModel)
 
@@ -65,7 +65,7 @@ class HomeScreenTest {
     @Test
     fun homeScreen_showsSpinButton_whenWheelSegmentsPresent() {
         val nonEmptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake") {}))
+            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake")))
         )
         setHomeScreen(nonEmptyListViewModel)
 
