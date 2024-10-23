@@ -1,44 +1,36 @@
 package com.random.randomizer.presentation.core
 
 import androidx.lifecycle.ViewModel
-import com.random.randomizer.presentation.core.Reducer.UiEffect
-import com.random.randomizer.presentation.core.Reducer.UiEvent
-import com.random.randomizer.presentation.core.Reducer.UiState
+import com.random.randomizer.presentation.core.BaseViewModel.UiEffect
+import com.random.randomizer.presentation.core.BaseViewModel.UiEvent
+import com.random.randomizer.presentation.core.BaseViewModel.UiState
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 
 abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiEffect>(
-    initialUiState: State,
-    private val reducer: Reducer<State, Event, Effect>
+    initialUiState: State
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(initialUiState)
-    val state = _state.asStateFlow()
+    private val _uiState = MutableStateFlow(initialUiState)
+    val uiState = _uiState.asStateFlow()
 
-    private val _event = MutableSharedFlow<Event>()
-    val event = _event.asSharedFlow()
+    private val _uiEffects = Channel<Effect>(capacity = Channel.CONFLATED)
+    val uiEffect = _uiEffects.receiveAsFlow()
 
-    private val _effects = Channel<Effect>(capacity = Channel.CONFLATED)
-    val effect = _effects.receiveAsFlow()
+    abstract fun onEvent(event: Event)
 
-    fun sendEffect(effect: Effect) {
-        _effects.trySend(effect)
+    protected fun updateState(transform: (State) -> State) {
+        _uiState.update { transform(it) }
     }
 
-    fun sendEvent(event: Event) {
-        val (newState, _) = reducer.reduce(_state.value, event)
-        _state.tryEmit(newState)
+    protected fun triggerEffect(effect: Effect) {
+        _uiEffects.trySend(effect)
     }
 
-    fun sendEventForEffect(event: Event) {
-        val (newState, effect) = reducer.reduce(_state.value, event)
-        _state.tryEmit(newState)
-        effect?.let {
-            sendEffect(it)
-        }
-    }
+    interface UiState
+    interface UiEvent
+    interface UiEffect
 }
