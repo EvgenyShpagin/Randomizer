@@ -32,13 +32,10 @@ fun RandomizerNavHost(
         }
         composable<Destination.Edit> {
             EditScreen(
-                onClickAddSegment = {
-                    /*TODO: implement*/
-                },
                 navigateBack = {
                     navController.navigateUp()
                 },
-                editViewModel = viewModel()
+                viewModel = viewModel()
             )
         }
         composable<Destination.SpinWheel> {

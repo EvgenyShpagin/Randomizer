@@ -20,21 +20,31 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.CreateSegment
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.EditSegment
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.NavigateBack
+import com.random.randomizer.presentation.util.HandleUiEffects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(
-    onClickAddSegment: () -> Unit,
     navigateBack: () -> Unit,
-    editViewModel: EditViewModel = viewModel(),
+    viewModel: EditViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState by editViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HandleUiEffects(viewModel.uiEffect) { effect ->
+        when (effect) {
+            EditUiEffect.NavigateToHome -> navigateBack()
+        }
+    }
 
     EditScreen(
         wheelSegments = uiState.wheelSegments,
-        onClickAddSegment = onClickAddSegment,
-        navigateBack = navigateBack,
+        onAddSegmentClicked = { viewModel.onEvent(CreateSegment) },
+        onSegmentClicked = { viewModel.onEvent(EditSegment(it)) },
+        navigateBack = { viewModel.onEvent(NavigateBack) },
         modifier = modifier
     )
 }
@@ -43,7 +53,8 @@ fun EditScreen(
 @Composable
 private fun EditScreen(
     wheelSegments: List<WheelSegmentUiState>,
-    onClickAddSegment: () -> Unit,
+    onAddSegmentClicked: () -> Unit,
+    onSegmentClicked: (WheelSegmentUiState) -> Unit,
     navigateBack: () -> Unit,
     listState: LazyListState = rememberLazyListState(),
     topAppBarState: TopAppBarState = rememberTopAppBarState(),
@@ -59,7 +70,7 @@ private fun EditScreen(
             )
         },
         floatingActionButton = {
-            AddWheelSegmentButton(onClick = onClickAddSegment)
+            AddWheelSegmentButton(onClick = onAddSegmentClicked)
         }
     ) { innerPadding ->
         Box(
@@ -75,7 +86,7 @@ private fun EditScreen(
                 WheelSegmentList(
                     wheelItems = wheelSegments,
                     listState = listState,
-                    onClickWheelSegment = onClickWheelSegment
+                    onClickWheelSegment = onSegmentClicked
                 )
             }
         }
