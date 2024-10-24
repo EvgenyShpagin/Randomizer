@@ -20,20 +20,30 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.util.HandleUiEffects
+import com.random.randomizer.presentation.util.rememberFlowWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToSpin: () -> Unit,
     navigateToEdit: () -> Unit,
-    homeViewModel: HomeViewModel = viewModel(),
+    viewModel: HomeViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = rememberFlowWithLifecycle(viewModel.uiEffect)
+
+    HandleUiEffects(uiEffect) { effect ->
+        when (effect) {
+            HomeUiEffect.NavigateToEdit -> navigateToEdit()
+            HomeUiEffect.NavigateToSpin -> navigateToSpin()
+        }
+    }
 
     HomeScreen(
-        navigateToSpin = navigateToSpin,
-        navigateToEdit = navigateToEdit,
+        onClickSpin = { viewModel.onEvent(HomeUiEvent.Spin) },
+        onClickEdit = { viewModel.onEvent(HomeUiEvent.Edit) },
         wheelItems = uiState.wheelSegments,
         modifier = modifier
     )
@@ -42,8 +52,8 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
-    navigateToSpin: () -> Unit,
-    navigateToEdit: () -> Unit,
+    onClickSpin: () -> Unit,
+    onClickEdit: () -> Unit,
     wheelItems: List<WheelSegmentUiState>,
     listState: LazyListState = rememberLazyListState(),
     topAppBarState: TopAppBarState = rememberTopAppBarState(),
@@ -53,13 +63,13 @@ private fun HomeScreen(
     Scaffold(
         topBar = {
             HomeTopBar(
-                onClickEdit = navigateToEdit,
+                onClickEdit = onClickEdit,
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
             if (wheelItems.isNotEmpty()) {
-                SpinButton(onClick = navigateToSpin)
+                SpinButton(onClick = onClickSpin)
             }
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)

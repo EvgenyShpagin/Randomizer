@@ -1,11 +1,23 @@
 package com.random.randomizer.presentation.screen.home
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.random.randomizer.presentation.core.BaseViewModel
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel : BaseViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(
+    initialUiState = HomeUiState()
+) {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState = _uiState.asStateFlow()
+    override fun onEvent(event: HomeUiEvent) {
+        when (event) {
+            HomeUiEvent.Edit -> onEdit()
+            HomeUiEvent.Spin -> onSpin()
+        }
+    }
+
+    private fun onSpin() {
+        triggerEffect(HomeUiEffect.NavigateToSpin)
+    }
+
+    private fun onEdit() {
+        triggerEffect(HomeUiEffect.NavigateToEdit)
+    }
 }
