@@ -6,9 +6,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 
 @Immutable
 data class WheelSegmentUiState(
-    val id: Int,
-    val title: String,
-    val description: String? = null,
+    val id: Int = 0,
+    val title: String = "",
+    val description: String = "",
     val image: ImageBitmap? = null,
     val customColor: Color? = null
 )

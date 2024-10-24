@@ -51,7 +51,7 @@ fun WheelSegment(
 @Composable
 private fun WheelSegment(
     title: String,
-    description: String?,
+    description: String,
     image: ImageBitmap?,
     containerColor: Color,
     onClick: () -> Unit,
@@ -68,13 +68,15 @@ private fun WheelSegment(
                     style = MaterialTheme.typography.titleMedium
                 )
             },
-            supportingContent = description?.let {
+            supportingContent = if (description.isNotBlank()) {
                 {
                     Text(
-                        text = it,
+                        text = description,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+            } else {
+                null
             },
             leadingContent = image?.let {
                 {
