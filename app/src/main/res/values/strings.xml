@@ -7,4 +7,15 @@
     <string name="cd_back_button">Back</string>
     <string name="cd_edit_wheel_segments">Edit wheel segments</string>
     <string name="label_no_wheel_segments">No wheel segments</string>
+    <string name="cd_checked_color_circle">Checked color (%s)</string>
+    <string name="cd_unchecked_color_circle">Unchecked color (%s)</string>
+    <string name="action_set_background_color">Set background color</string>
+    <string name="action_remove_background_color">Remove background color</string>
+    <string name="button_add_segment_image">Add image</string>
+    <string name="cd_add_image_to_segment">Add image to segment</string>
+    <string name="cd_remove_image_from_segment">Remove image from segment\n</string>
+    <string name="button_remove_segment_image">Remove image</string>
+    <string name="label_segment_title">Title</string>
+    <string name="label_segment_description">Description</string>
+    <string name="cd_remove_color">Remove color</string>
 </resources>
