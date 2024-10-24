@@ -13,17 +13,13 @@ import kotlinx.coroutines.launch
 
 
 class EditSegmentViewModel(
-    private var wheelSegmentId: Int?,
+    private val wheelSegmentId: Int,
 ) : BaseViewModel<EditSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = EditSegmentUiState()
 ) {
 
     init {
         viewModelScope.launch {
-            if (wheelSegmentId == null) {
-                wheelSegmentId = 0 // TODO: create and get item id
-            }
-
             // TODO: subscribe to wheel segment changes
         }
     }
@@ -32,7 +28,6 @@ class EditSegmentViewModel(
         onSuccess: () -> Unit = {},
         transform: (WheelSegment) -> WheelSegment
     ) {
-        val wheelSegmentId = wheelSegmentId ?: return
         //TODO: update
     }
 
@@ -76,7 +71,7 @@ class EditSegmentViewModel(
     }
 
     companion object {
-        fun Factory(wheelSegmentId: Int?) = viewModelFactory {
+        fun Factory(wheelSegmentId: Int) = viewModelFactory {
             initializer {
                 EditSegmentViewModel(wheelSegmentId)
             }
