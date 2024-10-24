@@ -32,9 +32,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val uiEffect = rememberFlowWithLifecycle(viewModel.uiEffect)
 
-    HandleUiEffects(uiEffect) { effect ->
+    HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
             HomeUiEffect.NavigateToEdit -> navigateToEdit()
             HomeUiEffect.NavigateToSpin -> navigateToSpin()
