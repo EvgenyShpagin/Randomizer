@@ -80,7 +80,7 @@ class HomeScreenTest {
             HomeScreen(
                 navigateToSpin = {},
                 navigateToEdit = {},
-                homeViewModel = viewModel
+                viewModel = viewModel
             )
         }
     }

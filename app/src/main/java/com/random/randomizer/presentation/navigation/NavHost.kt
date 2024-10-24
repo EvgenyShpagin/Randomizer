@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
+import com.random.randomizer.presentation.screen.spin.SpinWheelScreen
 
 @Composable
 fun RandomizerNavHost(
@@ -27,7 +28,7 @@ fun RandomizerNavHost(
                 navigateToEdit = {
                     navController.navigate(Destination.Edit)
                 },
-                homeViewModel = viewModel()
+                viewModel = viewModel()
             )
         }
         composable<Destination.Edit> {
