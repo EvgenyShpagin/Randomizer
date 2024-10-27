@@ -2,13 +2,12 @@ package com.random.randomizer.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
-import com.random.randomizer.presentation.screen.spin.SpinWheelScreen
 
 @Composable
 fun RandomizerNavHost(
@@ -28,7 +27,7 @@ fun RandomizerNavHost(
                 navigateToEdit = {
                     navController.navigate(Destination.Edit)
                 },
-                viewModel = viewModel()
+                viewModel = hiltViewModel()
             )
         }
         composable<Destination.Edit> {
@@ -36,7 +35,7 @@ fun RandomizerNavHost(
                 navigateBack = {
                     navController.navigateUp()
                 },
-                viewModel = viewModel()
+                viewModel = hiltViewModel()
             )
         }
         composable<Destination.SpinWheel> {
