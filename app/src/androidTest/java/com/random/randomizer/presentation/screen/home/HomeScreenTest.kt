@@ -5,11 +5,12 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.random.randomizer.R
-import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.test_util.testStringResource
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import org.junit.Rule
 import org.junit.Test
 
@@ -18,12 +19,12 @@ class HomeScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+
     @Test
     fun homeScreen_showsEmptyState_whenNoWheelSegments() {
-        val emptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = emptyList())
-        )
-        setHomeScreen(emptyListViewModel)
+        val viewModel = createViewModelWithSegments(emptyList())
+        setHomeScreen(viewModel = viewModel)
 
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
 
@@ -33,10 +34,10 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_showsWheelSegmentList_whenSegmentsPresent() {
-        val nonEmptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake")))
+        val viewModel = createViewModelWithSegments(
+            segments = listOf(WheelSegment(1, "fake", "", null, null))
         )
-        setHomeScreen(nonEmptyListViewModel)
+        setHomeScreen(viewModel = viewModel)
 
         composeTestRule
             .onNodeWithText("fake")
@@ -51,10 +52,8 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_hidesSpinButton_whenNoWheelSegments() {
-        val emptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = emptyList())
-        )
-        setHomeScreen(emptyListViewModel)
+        val viewModel = createViewModelWithSegments(emptyList())
+        setHomeScreen(viewModel = viewModel)
 
         val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
@@ -64,10 +63,10 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_showsSpinButton_whenWheelSegmentsPresent() {
-        val nonEmptyListViewModel = getMockViewModelWithState(
-            HomeUiState(wheelSegments = listOf(WheelSegmentUiState(1, "fake")))
+        val viewModel = createViewModelWithSegments(
+            segments = listOf(WheelSegment(1, "fake", "", null, null))
         )
-        setHomeScreen(nonEmptyListViewModel)
+        setHomeScreen(viewModel = viewModel)
 
         val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
@@ -85,9 +84,8 @@ class HomeScreenTest {
         }
     }
 
-    private fun getMockViewModelWithState(uiState: HomeUiState): HomeViewModel {
-        return mockk<HomeViewModel>().also { viewModel ->
-            every { viewModel.uiState } returns MutableStateFlow(uiState)
-        }
+    private fun createViewModelWithSegments(segments: List<WheelSegment>): HomeViewModel {
+        every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
+        return HomeViewModel(getWheelSegmentsStreamUseCase)
     }
 }
