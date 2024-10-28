@@ -5,15 +5,17 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.presentation.core.BaseViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 
-
-class EditSegmentViewModel(
-    private val wheelSegmentId: Int,
+@HiltViewModel(assistedFactory = EditSegmentViewModel.Factory::class)
+class EditSegmentViewModel @AssistedInject constructor(
+    @Assisted private val wheelSegmentId: Int,
 ) : BaseViewModel<EditSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = EditSegmentUiState()
 ) {
@@ -70,11 +72,11 @@ class EditSegmentViewModel(
         triggerEffect(EditSegmentUiEffect.OpenImagePicker)
     }
 
-    companion object {
-        fun Factory(wheelSegmentId: Int) = viewModelFactory {
-            initializer {
-                EditSegmentViewModel(wheelSegmentId)
-            }
-        }
+    /**
+     * Factory for passing in wheel segment being edited
+     */
+    @AssistedFactory
+    interface Factory {
+        fun create(wheelSegmentId: Int): EditSegmentViewModel
     }
 }
