@@ -6,6 +6,8 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
+import com.random.randomizer.presentation.core.toUiState
 import com.random.randomizer.presentation.core.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

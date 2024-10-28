@@ -3,7 +3,7 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.mapper.toPresentation
+import com.random.randomizer.presentation.core.toUiState
 import com.random.randomizer.presentation.core.BaseViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ class EditViewModel @Inject constructor(
     init {
         getWheelSegmentsStreamUseCase()
             .onEach { segments ->
-                val uiSegments = segments.map { it.toPresentation() }
+                val uiSegments = segments.map { it.toUiState() }
                 updateState { it.copy(wheelSegments = uiSegments) }
             }
             .launchIn(viewModelScope)
@@ -42,7 +42,7 @@ class EditViewModel @Inject constructor(
 
     private fun onCreateSegment() {
         viewModelScope.launch {
-            val newWheelSegmentUiState = createWheelSegmentUseCase().toPresentation()
+            val newWheelSegmentUiState = createWheelSegmentUseCase().toUiState()
             updateState {
                 it.copy(
                     wheelSegments = it.wheelSegments + newWheelSegmentUiState,

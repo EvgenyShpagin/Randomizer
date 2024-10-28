@@ -1,12 +1,11 @@
-package com.random.randomizer.mapper
+package com.random.randomizer.presentation.core
 
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.presentation.core.WheelSegmentUiState
 
-fun WheelSegment.toPresentation(): WheelSegmentUiState {
+fun WheelSegment.toUiState(): WheelSegmentUiState {
     return WheelSegmentUiState(
         id = id,
         title = title,
