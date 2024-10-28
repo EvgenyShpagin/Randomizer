@@ -15,20 +15,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.util.HandleUiEffects
-import com.random.randomizer.presentation.util.rememberFlowWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToSpin: () -> Unit,
     navigateToEdit: () -> Unit,
-    viewModel: HomeViewModel = viewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

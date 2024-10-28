@@ -15,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
@@ -29,7 +29,7 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 @Composable
 fun EditScreen(
     navigateBack: () -> Unit,
-    viewModel: EditViewModel = viewModel(),
+    viewModel: EditViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
