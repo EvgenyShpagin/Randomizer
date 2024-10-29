@@ -18,4 +18,5 @@
     <string name="label_segment_title">Title</string>
     <string name="label_segment_description">Description</string>
     <string name="cd_remove_color">Remove color</string>
+    <string name="message_failed_to_set_image">Failed to set image</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.random.randomizer.presentation.screen.edit
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -56,6 +57,10 @@ fun EditSegmentBottomSheet(
         when (effect) {
             EditSegmentUiEffect.OpenImagePicker -> {
                 pickMedia.launchImagePicker()
+            }
+
+            is EditSegmentUiEffect.ShowErrorMessage -> {
+                Toast.makeText(context, effect.textId, Toast.LENGTH_SHORT).show()
             }
         }
     }
