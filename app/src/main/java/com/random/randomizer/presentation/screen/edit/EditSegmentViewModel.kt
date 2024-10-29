@@ -7,25 +7,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
-import com.random.randomizer.presentation.core.toUiState
 import com.random.randomizer.presentation.core.BaseViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel(assistedFactory = EditSegmentViewModel.Factory::class)
 class EditSegmentViewModel @AssistedInject constructor(
     @Assisted private val wheelSegmentId: Int,
+    getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase
 ) : BaseViewModel<EditSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = EditSegmentUiState()
 ) {
 
     init {
-        viewModelScope.launch {
-            // TODO: subscribe to wheel segment changes
-        }
+        getWheelSegmentStreamUseCase(wheelSegmentId)
+            .onEach { segment -> updateState { segment.toEditUiState() } }
+            .launchIn(viewModelScope)
     }
 
     private fun updateWheelSegment(
