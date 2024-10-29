@@ -7,4 +7,5 @@ sealed interface EditUiEvent : BaseViewModel.UiEvent {
     data object NavigateBack : EditUiEvent
     data object CreateSegment : EditUiEvent
     data class EditSegment(val wheelSegment: WheelSegmentUiState) : EditUiEvent
+    data object FinishSegmentEdit : EditUiEvent
 }

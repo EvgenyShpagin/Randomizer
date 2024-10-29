@@ -22,6 +22,7 @@ import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.CreateSegment
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.EditSegment
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishSegmentEdit
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.NavigateBack
 import com.random.randomizer.presentation.util.HandleUiEffects
 
@@ -42,9 +43,11 @@ fun EditScreen(
 
     EditScreen(
         wheelSegments = uiState.wheelSegments,
+        currentlyEditedSegment = uiState.currentlyEditedSegment,
         onAddSegmentClicked = { viewModel.onEvent(CreateSegment) },
         onSegmentClicked = { viewModel.onEvent(EditSegment(it)) },
         navigateBack = { viewModel.onEvent(NavigateBack) },
+        onFinishSegmentEdit = { viewModel.onEvent(FinishSegmentEdit) },
         modifier = modifier
     )
 }
@@ -53,9 +56,11 @@ fun EditScreen(
 @Composable
 private fun EditScreen(
     wheelSegments: List<WheelSegmentUiState>,
+    currentlyEditedSegment: WheelSegmentUiState?,
     onAddSegmentClicked: () -> Unit,
     onSegmentClicked: (WheelSegmentUiState) -> Unit,
     navigateBack: () -> Unit,
+    onFinishSegmentEdit: () -> Unit,
     listState: LazyListState = rememberLazyListState(),
     topAppBarState: TopAppBarState = rememberTopAppBarState(),
     modifier: Modifier = Modifier
@@ -89,6 +94,13 @@ private fun EditScreen(
                     onClickWheelSegment = onSegmentClicked
                 )
             }
+        }
+
+        if (currentlyEditedSegment != null) {
+            EditSegmentBottomSheet(
+                currentlyEditedSegment = currentlyEditedSegment,
+                onDismiss = onFinishSegmentEdit
+            )
         }
     }
 }

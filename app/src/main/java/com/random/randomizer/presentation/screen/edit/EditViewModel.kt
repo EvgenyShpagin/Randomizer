@@ -3,9 +3,9 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.toUiState
 import com.random.randomizer.presentation.core.BaseViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.core.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -33,6 +33,7 @@ class EditViewModel @Inject constructor(
             is EditUiEvent.EditSegment -> onEditSegment(event.wheelSegment)
             EditUiEvent.CreateSegment -> onCreateSegment()
             EditUiEvent.NavigateBack -> onNavigateBack()
+            EditUiEvent.FinishSegmentEdit -> onFinishSegmentEdit()
         }
     }
 
@@ -54,5 +55,9 @@ class EditViewModel @Inject constructor(
 
     private fun onNavigateBack() {
         triggerEffect(EditUiEffect.NavigateToHome)
+    }
+
+    private fun onFinishSegmentEdit() {
+        updateState { it.copy(currentlyEditedSegment = null) }
     }
 }
