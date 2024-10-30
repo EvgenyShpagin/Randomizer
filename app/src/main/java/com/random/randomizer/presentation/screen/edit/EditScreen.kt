@@ -43,7 +43,7 @@ fun EditScreen(
 
     EditScreen(
         wheelSegments = uiState.wheelSegments,
-        currentlyEditedSegment = uiState.currentlyEditedSegment,
+        currentlyEditedSegmentId = uiState.currentlyEditedSegmentId,
         onAddSegmentClicked = { viewModel.onEvent(CreateSegment) },
         onSegmentClicked = { viewModel.onEvent(EditSegment(it)) },
         navigateBack = { viewModel.onEvent(NavigateBack) },
@@ -56,7 +56,7 @@ fun EditScreen(
 @Composable
 private fun EditScreen(
     wheelSegments: List<WheelSegmentUiState>,
-    currentlyEditedSegment: WheelSegmentUiState?,
+    currentlyEditedSegmentId: Int?,
     onAddSegmentClicked: () -> Unit,
     onSegmentClicked: (WheelSegmentUiState) -> Unit,
     navigateBack: () -> Unit,
@@ -96,9 +96,9 @@ private fun EditScreen(
             }
         }
 
-        if (currentlyEditedSegment != null) {
+        if (currentlyEditedSegmentId != null) {
             EditSegmentBottomSheet(
-                currentlyEditedSegment = currentlyEditedSegment,
+                currentlyEditedSegmentId = currentlyEditedSegmentId,
                 onDismiss = onFinishSegmentEdit
             )
         }

@@ -7,5 +7,5 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 @Immutable
 data class EditUiState(
     val wheelSegments: List<WheelSegmentUiState> = emptyList(),
-    val currentlyEditedSegment: WheelSegmentUiState? = null
+    val currentlyEditedSegmentId: Int? = null
 ) : BaseViewModel.UiState

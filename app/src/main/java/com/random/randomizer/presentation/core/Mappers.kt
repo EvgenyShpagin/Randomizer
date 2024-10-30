@@ -14,3 +14,13 @@ fun WheelSegment.toUiState(): WheelSegmentUiState {
         customColor = customColor?.let { Color(it) }
     )
 }
+
+fun WheelSegmentUiState.toDomain(thumbnailPath: String?): WheelSegment {
+    return WheelSegment(
+        id = id,
+        title = title,
+        description = description,
+        thumbnailPath = thumbnailPath,
+        customColor = customColor?.value?.toLong()
+    )
+}

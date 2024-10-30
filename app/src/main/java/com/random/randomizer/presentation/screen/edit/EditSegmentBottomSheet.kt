@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.InputTitle
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.OpenImagePicker
@@ -33,11 +32,11 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditSegmentBottomSheet(
-    currentlyEditedSegment: WheelSegmentUiState,
+    currentlyEditedSegmentId: Int,
     onDismiss: () -> Unit,
     viewModel: EditSegmentViewModel = hiltViewModel(
         creationCallback = { factory: EditSegmentViewModel.Factory ->
-            factory.create(currentlyEditedSegment.id)
+            factory.create(currentlyEditedSegmentId)
         }
     ),
     modifier: Modifier = Modifier
