@@ -104,6 +104,12 @@ class EditScreenTest {
 
     private fun createViewModelWithSegments(segments: List<WheelSegment>): EditViewModel {
         every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
-        return EditViewModel(getWheelSegmentsStreamUseCase, createWheelSegmentUseCase)
+        return EditViewModel(
+            getWheelSegmentsStreamUseCase = getWheelSegmentsStreamUseCase,
+            createWheelSegmentUseCase = createWheelSegmentUseCase,
+            deleteWheelSegmentUseCase = mockk(),
+            validateWheelSegmentUseCase = mockk(),
+            makeWheelSegmentUniqueUseCase = mockk()
+        )
     }
 }
