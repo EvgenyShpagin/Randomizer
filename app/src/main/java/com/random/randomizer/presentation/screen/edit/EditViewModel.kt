@@ -74,8 +74,8 @@ class EditViewModel @Inject constructor(
 
     private fun onFinishSegmentEdit() {
         val currentlyEditedSegment = uiState.value.let { uiState ->
-            uiState.wheelSegments.find { it.id == uiState.currentlyEditedSegmentId }!!
-        }.toDomain(currentlyEditedSegmentThumbnailPath)
+            uiState.wheelSegments.find { it.id == uiState.currentlyEditedSegmentId }
+        }?.toDomain(currentlyEditedSegmentThumbnailPath) ?: return
 
         viewModelScope.launch {
             validateWheelSegmentUseCase(currentlyEditedSegment)
