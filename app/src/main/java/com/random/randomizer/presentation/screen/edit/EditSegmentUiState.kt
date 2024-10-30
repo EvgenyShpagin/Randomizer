@@ -12,6 +12,4 @@ data class EditSegmentUiState(
     val description: String = "",
     val thumbnail: ImageBitmap? = null,
     val checkedColor: Color? = null
-) : BaseViewModel.UiState {
-    val canBeClosed get() = title.isNotEmpty()
-}
+) : BaseViewModel.UiState
