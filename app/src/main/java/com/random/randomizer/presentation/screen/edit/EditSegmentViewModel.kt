@@ -12,6 +12,7 @@ import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.valueAsLong
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEffect.ShowErrorMessage
 import com.random.randomizer.util.getInputStreamOrNull
 import com.random.randomizer.util.getUniqueFilename
@@ -96,7 +97,7 @@ class EditSegmentViewModel @AssistedInject constructor(
     }
 
     private fun onPickBackgroundColor(color: Color?) {
-        updateWheelSegment { it.copy(customColor = color?.value?.toLong()) }
+        updateWheelSegment { it.copy(customColor = color?.valueAsLong()) }
     }
 
     private fun onOpenImagePicker() {
