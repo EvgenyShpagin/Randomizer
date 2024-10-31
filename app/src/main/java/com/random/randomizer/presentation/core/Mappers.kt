@@ -21,6 +21,10 @@ fun WheelSegmentUiState.toDomain(thumbnailPath: String?): WheelSegment {
         title = title,
         description = description,
         thumbnailPath = thumbnailPath,
-        customColor = customColor?.value?.toLong()
+        customColor = customColor?.valueAsLong()
     )
+}
+
+fun Color.valueAsLong(): Long {
+    return value.shr(32).toLong()
 }
