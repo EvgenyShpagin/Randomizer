@@ -8,7 +8,6 @@ import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
-import com.random.randomizer.presentation.core.toUiState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -44,6 +43,7 @@ class EditViewModelTest {
     val validateWheelSegmentUseCase = mockk<ValidateWheelSegmentUseCase>()
     val makeWheelSegmentUniqueUseCase = mockk<MakeWheelSegmentUniqueUseCase>()
 
+    val mappers = FakeEditMappers
 
     @Before
     fun setup() {
@@ -65,7 +65,7 @@ class EditViewModelTest {
 
         advanceUntilIdle()
 
-        val expected = wheelSegments.map { it.toUiState() }
+        val expected = wheelSegments.map { mappers.toPresentation(it) }
         val actual = viewModel.uiState.value.wheelSegments
 
         assertEquals(expected, actual)
@@ -93,7 +93,7 @@ class EditViewModelTest {
 
         initViewModel()
 
-        viewModel.onEvent(EditUiEvent.EditSegment(EmptyWheelSegment.toUiState()))
+        viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
 
         advanceUntilIdle()
 
@@ -111,7 +111,7 @@ class EditViewModelTest {
 
         initViewModel()
 
-        viewModel.onEvent(EditUiEvent.EditSegment(EmptyWheelSegment.toUiState()))
+        viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
 
         advanceUntilIdle()
 
@@ -134,7 +134,8 @@ class EditViewModelTest {
             createWheelSegmentUseCase = createWheelSegmentUseCase,
             deleteWheelSegmentUseCase = deleteWheelSegmentUseCase,
             validateWheelSegmentUseCase = validateWheelSegmentUseCase,
-            makeWheelSegmentUniqueUseCase = makeWheelSegmentUniqueUseCase
+            makeWheelSegmentUniqueUseCase = makeWheelSegmentUniqueUseCase,
+            mappers = mappers
         )
     }
 }
