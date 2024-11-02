@@ -9,3 +9,6 @@ data class EditUiState(
     val wheelSegments: List<WheelSegmentUiState> = emptyList(),
     val currentlyEditedSegmentId: Int? = null
 ) : BaseViewModel.UiState
+
+val EditUiState.currentlyEditedSegment
+    get() = wheelSegments.find { it.id == currentlyEditedSegmentId }

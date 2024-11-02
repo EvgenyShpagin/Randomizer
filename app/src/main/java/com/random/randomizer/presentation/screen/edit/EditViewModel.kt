@@ -11,8 +11,6 @@ import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.BaseViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.core.toDomain
-import com.random.randomizer.presentation.core.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,7 +23,8 @@ class EditViewModel @Inject constructor(
     private val createWheelSegmentUseCase: CreateWheelSegmentUseCase,
     private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
-    private val makeWheelSegmentUniqueUseCase: MakeWheelSegmentUniqueUseCase
+    private val makeWheelSegmentUniqueUseCase: MakeWheelSegmentUniqueUseCase,
+    private val mappers: EditMappers
 ) : BaseViewModel<EditUiState, EditUiEvent, EditUiEffect>(
     initialUiState = EditUiState()
 ) {
@@ -36,7 +35,7 @@ class EditViewModel @Inject constructor(
     init {
         getWheelSegmentsStreamUseCase()
             .onEach { segments ->
-                val uiSegments = segments.map { it.toUiState() }
+                val uiSegments = segments.map { mappers.toPresentation(it) }
                 updateState { it.copy(wheelSegments = uiSegments) }
                 updateCurrentlyEditedSegment(segments)
             }
@@ -58,7 +57,7 @@ class EditViewModel @Inject constructor(
 
     private fun onCreateSegment() {
         viewModelScope.launch {
-            val newWheelSegmentUiState = createWheelSegmentUseCase().toUiState()
+            val newWheelSegmentUiState = mappers.toPresentation(createWheelSegmentUseCase())
             updateState {
                 it.copy(
                     wheelSegments = it.wheelSegments + newWheelSegmentUiState,
@@ -73,9 +72,9 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onFinishSegmentEdit() {
-        val currentlyEditedSegment = uiState.value.let { uiState ->
-            uiState.wheelSegments.find { it.id == uiState.currentlyEditedSegmentId }
-        }?.toDomain(currentlyEditedSegmentThumbnailPath) ?: return
+        val currentlyEditedSegment = uiState.value.currentlyEditedSegment?.let { uiState ->
+            mappers.toDomain(uiState, currentlyEditedSegmentThumbnailPath)
+        } ?: return
 
         viewModelScope.launch {
             validateWheelSegmentUseCase(currentlyEditedSegment)

@@ -2,7 +2,6 @@ package com.random.randomizer.presentation.screen.home
 
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.toUiState
 import com.random.randomizer.presentation.core.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -12,6 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
+    private val mappers: HomeMappers
 ) : BaseViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(
     initialUiState = HomeUiState()
 ) {
@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(
     init {
         getWheelSegmentsStreamUseCase()
             .onEach { segments ->
-                val uiSegments = segments.map { it.toUiState() }
+                val uiSegments = segments.map { mappers.toPresentation(it) }
                 updateState { it.copy(wheelSegments = uiSegments) }
             }
             .launchIn(viewModelScope)

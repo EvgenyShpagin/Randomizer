@@ -12,7 +12,6 @@ import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.BaseViewModel
-import com.random.randomizer.presentation.core.valueAsLong
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEffect.ShowErrorMessage
 import com.random.randomizer.util.getInputStreamOrNull
 import com.random.randomizer.util.getUniqueFilename
@@ -30,14 +29,15 @@ class EditSegmentViewModel @AssistedInject constructor(
     getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase,
     private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
     private val saveImageThumbnailUseCase: SaveImageThumbnailUseCase,
-    private val deleteThumbnailUseCase: DeleteThumbnailUseCase
+    private val deleteThumbnailUseCase: DeleteThumbnailUseCase,
+    private val mappers: EditSegmentMappers
 ) : BaseViewModel<EditSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = EditSegmentUiState()
 ) {
 
     init {
         getWheelSegmentStreamUseCase(wheelSegmentId)
-            .onEach { segment -> updateState { segment.toEditUiState() } }
+            .onEach { segment -> updateState { mappers.toPresentation(segment) } }
             .launchIn(viewModelScope)
     }
 
@@ -97,7 +97,8 @@ class EditSegmentViewModel @AssistedInject constructor(
     }
 
     private fun onPickBackgroundColor(color: Color?) {
-        updateWheelSegment { it.copy(customColor = color?.valueAsLong()) }
+        val domainColor = color?.let { color -> mappers.toDomain(color) }
+        updateWheelSegment { it.copy(customColor = domainColor) }
     }
 
     private fun onOpenImagePicker() {
