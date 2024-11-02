@@ -13,7 +13,7 @@ interface EditMappers {
 }
 
 interface EditSegmentMappers {
-    fun toPresentation(wheelSegment: WheelSegment): EditSegmentUiState
+    fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState
     fun toPresentation(imagePath: String): ImageBitmap?
     fun toDomain(color: Color): Long
 }
@@ -34,14 +34,8 @@ class EditMappersImpl @Inject constructor(private val coreMappers: CoreMappers) 
 class EditSegmentMappersImpl @Inject constructor(
     private val coreMappers: CoreMappers
 ) : EditSegmentMappers {
-    override fun toPresentation(wheelSegment: WheelSegment): EditSegmentUiState {
-        return EditSegmentUiState(
-            wheelSegmentId = wheelSegment.id,
-            title = wheelSegment.title,
-            description = wheelSegment.description,
-            thumbnail = wheelSegment.thumbnailPath?.let { toPresentation(thumbnailPath = it) },
-            checkedColor = wheelSegment.customColor?.let { Color(it) }
-        )
+    override fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState {
+        return coreMappers.toPresentation(wheelSegment)
     }
 
     override fun toPresentation(thumbnailPath: String): ImageBitmap? {

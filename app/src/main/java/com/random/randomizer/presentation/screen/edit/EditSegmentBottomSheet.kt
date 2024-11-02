@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.InputTitle
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEvent.OpenImagePicker
@@ -86,7 +87,7 @@ fun EditSegmentBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditSegmentBottomSheet(
-    segmentUiState: EditSegmentUiState,
+    segmentUiState: WheelSegmentUiState,
     onDismiss: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
@@ -114,7 +115,7 @@ private fun EditSegmentBottomSheet(
                 description = segmentUiState.description,
                 onInput = onInputDescription
             )
-            if (segmentUiState.thumbnail == null) {
+            if (segmentUiState.image == null) {
                 AddSegmentImageButton(onClickAdd = onClickAddImage)
             } else {
                 RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
@@ -123,7 +124,7 @@ private fun EditSegmentBottomSheet(
                 colors = backgroundColors,
                 onCheckColor = onPickBackgroundColor,
                 onRemoveColor = { onPickBackgroundColor(null) },
-                checkedColor = segmentUiState.checkedColor
+                checkedColor = segmentUiState.customColor
             )
         }
     }

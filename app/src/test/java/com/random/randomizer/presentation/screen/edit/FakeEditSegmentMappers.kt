@@ -4,16 +4,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.presentation.core.FakeCoreMappers
+import com.random.randomizer.presentation.core.WheelSegmentUiState
 
 object FakeEditSegmentMappers : EditSegmentMappers {
-    override fun toPresentation(wheelSegment: WheelSegment): EditSegmentUiState {
-        return EditSegmentUiState(
-            wheelSegmentId = wheelSegment.id,
-            title = wheelSegment.title,
-            description = wheelSegment.description,
-            thumbnail = wheelSegment.thumbnailPath?.let { toPresentation(thumbnailPath = it) },
-            checkedColor = wheelSegment.customColor?.let { Color(it) }
-        )
+    override fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState {
+        return FakeCoreMappers.toPresentation(wheelSegment)
     }
 
     override fun toPresentation(thumbnailPath: String): ImageBitmap? {

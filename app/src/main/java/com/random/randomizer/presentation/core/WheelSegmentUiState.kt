@@ -11,4 +11,4 @@ data class WheelSegmentUiState(
     val description: String = "",
     val image: ImageBitmap? = null,
     val customColor: Color? = null
-)
+) : BaseViewModel.UiState
