@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 @HiltAndroidTest
 class EditScreenTest {
@@ -34,6 +35,10 @@ class EditScreenTest {
 
     val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
     val createWheelSegmentUseCase = mockk<CreateWheelSegmentUseCase>()
+
+    @Inject
+    lateinit var mappers: EditMappers
+
 
     init {
         coEvery { createWheelSegmentUseCase() } returns WheelSegment(1, "", "", null, null)
@@ -109,7 +114,8 @@ class EditScreenTest {
             createWheelSegmentUseCase = createWheelSegmentUseCase,
             deleteWheelSegmentUseCase = mockk(),
             validateWheelSegmentUseCase = mockk(),
-            makeWheelSegmentUniqueUseCase = mockk()
+            makeWheelSegmentUniqueUseCase = mockk(),
+            mappers = mappers
         )
     }
 }
