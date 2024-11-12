@@ -66,7 +66,7 @@ private fun HomeScreen(
             )
         },
         floatingActionButton = {
-            if (wheelItems.isNotEmpty()) {
+            if (wheelItems.count() > 1) {
                 SpinButton(onClick = onClickSpin)
             }
         },
