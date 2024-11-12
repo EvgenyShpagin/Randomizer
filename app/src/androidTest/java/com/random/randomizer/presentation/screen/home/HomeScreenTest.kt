@@ -78,9 +78,25 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_showsSpinButton_whenWheelSegmentsPresent() {
+    fun homeScreen_hidesSpinButton_whenSingleWheelSegment() {
         val viewModel = createViewModelWithSegments(
             segments = listOf(WheelSegment(1, "fake", "", null, null))
+        )
+        setHomeScreen(viewModel = viewModel)
+
+        val spinButtonText = testStringResource(R.string.button_spin)
+        composeTestRule
+            .onNodeWithText(spinButtonText, useUnmergedTree = true)
+            .assertIsNotDisplayed()
+    }
+
+    @Test
+    fun homeScreen_showsSpinButton_whenWheelSegmentsPresent() {
+        val viewModel = createViewModelWithSegments(
+            segments = listOf(
+                WheelSegment(1, "fake", "", null, null),
+                WheelSegment(2, "fake2", "", null, null)
+            )
         )
         setHomeScreen(viewModel = viewModel)
 
