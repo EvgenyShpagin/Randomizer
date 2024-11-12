@@ -17,7 +17,7 @@ fun RandomizerNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destination.Home,
+        startDestination = Destination.SpinWheel,
         modifier = modifier
     ) {
         composable<Destination.Home> {
