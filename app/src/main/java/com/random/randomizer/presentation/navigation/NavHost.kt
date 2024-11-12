@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
+import com.random.randomizer.presentation.screen.spin.SpinScreen
 
 @Composable
 fun RandomizerNavHost(
@@ -39,7 +40,9 @@ fun RandomizerNavHost(
             )
         }
         composable<Destination.SpinWheel> {
-            // TODO: implement
+            SpinScreen(
+                viewModel = hiltViewModel()
+            )
         }
     }
 }

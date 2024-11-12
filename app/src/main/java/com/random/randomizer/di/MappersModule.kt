@@ -8,6 +8,8 @@ import com.random.randomizer.presentation.screen.edit.EditSegmentMappers
 import com.random.randomizer.presentation.screen.edit.EditSegmentMappersImpl
 import com.random.randomizer.presentation.screen.home.HomeMappers
 import com.random.randomizer.presentation.screen.home.HomeMappersImpl
+import com.random.randomizer.presentation.screen.spin.SpinMappers
+import com.random.randomizer.presentation.screen.spin.SpinMappersImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,4 +29,7 @@ abstract class MappersModule {
 
     @Binds
     abstract fun bindEditSegmentMappers(impl: EditSegmentMappersImpl): EditSegmentMappers
+
+    @Binds
+    abstract fun bindSpinMappers(impl: SpinMappersImpl): SpinMappers
 }
