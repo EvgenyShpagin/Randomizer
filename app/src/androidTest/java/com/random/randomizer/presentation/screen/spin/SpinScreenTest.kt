@@ -39,48 +39,29 @@ class SpinScreenTest {
     @Inject
     lateinit var mappers: SpinMappers
 
+    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+
     @Before
     fun setup() {
         hiltRule.inject()
     }
 
     @Test
-    fun spinScreen_displaysWheelSegmentList_whenSegmentsPresent() {
-        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-
-        every {
-            getWheelSegmentStreamUseCase()
-        } returns flow {
-            emit(
-                listOf(
-                    WheelSegment(1, "fake", "", null, null),
-                    WheelSegment(2, "fake2", "", null, null)
-                ),
-            )
-        }
-
-        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+    fun displaysWheelSegmentList_whenSegmentsPresent() {
+        val viewModel = createViewModelWithSegments(ShortFakeList)
 
         composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
         }
 
         composeTestRule
-            .onAllNodesWithText("fake")
-            .assertAny(hasText("fake"))
+            .onAllNodesWithText("fake0")
+            .assertAny(hasText("fake0"))
     }
 
     @Test
-    fun spinScreen_doesNotScroll_whenUserScrolls() {
-        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-
-        every {
-            getWheelSegmentStreamUseCase()
-        } returns flow {
-            emit(LongFakeList)
-        }
-
-        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+    fun doesNotScroll_whenSwiped() {
+        val viewModel = createViewModelWithSegments(LongFakeList)
 
         composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
@@ -93,17 +74,8 @@ class SpinScreenTest {
     }
 
     @Test
-    fun spinScreen_fillsAllScreenSizeByItems_beforeSpin() {
-        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-
-        every {
-            getWheelSegmentStreamUseCase()
-        } returns flow {
-            val shortList = LongFakeList.subList(0, 2)
-            emit(shortList)
-        }
-
-        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+    fun fillsScreenSizeByItems_beforeSpin() {
+        val viewModel = createViewModelWithSegments(ShortFakeList)
 
         composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
@@ -121,16 +93,8 @@ class SpinScreenTest {
     }
 
     @Test
-    fun spinScreen_containsEachWheelSegmentAtLeastTwice_beforeSpin() {
-        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-
-        every {
-            getWheelSegmentStreamUseCase()
-        } returns flow {
-            emit(LongFakeList)
-        }
-
-        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+    fun containsEachSegmentAtLeastTwice_beforeSpin() {
+        val viewModel = createViewModelWithSegments(LongFakeList)
 
         composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
@@ -147,7 +111,16 @@ class SpinScreenTest {
         assertTrue(fake0SegmentCount >= 2)
     }
 
+    private fun createViewModelWithSegments(segments: List<WheelSegment>): SpinViewModel {
+        every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
+        return SpinViewModel(getWheelSegmentsStreamUseCase, mappers)
+    }
+
     companion object {
+        val ShortFakeList = List(2) { i ->
+            WheelSegment(i, "fake$i", "", null, null)
+        }
+
         val LongFakeList = List(100) { i ->
             WheelSegment(i, "fake$i", "", null, null)
         }
