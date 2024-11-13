@@ -1,16 +1,21 @@
 package com.random.randomizer.presentation.screen.spin
 
+import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.unit.dp
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
+import com.random.randomizer.presentation.core.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.every
@@ -28,7 +33,7 @@ class SpinScreenTest {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Inject
     lateinit var mappers: SpinMappers
@@ -55,7 +60,7 @@ class SpinScreenTest {
 
         val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
 
-        composeTestRule.setContent {
+        composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
         }
 
@@ -76,7 +81,7 @@ class SpinScreenTest {
 
         val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
 
-        composeTestRule.setContent {
+        composeTestRule.activity.setContent {
             SpinScreen(viewModel = viewModel)
         }
 
@@ -84,6 +89,34 @@ class SpinScreenTest {
             .performTouchInput { swipeUp() }
 
         composeTestRule.onNodeWithText("fake0").assertIsDisplayed()
+    }
+
+    @Test
+    fun spinScreen_fillsAllScreenSizeByItems_beforeSpin() {
+        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+
+        every {
+            getWheelSegmentStreamUseCase()
+        } returns flow {
+            val shortList = LongFakeList.subList(0, 2)
+            emit(shortList)
+        }
+
+        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+
+        composeTestRule.activity.setContent {
+            SpinScreen(viewModel = viewModel)
+        }
+
+        // Wait some time before content will be updated
+        composeTestRule.mainClock.advanceTimeBy(500)
+
+        val displayMetrics = composeTestRule.activity.resources.displayMetrics
+        val screenHeightDp = (displayMetrics.heightPixels / displayMetrics.density).dp
+
+        composeTestRule
+            .onNodeWithTag("Spin Segment List")
+            .assertHeightIsAtLeast(screenHeightDp)
     }
 
     companion object {
