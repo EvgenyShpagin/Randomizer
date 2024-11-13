@@ -64,7 +64,7 @@ class SpinScreenTest {
             .assertAny(hasText("fake"))
     }
 
-    @Test // TODO: disable scroll
+    @Test
     fun spinScreen_doesNotScroll_whenUserScrolls() {
         val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
 
