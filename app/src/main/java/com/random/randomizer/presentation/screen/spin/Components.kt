@@ -43,6 +43,7 @@ fun SpinWheelSegmentList(
             bottom = 8.dp
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        userScrollEnabled = false,
         state = lazyListState,
         modifier = modifier.padding(
             top = topPadding,
