@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 
@@ -16,8 +17,10 @@ fun SpinScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val extendedWheelSegments = uiState.wheelSegments.extendTo(100)
+
     SpinScreen(
-        wheelSegments = uiState.wheelSegments,
+        wheelSegments = extendedWheelSegments,
         modifier = modifier
     )
 }
@@ -32,5 +35,6 @@ private fun SpinScreen(
         wheelSegments = wheelSegments,
         lazyListState = lazyListState,
         modifier = modifier
+            .testTag("Spin Segment List")
     )
 }
