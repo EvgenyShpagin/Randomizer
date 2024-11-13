@@ -20,6 +20,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.every
 import io.mockk.mockk
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.flow
 import org.junit.Before
 import org.junit.Rule
@@ -119,8 +120,35 @@ class SpinScreenTest {
             .assertHeightIsAtLeast(screenHeightDp)
     }
 
+    @Test
+    fun spinScreen_containsEachWheelSegmentAtLeastTwice_beforeSpin() {
+        val getWheelSegmentStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+
+        every {
+            getWheelSegmentStreamUseCase()
+        } returns flow {
+            emit(LongFakeList)
+        }
+
+        val viewModel = SpinViewModel(getWheelSegmentStreamUseCase, mappers)
+
+        composeTestRule.activity.setContent {
+            SpinScreen(viewModel = viewModel)
+        }
+
+        // Wait some time before content will be updated
+        composeTestRule.mainClock.advanceTimeBy(500)
+
+        val fake0SegmentCount = composeTestRule
+            .onAllNodesWithText("fake0")
+            .fetchSemanticsNodes()
+            .count()
+
+        assertTrue(fake0SegmentCount >= 2)
+    }
+
     companion object {
-        val LongFakeList = List(30) { i ->
+        val LongFakeList = List(100) { i ->
             WheelSegment(i, "fake$i", "", null, null)
         }
     }
