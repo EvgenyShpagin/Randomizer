@@ -17,10 +17,8 @@ fun SpinScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val extendedWheelSegments = uiState.wheelSegments.extendTo(100)
-
     SpinScreen(
-        wheelSegments = extendedWheelSegments,
+        wheelSegments = uiState.wheelSegments,
         modifier = modifier
     )
 }

@@ -21,6 +21,7 @@ class SpinViewModel @Inject constructor(
                     it.copy(
                         wheelSegments = wheelSegments
                             .map { mappers.toPresentation(it) }
+                            .extendTo(100.coerceAtLeast(wheelSegments.count() * 2))
                     )
                 }
             }
