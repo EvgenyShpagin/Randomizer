@@ -1,6 +1,7 @@
 package com.random.randomizer.presentation.core
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,7 +36,8 @@ import com.random.randomizer.R
 fun WheelSegment(
     itemUiState: WheelSegmentUiState,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isClickable: Boolean = true
 ) {
     WheelSegment(
         title = itemUiState.title,
@@ -44,6 +46,7 @@ fun WheelSegment(
             ?: MaterialTheme.colorScheme.surface,
         image = itemUiState.image,
         onClick = onClick,
+        isClickable = isClickable,
         modifier = modifier
     )
 }
@@ -55,7 +58,8 @@ private fun WheelSegment(
     image: ImageBitmap?,
     containerColor: Color,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isClickable: Boolean = true
 ) {
     OutlinedCard(
         modifier = modifier,
@@ -87,7 +91,12 @@ private fun WheelSegment(
                     )
                 }
             },
-            colors = ListItemDefaults.colors(containerColor = containerColor)
+            colors = ListItemDefaults.colors(containerColor = containerColor),
+            modifier = if (isClickable) {
+                Modifier
+            } else {
+                Modifier.clickable(enabled = false, onClick = {})
+            }
         )
     }
 }
