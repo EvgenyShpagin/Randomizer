@@ -4,6 +4,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -107,6 +108,28 @@ class SpinScreenTest {
         val lastItemCount = viewModel.uiState.value.wheelSegments.count { it.title == "fake99" }
         assertTrue(firstItemCount >= 2)
         assertTrue(lastItemCount >= 2)
+    }
+
+    @Test
+    fun startsSpin_afterSecondDelay() {
+        val viewModel = createViewModelWithSegments(LongFakeList)
+
+        composeTestRule.activity.setContent {
+            SpinScreen(viewModel = viewModel)
+        }
+
+        composeTestRule
+            .onNodeWithText("fake0")
+            .assertIsDisplayed()
+
+        composeTestRule.waitUntil(timeoutMillis = 1000 + 1000) {
+            composeTestRule.onAllNodesWithText("fake0")
+                .fetchSemanticsNodes().count() == 0
+        }
+
+        composeTestRule
+            .onNodeWithText("fake0")
+            .assertIsNotDisplayed()
     }
 
     private fun createViewModelWithSegments(segments: List<WheelSegment>): SpinViewModel {
