@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.presentation.core.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,13 +17,21 @@ class SpinViewModel @Inject constructor(
 ) {
     init {
         viewModelScope.launch {
-            getWheelSegmentsStreamUseCase().collect { wheelSegments ->
+            launch {
+                getWheelSegmentsStreamUseCase().collect { wheelSegments ->
+                    updateState {
+                        it.copy(
+                            wheelSegments = wheelSegments
+                                .map { mappers.toPresentation(it) }
+                                .extendTo(100.coerceAtLeast(wheelSegments.count() * 2))
+                        )
+                    }
+                }
+            }
+            launch {
+                delay(1000)
                 updateState {
-                    it.copy(
-                        wheelSegments = wheelSegments
-                            .map { mappers.toPresentation(it) }
-                            .extendTo(100.coerceAtLeast(wheelSegments.count() * 2))
-                    )
+                    it.copy(isSpinning = true)
                 }
             }
         }
