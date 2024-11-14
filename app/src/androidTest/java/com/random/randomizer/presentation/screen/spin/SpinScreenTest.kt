@@ -103,12 +103,10 @@ class SpinScreenTest {
         // Wait some time before content will be updated
         composeTestRule.mainClock.advanceTimeBy(500)
 
-        val fake0SegmentCount = composeTestRule
-            .onAllNodesWithText("fake0")
-            .fetchSemanticsNodes()
-            .count()
-
-        assertTrue(fake0SegmentCount >= 2)
+        val firstItemCount = viewModel.uiState.value.wheelSegments.count { it.title == "fake0" }
+        val lastItemCount = viewModel.uiState.value.wheelSegments.count { it.title == "fake99" }
+        assertTrue(firstItemCount >= 2)
+        assertTrue(lastItemCount >= 2)
     }
 
     private fun createViewModelWithSegments(segments: List<WheelSegment>): SpinViewModel {
