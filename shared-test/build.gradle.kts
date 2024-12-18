@@ -24,7 +24,7 @@ android {
 
 dependencies {
     implementation(project(":app"))
-
+    implementation(project(":domain"))
     implementation(libs.junit)
     implementation(libs.androidx.runner)
     implementation(libs.hilt.android)
