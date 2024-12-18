@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.random.data"
+    namespace = "com.random.randomizer.data"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
