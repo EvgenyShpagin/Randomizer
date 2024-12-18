@@ -107,12 +107,14 @@ dependencies {
 
     // AndroidX Test - JVM testing
     testImplementation(libs.androidx.test.ext)
+    testImplementation(project(":shared-test"))
 
 
     // AndroidX Test - Instrumented testing
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(project(":shared-test"))
 
 
     // AndroidX Test - Hilt testing
