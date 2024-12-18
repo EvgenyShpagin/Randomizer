@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":app"))
     implementation(project(":domain"))
     implementation(libs.junit)
+    implementation(libs.kotlinx.coroutines.test)
     implementation(libs.androidx.runner)
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.testing)
