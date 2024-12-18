@@ -23,3 +23,4 @@ rootProject.name = "Randomizer"
 include(":app")
 include(":domain")
 include(":data")
+include(":shared-test")
