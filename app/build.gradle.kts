@@ -53,36 +53,70 @@ android {
 
 dependencies {
 
+    // App dependencies
     implementation(project(path = ":domain"))
     implementation(project(path = ":data"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.serialization.json)
+
+
+    // Architecture Components
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(platform(libs.androidx.compose.bom))
+
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+
+
+    // Jetpack Compose
+    val composeBom = platform(libs.androidx.compose.bom)
+
+    implementation(composeBom)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    // Dependencies for local unit tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+
+
+    // JVM tests - Hilt
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.android.compiler)
+
+
+    // Dependencies for Android unit tests
     androidTestImplementation(libs.mockk.android)
-    androidTestImplementation(libs.ui.test.junit4)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.navigation.testing)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.ui.test.junit)
     androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(composeBom)
+
+
+    // AndroidX Test - JVM testing
+    testImplementation(libs.androidx.test.ext)
+
+
+    // AndroidX Test - Instrumented testing
+    androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.runner)
+
+
+    // AndroidX Test - Hilt testing
+    androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.android.compiler)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+
 }
