@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -31,10 +29,6 @@ fun SpinWheelSegmentList(
     val cutoutStartPadding = displayCutout.calculateStartPadding(layoutDirection)
     val cutoutEndPadding = displayCutout.calculateEndPadding(layoutDirection)
 
-    val safeContentPadding = WindowInsets.safeContent.asPaddingValues()
-    val topPadding = safeContentPadding.calculateTopPadding()
-    val bottomPadding = safeContentPadding.calculateBottomPadding()
-
     LazyColumn(
         contentPadding = PaddingValues(
             start = cutoutStartPadding.coerceAtLeast(16.dp),
@@ -45,10 +39,7 @@ fun SpinWheelSegmentList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         userScrollEnabled = false,
         state = lazyListState,
-        modifier = modifier.padding(
-            top = topPadding,
-            bottom = bottomPadding
-        )
+        modifier = modifier
     ) {
         items(items = wheelSegments) { item ->
             WheelSegment(
