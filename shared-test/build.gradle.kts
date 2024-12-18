@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":app"))
 
     implementation(libs.junit)
+    implementation(libs.androidx.runner)
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.testing)
     ksp(libs.hilt.android.compiler)
