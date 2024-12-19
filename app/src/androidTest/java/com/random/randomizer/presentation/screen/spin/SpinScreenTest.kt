@@ -21,6 +21,7 @@ import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -121,6 +122,40 @@ class SpinScreenTest {
         composeTestRule
             .onNodeWithText("fake0")
             .assertIsNotDisplayed()
+    }
+
+    @Test
+    fun spinsToItemAndCenterIt() = runTest {
+        repository.addMultiple(LongFakeList)
+
+        setContent()
+
+        // Wait for spin start
+        composeTestRule.waitUntil(2000) { viewModel.uiState.value.isSpinning }
+
+        // Wait for spin end
+        composeTestRule.waitUntil(10000) { !viewModel.uiState.value.isSpinning }
+
+        val uiState = viewModel.uiState.value
+        val centerItem = uiState.wheelSegments[uiState.targetIndex]
+
+        val centerNode = composeTestRule
+            .onNodeWithText(centerItem.title)
+            .fetchSemanticsNode()
+
+        val listContentBoundsInWindow = composeTestRule
+            .onNodeWithTag("Spin Segment List")
+            .fetchSemanticsNode()
+            .boundsInWindow
+
+        val expectedNodeCenterY = listContentBoundsInWindow.center.y
+        val actualNodeCenterY = centerNode.positionOnScreen.y + centerNode.size.height / 2f
+
+        assertEquals(
+            expectedNodeCenterY,
+            actualNodeCenterY,
+            4f
+        )
     }
 
     private fun setContent() {
