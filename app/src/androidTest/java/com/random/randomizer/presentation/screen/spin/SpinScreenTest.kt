@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.screen.spin
 
-import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
@@ -14,20 +13,23 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.test.filters.MediumTest
+import com.random.randomizer.HiltTestActivity
+import com.random.randomizer.data.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.MainActivity
+import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.every
-import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+
+@MediumTest
 @HiltAndroidTest
 class SpinScreenTest {
 
@@ -35,12 +37,13 @@ class SpinScreenTest {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
+
+    lateinit var viewModel: SpinViewModel
+
 
     @Inject
-    lateinit var mappers: SpinMappers
-
-    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+    lateinit var repository: WheelSegmentRepository
 
     @Before
     fun setup() {
@@ -48,12 +51,10 @@ class SpinScreenTest {
     }
 
     @Test
-    fun displaysWheelSegmentList_whenSegmentsPresent() {
-        val viewModel = createViewModelWithSegments(ShortFakeList)
+    fun displaysWheelSegmentList_whenSegmentsPresent() = runTest {
+        repository.addMultiple(ShortFakeList)
 
-        composeTestRule.activity.setContent {
-            SpinScreen(viewModel = viewModel)
-        }
+        setContent()
 
         composeTestRule
             .onAllNodesWithText("fake0")
@@ -61,12 +62,10 @@ class SpinScreenTest {
     }
 
     @Test
-    fun doesNotScroll_whenSwiped() {
-        val viewModel = createViewModelWithSegments(LongFakeList)
+    fun doesNotScroll_whenSwiped() = runTest {
+        repository.addMultiple(LongFakeList)
 
-        composeTestRule.activity.setContent {
-            SpinScreen(viewModel = viewModel)
-        }
+        setContent()
 
         composeTestRule.onRoot()
             .performTouchInput { swipeUp() }
@@ -75,13 +74,10 @@ class SpinScreenTest {
     }
 
     @Test
-    fun fillsScreenSizeByItems_beforeSpin() {
-        val viewModel = createViewModelWithSegments(ShortFakeList)
+    fun fillsScreenSizeByItems_beforeSpin() = runTest {
+        repository.addMultiple(ShortFakeList)
 
-        composeTestRule.activity.setContent {
-            SpinScreen(viewModel = viewModel)
-        }
-
+        setContent()
         // Wait some time before content will be updated
         composeTestRule.mainClock.advanceTimeBy(500)
 
@@ -94,12 +90,10 @@ class SpinScreenTest {
     }
 
     @Test
-    fun containsEachSegmentAtLeastTwice_beforeSpin() {
-        val viewModel = createViewModelWithSegments(LongFakeList)
+    fun containsEachSegmentAtLeastTwice_beforeSpin() = runTest {
+        repository.addMultiple(LongFakeList)
 
-        composeTestRule.activity.setContent {
-            SpinScreen(viewModel = viewModel)
-        }
+        setContent()
 
         // Wait some time before content will be updated
         composeTestRule.mainClock.advanceTimeBy(500)
@@ -111,13 +105,10 @@ class SpinScreenTest {
     }
 
     @Test
-    fun startsSpin_afterSecondDelay() {
-        val viewModel = createViewModelWithSegments(LongFakeList)
+    fun startsSpin_afterSecondDelay() = runTest {
+        repository.addMultiple(LongFakeList)
 
-        composeTestRule.activity.setContent {
-            SpinScreen(viewModel = viewModel)
-        }
-
+        setContent()
         composeTestRule
             .onNodeWithText("fake0")
             .assertIsDisplayed()
@@ -132,9 +123,11 @@ class SpinScreenTest {
             .assertIsNotDisplayed()
     }
 
-    private fun createViewModelWithSegments(segments: List<WheelSegment>): SpinViewModel {
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
-        return SpinViewModel(getWheelSegmentsStreamUseCase, mappers)
+    private fun setContent() {
+        composeTestRule.setContent {
+            viewModel = hiltViewModel()
+            SpinScreen(viewModel = viewModel)
+        }
     }
 
     companion object {
