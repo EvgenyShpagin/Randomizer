@@ -7,5 +7,6 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 @Immutable
 data class SpinUiState(
     val isSpinning: Boolean = false,
+    val targetIndex: Int = -1,
     val wheelSegments: List<WheelSegmentUiState> = emptyList()
 ) : UiState
