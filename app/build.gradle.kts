@@ -93,11 +93,6 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
 
 
-    // JVM tests - Hilt
-    testImplementation(libs.hilt.android.testing)
-    kspTest(libs.hilt.android.compiler)
-
-
     // Dependencies for Android unit tests
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.ui.test.junit)
