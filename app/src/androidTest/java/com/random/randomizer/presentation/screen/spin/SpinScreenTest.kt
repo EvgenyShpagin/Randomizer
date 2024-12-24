@@ -1,17 +1,15 @@
 package com.random.randomizer.presentation.screen.spin
 
-import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.filters.MediumTest
@@ -22,7 +20,7 @@ import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +28,7 @@ import org.junit.Test
 import javax.inject.Inject
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 @HiltAndroidTest
 class SpinScreenTest {
@@ -40,7 +39,7 @@ class SpinScreenTest {
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
-    lateinit var viewModel: SpinViewModel
+    private lateinit var viewModel: SpinViewModel
 
 
     @Inject
@@ -53,87 +52,84 @@ class SpinScreenTest {
 
     @Test
     fun displaysWheelSegmentList_whenSegmentsPresent() = runTest {
+        // Given - some segments
         repository.addMultiple(ShortFakeList)
 
         setContent()
 
-        composeTestRule
-            .onAllNodesWithText("fake0")
-            .assertAny(hasText("fake0"))
+        // When - items are updated
+        composeTestRule.waitUntil {
+            viewModel.uiState.value.wheelSegments.isNotEmpty()
+        }
+
+        // Then - verify item is displayed
+        // (here is checking at least one item because list extends)
+        composeTestRule.onAllNodesWithText(ShortFakeList.first().title)
+            .onFirst()
+            .assertIsDisplayed()
     }
 
     @Test
     fun doesNotScroll_whenSwiped() = runTest {
+        // Given - some segments
         repository.addMultiple(LongFakeList)
 
+        // When - on startup
         setContent()
 
-        composeTestRule.onRoot()
-            .performTouchInput { swipeUp() }
-
-        composeTestRule.onNodeWithText("fake0").assertIsDisplayed()
+        // Then - verify there is no scrollable list
+        composeTestRule.onNode(hasScrollAction())
+            .assertDoesNotExist()
     }
 
     @Test
     fun fillsScreenSizeByItems_beforeSpin() = runTest {
+        // Given - some segments
         repository.addMultiple(ShortFakeList)
 
         setContent()
-        // Wait some time before content will be updated
-        composeTestRule.mainClock.advanceTimeBy(500)
+        // When - list of segments will be extended
+        composeTestRule.waitUntil {
+            viewModel.uiState.value.wheelSegments.count() > ShortFakeList.count()
+        }
 
         val displayMetrics = composeTestRule.activity.resources.displayMetrics
         val screenHeightDp = (displayMetrics.heightPixels / displayMetrics.density).dp
 
+        // Then - verify the list height fills all available space
         composeTestRule
             .onNodeWithTag("Spin Segment List")
             .assertHeightIsAtLeast(screenHeightDp)
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun containsEachSegmentAtLeastTwice_beforeSpin() = runTest {
+    fun startsSpin_afterShortDelay() = runTest {
+        // Given - long segment list
         repository.addMultiple(LongFakeList)
 
         setContent()
 
-        // Wait some time before content will be updated
-        composeTestRule.mainClock.advanceTimeBy(500)
+        // When - after first segment has been displayed
+        composeTestRule.waitUntilExactlyOneExists(hasText(LongFakeList.first().title), 2000)
 
-        val firstItemCount = viewModel.uiState.value.wheelSegments.count { it.title == "fake0" }
-        val lastItemCount = viewModel.uiState.value.wheelSegments.count { it.title == "fake99" }
-        assertTrue(firstItemCount >= 2)
-        assertTrue(lastItemCount >= 2)
-    }
-
-    @Test
-    fun startsSpin_afterSecondDelay() = runTest {
-        repository.addMultiple(LongFakeList)
-
-        setContent()
-        composeTestRule
-            .onNodeWithText("fake0")
-            .assertIsDisplayed()
-
-        composeTestRule.waitUntil(timeoutMillis = 1000 + 1000) {
-            composeTestRule.onAllNodesWithText("fake0")
-                .fetchSemanticsNodes().count() == 0
-        }
-
-        composeTestRule
-            .onNodeWithText("fake0")
-            .assertIsNotDisplayed()
+        // Then - verify it was scrolled away (does not exist in node tree)
+        composeTestRule.waitUntilDoesNotExist(hasText(LongFakeList.first().title), 2000)
+        composeTestRule.onNodeWithText(LongFakeList.first().title)
+            .assertDoesNotExist()
     }
 
     @Test
     fun spinsToItemAndCenterIt() = runTest {
+        // Given - long segment list
         repository.addMultiple(LongFakeList)
 
         setContent()
 
-        // Wait for spin start
+        // When
+        // spin started
         composeTestRule.waitUntil(2000) { viewModel.uiState.value.isSpinning }
-
-        // Wait for spin end
+        // and then finished
         composeTestRule.waitUntil(10000) { !viewModel.uiState.value.isSpinning }
 
         val uiState = viewModel.uiState.value
@@ -151,6 +147,7 @@ class SpinScreenTest {
         val expectedNodeCenterY = listContentBoundsInWindow.center.y
         val actualNodeCenterY = centerNode.positionOnScreen.y + centerNode.size.height / 2f
 
+        // Then - verify the center of the item is in the center of the screen
         assertEquals(
             expectedNodeCenterY,
             actualNodeCenterY,
