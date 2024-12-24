@@ -9,7 +9,7 @@ import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
-import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -25,7 +25,7 @@ class EditViewModel @Inject constructor(
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
     private val makeWheelSegmentUniqueUseCase: MakeWheelSegmentUniqueUseCase,
     private val mappers: EditMappers
-) : BaseViewModel<EditUiState, EditUiEvent, EditUiEffect>(
+) : MutableStateViewModel<EditUiState, EditUiEvent, EditUiEffect>(
     initialUiState = EditUiState()
 ) {
 

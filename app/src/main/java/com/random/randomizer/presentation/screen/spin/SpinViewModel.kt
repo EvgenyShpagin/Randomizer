@@ -2,7 +2,7 @@ package com.random.randomizer.presentation.screen.spin
 
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -12,9 +12,6 @@ import javax.inject.Inject
 class SpinViewModel @Inject constructor(
     private val getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
     private val mappers: SpinMappers
-) : BaseViewModel<SpinUiState, Nothing, Nothing>(
-    initialUiState = SpinUiState()
-) {
     init {
         viewModelScope.launch {
             launch {
@@ -29,6 +26,7 @@ class SpinViewModel @Inject constructor(
                 }
             }
             launch {
+) : ImmutableStateViewModel<SpinUiState, Nothing, Nothing>() {
                 delay(1000)
                 updateState {
                     it.copy(isSpinning = true)

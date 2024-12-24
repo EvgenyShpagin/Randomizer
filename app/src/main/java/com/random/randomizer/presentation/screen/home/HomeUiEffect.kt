@@ -1,8 +1,8 @@
 package com.random.randomizer.presentation.screen.home
 
-import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.UiEffect
 
-sealed interface HomeUiEffect : BaseViewModel.UiEffect {
+sealed interface HomeUiEffect : UiEffect {
     data object NavigateToEdit : HomeUiEffect
     data object NavigateToSpin : HomeUiEffect
 }

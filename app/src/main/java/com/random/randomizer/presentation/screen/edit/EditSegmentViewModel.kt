@@ -11,7 +11,7 @@ import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
-import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEffect.ShowErrorMessage
 import com.random.randomizer.util.getInputStreamOrNull
@@ -32,7 +32,7 @@ class EditSegmentViewModel @AssistedInject constructor(
     private val saveImageThumbnailUseCase: SaveImageThumbnailUseCase,
     private val deleteThumbnailUseCase: DeleteThumbnailUseCase,
     private val mappers: EditSegmentMappers
-) : BaseViewModel<WheelSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
+) : MutableStateViewModel<WheelSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = WheelSegmentUiState()
 ) {
 
