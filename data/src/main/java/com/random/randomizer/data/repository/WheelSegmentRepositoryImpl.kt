@@ -5,8 +5,8 @@ import com.random.randomizer.domain.repository.WheelSegmentRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class WheelSegmentRepositoryImpl @Inject constructor(): WheelSegmentRepository {
-    override suspend fun add(segment: WheelSegment) {
+class WheelSegmentRepositoryImpl @Inject constructor() : WheelSegmentRepository {
+    override suspend fun add(segment: WheelSegment): Int {
         TODO("Not yet implemented")
     }
 

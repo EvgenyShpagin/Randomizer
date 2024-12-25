@@ -12,8 +12,11 @@ class FakeWheelSegmentRepository @Inject constructor() : WheelSegmentRepository 
 
     private val wheelSegments = MutableStateFlow(emptyList<WheelSegment>())
 
-    override suspend fun add(segment: WheelSegment) {
-        wheelSegments.update { segments -> segments + segment }
+    override suspend fun add(segment: WheelSegment): Int {
+        val newSegmentId = wheelSegments.value.maxOfOrNull { segment -> segment.id + 1 } ?: 0
+        val newSegment = segment.copy(id = newSegmentId)
+        wheelSegments.update { segments -> segments + newSegment }
+        return newSegmentId
     }
 
     override suspend fun getAll(): List<WheelSegment> {

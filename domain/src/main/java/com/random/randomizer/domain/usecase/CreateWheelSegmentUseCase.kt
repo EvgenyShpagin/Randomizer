@@ -1,12 +1,18 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.repository.WheelSegmentRepository
 import javax.inject.Inject
 
-// TODO: implement
-class CreateWheelSegmentUseCase @Inject constructor() {
-
+class CreateWheelSegmentUseCase @Inject constructor(
+    private val wheelSegmentRepository: WheelSegmentRepository
+) {
     suspend operator fun invoke(): WheelSegment {
-        return WheelSegment(-1, "", "", null, null)
+        val id = wheelSegmentRepository.add(EmptyWheelSegment)
+        return EmptyWheelSegment.copy(id = id)
+    }
+
+    private companion object {
+        val EmptyWheelSegment = WheelSegment(-1, "", "", null, null)
     }
 }

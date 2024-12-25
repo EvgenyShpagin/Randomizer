@@ -4,7 +4,7 @@ import com.random.randomizer.domain.model.WheelSegment
 import kotlinx.coroutines.flow.Flow
 
 interface WheelSegmentRepository {
-    suspend fun add(segment: WheelSegment)
+    suspend fun add(segment: WheelSegment): Int
     suspend fun getAll(): List<WheelSegment>
     fun getAllStream(): Flow<List<WheelSegment>>
     suspend fun get(segmentId: Int): WheelSegment?
