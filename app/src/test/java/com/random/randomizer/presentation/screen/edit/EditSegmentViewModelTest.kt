@@ -1,6 +1,7 @@
 package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.ui.graphics.Color
+import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
@@ -13,17 +14,12 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 private const val SEGMENT_ID = 1
@@ -32,7 +28,10 @@ private val EmptyWheelSegment = WheelSegment(1, "", "", null, null)
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditSegmentViewModelTest {
 
-    val testDispatcher = StandardTestDispatcher()
+    // Set the main coroutines dispatcher for unit testing.
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
 
     lateinit var viewModel: EditSegmentViewModel
 
@@ -42,16 +41,6 @@ class EditSegmentViewModelTest {
     val deleteThumbnailUseCase: DeleteThumbnailUseCase = mockk()
 
     val mappers = FakeEditSegmentMappers
-
-    @Before
-    fun setup() {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     private fun initViewModel() {
         viewModel = EditSegmentViewModel(
