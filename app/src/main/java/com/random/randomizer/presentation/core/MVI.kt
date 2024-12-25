@@ -59,6 +59,15 @@ abstract class ImmutableStateViewModel<
     }
 }
 
+/**
+ * An abstract ViewModel for managing UI state and handling events in the MVI pattern.
+ * This ViewModel provides additional functionality for managing mutable state.
+ *
+ * @param State The type representing the current state of the UI.
+ * @param Event The type representing one-time events.
+ * @param Effect The type representing one-time effects.
+ * @param initialUiState The initial state of the UI.
+ */
 abstract class MutableStateViewModel<State : UiState, Event : UiEvent, Effect : UiEffect>(
     initialUiState: State
 ) : ImmutableStateViewModel<State, Event, Effect>() {
