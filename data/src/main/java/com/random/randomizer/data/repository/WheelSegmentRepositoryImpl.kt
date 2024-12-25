@@ -22,7 +22,7 @@ class WheelSegmentRepositoryImpl @Inject constructor(): WheelSegmentRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getStream(segmentId: Int): Flow<WheelSegment>? {
+    override fun getStream(segmentId: Int): Flow<WheelSegment?> {
         TODO("Not yet implemented")
     }
 

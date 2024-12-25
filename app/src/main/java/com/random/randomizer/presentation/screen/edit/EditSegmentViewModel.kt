@@ -38,8 +38,13 @@ class EditSegmentViewModel @AssistedInject constructor(
 
     init {
         getWheelSegmentStreamUseCase(wheelSegmentId)
-            .onEach { segment -> updateState { mappers.toPresentation(segment) } }
+            .onEach { segment -> handleWheelSegment(segment) }
             .launchIn(viewModelScope)
+    }
+
+    private fun handleWheelSegment(wheelSegment: WheelSegment?) {
+        if (wheelSegment == null) return
+        updateState { mappers.toPresentation(wheelSegment) }
     }
 
     private fun updateWheelSegment(
