@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.core
 
+import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,6 +64,8 @@ abstract class ImmutableStateViewModel<
  * An abstract ViewModel for managing UI state and handling events in the MVI pattern.
  * This ViewModel provides additional functionality for managing mutable state.
  *
+ * The [uiState] property is now connected to the mutable [_uiState] property, so inheritor shouldn't override it
+ *
  * @param State The type representing the current state of the UI.
  * @param Event The type representing one-time events.
  * @param Effect The type representing one-time effects.
@@ -73,6 +76,8 @@ abstract class MutableStateViewModel<State : UiState, Event : UiEvent, Effect : 
 ) : ImmutableStateViewModel<State, Event, Effect>() {
 
     private val _uiState = MutableStateFlow(initialUiState)
+
+    @get:CallSuper
     override val uiState = _uiState.asStateFlow()
 
     protected fun updateState(transform: (State) -> State) {
