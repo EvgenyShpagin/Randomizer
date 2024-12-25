@@ -1,13 +1,14 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.repository.WheelSegmentRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-// TODO: implement
-class GetWheelSegmentsStreamUseCase @Inject constructor() {
+class GetWheelSegmentsStreamUseCase @Inject constructor(
+    private val wheelSegmentRepository: WheelSegmentRepository
+) {
     operator fun invoke(): Flow<List<WheelSegment>> {
-        return flow {}
+        return wheelSegmentRepository.getAllStream()
     }
 }
