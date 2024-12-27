@@ -1,12 +1,23 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.domain.common.Result
+import com.random.randomizer.domain.error.SaveImageThumbnailError
+import com.random.randomizer.domain.repository.ThumbnailRepository
 import java.io.InputStream
 import javax.inject.Inject
 
-// TODO: implement
-class SaveImageThumbnailUseCase @Inject constructor() {
-    suspend operator fun invoke(imageId: String, inputStream: InputStream): Result<String, Error> {
-        return Result.Failure(Error())
+class SaveImageThumbnailUseCase @Inject constructor(
+    private val thumbnailRepository: ThumbnailRepository
+) {
+    suspend operator fun invoke(
+        imageId: String,
+        imageInputStream: InputStream
+    ): Result<String, SaveImageThumbnailError> {
+        val imageFile = thumbnailRepository.save(imageId, imageInputStream)
+        return if (imageFile != null) {
+            Result.Success(data = imageFile.path)
+        } else {
+            Result.Failure(error = SaveImageThumbnailError.UnableToSaveFile)
+        }
     }
 }

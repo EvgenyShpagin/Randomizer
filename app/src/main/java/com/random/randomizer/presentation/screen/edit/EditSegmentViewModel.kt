@@ -87,7 +87,7 @@ class EditSegmentViewModel @AssistedInject constructor(
 
         saveImageThumbnailUseCase(
             imageId = imageUri.getUniqueFilename(),
-            inputStream = imageInputStream
+            imageInputStream = imageInputStream
         ).onSuccess { path ->
             updateWheelSegment { it.copy(thumbnailPath = path) }
         }.onFailure {
