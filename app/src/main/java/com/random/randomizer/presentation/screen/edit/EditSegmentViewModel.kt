@@ -36,6 +36,8 @@ class EditSegmentViewModel @AssistedInject constructor(
     initialUiState = WheelSegmentUiState()
 ) {
 
+    private var thumbnailPath: String? = null
+
     init {
         getWheelSegmentStreamUseCase(wheelSegmentId)
             .onEach { segment -> handleWheelSegment(segment) }
@@ -45,6 +47,7 @@ class EditSegmentViewModel @AssistedInject constructor(
     private fun handleWheelSegment(wheelSegment: WheelSegment?) {
         if (wheelSegment == null) return
         updateState { mappers.toPresentation(wheelSegment) }
+        thumbnailPath = wheelSegment.thumbnailPath
     }
 
     private fun updateWheelSegment(
@@ -96,8 +99,13 @@ class EditSegmentViewModel @AssistedInject constructor(
     }
 
     private fun onRemoveImage() {
+        val thumbnailPath = thumbnailPath ?: return
         updateWheelSegment(
-            onSuccess = { viewModelScope.launch { deleteThumbnailUseCase() } },
+            onSuccess = {
+                viewModelScope.launch {
+                    deleteThumbnailUseCase(thumbnailPath)
+                }
+            },
             transform = { it.copy(thumbnailPath = null) }
         )
     }
