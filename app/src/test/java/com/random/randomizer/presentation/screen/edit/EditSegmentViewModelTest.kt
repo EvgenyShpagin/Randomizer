@@ -17,7 +17,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import javax.inject.Inject
 
 private const val SEGMENT_ID = 1
 private val EmptyWheelSegment = WheelSegment(SEGMENT_ID, "", "", null, null)
@@ -29,11 +28,8 @@ class EditSegmentViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    @Inject
-    lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
-
-    @Inject
-    lateinit var thumbnailRepository: FakeThumbnailRepository
+    private lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
+    private lateinit var thumbnailRepository: FakeThumbnailRepository
 
     // Subject under test
     private lateinit var viewModel: EditSegmentViewModel
