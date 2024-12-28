@@ -20,7 +20,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -73,8 +72,6 @@ class EditViewModelTest {
 
         initViewModel()
 
-        advanceUntilIdle()
-
         val expected = wheelSegments.map { mappers.toPresentation(it) }
         val actual = viewModel.uiState.value.wheelSegments
 
@@ -90,8 +87,6 @@ class EditViewModelTest {
 
         viewModel.onEvent(EditUiEvent.CreateSegment)
 
-        advanceUntilIdle()
-
         coVerify { createWheelSegmentUseCase() }
     }
 
@@ -104,8 +99,6 @@ class EditViewModelTest {
         initViewModel()
 
         viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
-
-        advanceUntilIdle()
 
         val expected = EmptyWheelSegment.id
         val actual = viewModel.uiState.value.currentlyEditedSegmentId
@@ -123,8 +116,6 @@ class EditViewModelTest {
 
         viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
 
-        advanceUntilIdle()
-
         coEvery {
             validateWheelSegmentUseCase(EmptyWheelSegment)
         } returns Result.Failure(WheelSegmentValidationError.Empty)
@@ -132,8 +123,6 @@ class EditViewModelTest {
         coEvery { deleteWheelSegmentUseCase(EmptyWheelSegment.id) } just runs
 
         viewModel.onEvent(EditUiEvent.FinishSegmentEdit)
-
-        advanceUntilIdle()
 
         coVerify { deleteWheelSegmentUseCase(EmptyWheelSegment.id) }
     }
