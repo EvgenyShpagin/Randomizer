@@ -1,6 +1,8 @@
 package com.random.randomizer.di
 
+import com.random.randomizer.data.FakeThumbnailRepository
 import com.random.randomizer.data.FakeWheelSegmentRepository
+import com.random.randomizer.domain.repository.ThumbnailRepository
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.Binds
 import dagger.Module
@@ -20,4 +22,10 @@ abstract class RepositoryTestModule {
     abstract fun bindWheelSegmentRepository(
         impl: FakeWheelSegmentRepository
     ): WheelSegmentRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindThumbnailRepository(
+        impl: FakeThumbnailRepository
+    ): ThumbnailRepository
 }
