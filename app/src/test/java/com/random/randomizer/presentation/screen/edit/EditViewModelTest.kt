@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.edit
 
+import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.error.WheelSegmentValidationError
 import com.random.randomizer.domain.model.WheelSegment
@@ -14,17 +15,12 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
+import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 
 
@@ -35,8 +31,6 @@ class EditViewModelTest {
 
     lateinit var viewModel: EditViewModel
 
-    val testDispatcher = StandardTestDispatcher()
-
     val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
     val createWheelSegmentUseCase = mockk<CreateWheelSegmentUseCase>()
     val deleteWheelSegmentUseCase = mockk<DeleteWheelSegmentUseCase>()
@@ -45,15 +39,8 @@ class EditViewModelTest {
 
     val mappers = FakeEditMappers
 
-    @Before
-    fun setup() {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    @get:Rule
+    val mainCoroutineRule = MainCoroutineRule()
 
     @Test
     fun editViewModel_updatesState_whenCreated() = runTest {
