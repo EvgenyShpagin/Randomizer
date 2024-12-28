@@ -1,162 +1,135 @@
 package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import com.random.randomizer.MainCoroutineRule
+import com.random.randomizer.data.FakeThumbnailRepository
+import com.random.randomizer.data.FakeWheelSegmentRepository
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 private const val SEGMENT_ID = 1
-private val EmptyWheelSegment = WheelSegment(1, "", "", null, null)
+private val EmptyWheelSegment = WheelSegment(SEGMENT_ID, "", "", null, null)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditSegmentViewModelTest {
 
     // Set the main coroutines dispatcher for unit testing.
-    @ExperimentalCoroutinesApi
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    lateinit var viewModel: EditSegmentViewModel
+    @Inject
+    lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
 
-    val getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase = mockk()
-    val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase = mockk()
-    val saveImageThumbnailUseCase: SaveImageThumbnailUseCase = mockk()
-    val deleteThumbnailUseCase: DeleteThumbnailUseCase = mockk()
+    @Inject
+    lateinit var thumbnailRepository: FakeThumbnailRepository
+
+    // Subject under test
+    private lateinit var viewModel: EditSegmentViewModel
 
     val mappers = FakeEditSegmentMappers
 
-    private fun initViewModel() {
+    @Before
+    fun setup() {
+        wheelSegmentRepository = FakeWheelSegmentRepository()
+        thumbnailRepository = FakeThumbnailRepository()
         viewModel = EditSegmentViewModel(
             SEGMENT_ID,
-            getWheelSegmentStreamUseCase,
-            updateWheelSegmentUseCase,
-            saveImageThumbnailUseCase,
-            deleteThumbnailUseCase,
+            GetWheelSegmentStreamUseCase(wheelSegmentRepository),
+            UpdateWheelSegmentUseCase(wheelSegmentRepository),
+            SaveImageThumbnailUseCase(thumbnailRepository),
+            DeleteThumbnailUseCase(thumbnailRepository),
             mappers
         )
     }
 
+    @After
+    fun tearDown() {
+        thumbnailRepository.deleteAllFiles()
+    }
+
     @Test
-    fun editViewModel_updatesState_whenCreated() = runTest {
-        every { getWheelSegmentStreamUseCase(SEGMENT_ID) } returns flow { emit(EmptyWheelSegment) }
+    fun updatesState_whenCreated() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        initViewModel()
-
-        advanceUntilIdle()
+        // When - on startup
 
         val expected = mappers.toPresentation(EmptyWheelSegment)
         val actual = viewModel.uiState.value
 
+        // Then - verify state is "blank"
         assertEquals(expected, actual)
     }
 
     @Test
-    fun editViewModel_updatesTitle_onInput() = runTest {
-        every { getWheelSegmentStreamUseCase(SEGMENT_ID) } returns flow { emit(EmptyWheelSegment) }
+    fun updatesTitle_onInput() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        val segmentTransformSlot = slot<(WheelSegment) -> WheelSegment>()
-        coEvery {
-            updateWheelSegmentUseCase(
-                wheelSegmentId = EmptyWheelSegment.id,
-                transform = capture(segmentTransformSlot)
-            )
-        } just runs
-
-        initViewModel()
-
+        // When - on title input
         viewModel.onEvent(EditSegmentUiEvent.InputTitle("User input string"))
 
-        advanceUntilIdle()
+        val expected = "User input string"
+        val actual = viewModel.uiState.value.title
 
-        val expectedUpdatedSegment = EmptyWheelSegment.copy(title = "User input string")
-        val actualUpdatedSegment = segmentTransformSlot.captured(EmptyWheelSegment)
-
-        assertEquals(expectedUpdatedSegment, actualUpdatedSegment)
+        // Then - verify segment's title was updated
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun editViewModel_updatesDescription_onInput() = runTest {
-        every { getWheelSegmentStreamUseCase(SEGMENT_ID) } returns flow { emit(EmptyWheelSegment) }
+    fun updatesDescription_onInput() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        val segmentTransformSlot = slot<(WheelSegment) -> WheelSegment>()
-        coEvery {
-            updateWheelSegmentUseCase(
-                wheelSegmentId = EmptyWheelSegment.id,
-                transform = capture(segmentTransformSlot)
-            )
-        } just runs
-
-        initViewModel()
-
+        // When - on description input
         viewModel.onEvent(EditSegmentUiEvent.InputDescription("User input string"))
 
-        advanceUntilIdle()
+        val expected = "User input string"
+        val actual = viewModel.uiState.value.description
 
-        val expectedUpdatedSegment = EmptyWheelSegment.copy(description = "User input string")
-        val actualUpdatedSegment = segmentTransformSlot.captured(EmptyWheelSegment)
-
-        assertEquals(expectedUpdatedSegment, actualUpdatedSegment)
+        // Then - verify segment's description was updated
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun editViewModel_updatesColor_onPick() = runTest {
-        every { getWheelSegmentStreamUseCase(SEGMENT_ID) } returns flow { emit(EmptyWheelSegment) }
+    fun updatesColor_onPick() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        val segmentTransformSlot = slot<(WheelSegment) -> WheelSegment>()
-        coEvery {
-            updateWheelSegmentUseCase(
-                wheelSegmentId = EmptyWheelSegment.id,
-                transform = capture(segmentTransformSlot)
-            )
-        } just runs
-
-        initViewModel()
-
+        // When - on color pick
         viewModel.onEvent(EditSegmentUiEvent.PickColor(Color.Red))
 
-        advanceUntilIdle()
+        val expected = Color.Red
+        val actual = viewModel.uiState.value.customColor
 
-        val expectedUpdatedSegment =
-            EmptyWheelSegment.copy(customColor = mappers.toDomain(Color.Red))
-        val actualUpdatedSegment = segmentTransformSlot.captured(EmptyWheelSegment)
-
-        assertEquals(expectedUpdatedSegment, actualUpdatedSegment)
+        // Then - verify segment's color was updated
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun viewModel_deletesThumbnail_onRemoveThumbnailEvent() = runTest {
-        every {
-            getWheelSegmentStreamUseCase(SEGMENT_ID)
-        } returns flow {
-            emit(EmptyWheelSegment.copy(thumbnailPath = "path/to/thumbnail.png"))
-        }
+    fun updatesImage_onRemove() = runTest {
+        // Given - wheel segment with thumbnail
+        wheelSegmentRepository.add(EmptyWheelSegment.copy(thumbnailPath = "path/to/thumbnail.png"))
 
-        coEvery { deleteThumbnailUseCase() } just runs
-        coEvery { updateWheelSegmentUseCase(any(), any()) } just runs
-
-        initViewModel()
-
+        // When - on remove thumbnail
         viewModel.onEvent(EditSegmentUiEvent.RemoveImage)
 
-        advanceUntilIdle()
+        val expected: ImageBitmap? = null
+        val actual = viewModel.uiState.value.image
 
-        coVerify { deleteThumbnailUseCase() }
+        // Then - verify segment's thumbnail was removed
+        assertEquals(expected, actual)
     }
 }
