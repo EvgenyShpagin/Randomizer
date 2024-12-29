@@ -1,6 +1,7 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.model.contentEquals
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,12 +32,7 @@ class CreateWheelSegmentUseCaseTest {
         val actual = createWheelSegmentUseCase()
         val expected = WheelSegment(0, "", "", null, null)
 
-        assertTrue(
-            actual.title == expected.title &&
-                    actual.description == expected.description &&
-                    actual.thumbnailPath == expected.thumbnailPath &&
-                    actual.customColor == expected.customColor
-        )
+        assertTrue(actual.contentEquals(expected))
     }
 
     @Test

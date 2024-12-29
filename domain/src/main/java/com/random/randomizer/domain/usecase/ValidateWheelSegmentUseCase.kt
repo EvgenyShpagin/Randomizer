@@ -5,13 +5,13 @@ import com.random.randomizer.domain.error.WheelSegmentValidationError
 import com.random.randomizer.domain.error.WheelSegmentValidationError.AlreadyExists
 import com.random.randomizer.domain.error.WheelSegmentValidationError.Empty
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.model.contentEquals
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import javax.inject.Inject
 
 class ValidateWheelSegmentUseCase @Inject constructor(
     private val wheelSegmentRepository: WheelSegmentRepository
 ) {
-
     suspend operator fun invoke(
         wheelSegment: WheelSegment
     ): Result<Unit, WheelSegmentValidationError> {
@@ -24,13 +24,6 @@ class ValidateWheelSegmentUseCase @Inject constructor(
             wheelSegment.isEmpty() -> Result.Failure(Empty)
             else -> Result.Success(Unit)
         }
-    }
-
-    private fun WheelSegment.contentEquals(other: WheelSegment): Boolean {
-        return this.title == other.title
-                && this.description == other.description
-                && this.thumbnailPath == other.thumbnailPath
-                && this.customColor == other.customColor
     }
 
     private fun WheelSegment.isEmpty(): Boolean {
