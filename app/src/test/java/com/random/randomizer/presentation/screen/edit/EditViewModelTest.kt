@@ -3,8 +3,6 @@ package com.random.randomizer.presentation.screen.edit
 import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.data.FakeThumbnailRepository
 import com.random.randomizer.data.FakeWheelSegmentRepository
-import com.random.randomizer.domain.common.Result
-import com.random.randomizer.domain.error.WheelSegmentValidationError
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
@@ -12,16 +10,10 @@ import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,12 +29,6 @@ class EditViewModelTest {
     private lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
     private lateinit var thumbnailRepository: FakeThumbnailRepository
 
-    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-    val createWheelSegmentUseCase = mockk<CreateWheelSegmentUseCase>()
-    val deleteWheelSegmentUseCase = mockk<DeleteWheelSegmentUseCase>()
-    val validateWheelSegmentUseCase = mockk<ValidateWheelSegmentUseCase>()
-    val makeWheelSegmentUniqueUseCase = mockk<MakeWheelSegmentUniqueUseCase>()
-
     val mappers = FakeEditMappers
 
     @get:Rule
@@ -56,6 +42,7 @@ class EditViewModelTest {
             GetWheelSegmentsStreamUseCase(wheelSegmentRepository),
             CreateWheelSegmentUseCase(wheelSegmentRepository),
             DeleteWheelSegmentUseCase(
+                wheelSegmentRepository,
                 DeleteThumbnailUseCase(thumbnailRepository)
             ),
             ValidateWheelSegmentUseCase(wheelSegmentRepository),
@@ -65,76 +52,62 @@ class EditViewModelTest {
     }
 
     @Test
-    fun editViewModel_updatesState_whenCreated() = runTest {
-        val wheelSegments = listOf(EmptyWheelSegment)
+    fun updatesState_whenCreated() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(wheelSegments) }
+        // When - on startup
 
-        initViewModel()
+        val expectedSegments = listOf(mappers.toPresentation(EmptyWheelSegment))
+        val actualSegments = viewModel.uiState.value.wheelSegments
 
-        val expected = wheelSegments.map { mappers.toPresentation(it) }
-        val actual = viewModel.uiState.value.wheelSegments
-
-        assertEquals(expected, actual)
+        // Then - verify UI state is the same as expected
+        assertEquals(expectedSegments, actualSegments)
     }
 
     @Test
-    fun editViewModel_createsSegment_onAddEvent() = runTest {
-        every { getWheelSegmentsStreamUseCase() } returns flow {}
-        coEvery { createWheelSegmentUseCase() } returns EmptyWheelSegment
+    fun createsSegment_onAddEvent() = runTest {
+        // Given - empty repository
 
-        initViewModel()
-
+        // When - on create segment event
         viewModel.onEvent(EditUiEvent.CreateSegment)
 
-        coVerify { createWheelSegmentUseCase() }
+        // Then - verify wheel segment was saved
+        assertEquals(
+            wheelSegmentRepository.getAll().count(),
+            1
+        )
     }
 
     @Test
-    fun editViewModel_updatesEditedSegment_onEditEvent() = runTest {
-        val wheelSegments = listOf(EmptyWheelSegment)
+    fun startsEditSegment_onEditEvent() = runTest {
+        // Given - blank wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
 
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(wheelSegments) }
+        val uiStateSegments = viewModel.uiState.value.wheelSegments
 
-        initViewModel()
+        // When - on edit segment event
+        viewModel.onEvent(
+            EditUiEvent.EditSegment(uiStateSegments.single())
+        )
 
-        viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
+        val expected = mappers.toPresentation(EmptyWheelSegment)
+        val actual = viewModel.uiState.value.currentlyEditedSegment
 
-        val expected = EmptyWheelSegment.id
-        val actual = viewModel.uiState.value.currentlyEditedSegmentId
-
+        // Then - verify segment is being edited
         assertEquals(expected, actual)
     }
 
     @Test
-    fun editViewModel_deletesEmptyEditedSegment_onFinishEdit() = runTest {
-        val wheelSegments = listOf(EmptyWheelSegment)
+    fun deletesEmptyEditedSegment_onFinishEdit() = runTest {
+        // Given - no wheel segments
 
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(wheelSegments) }
-
-        initViewModel()
-
-        viewModel.onEvent(EditUiEvent.EditSegment(mappers.toPresentation(EmptyWheelSegment)))
-
-        coEvery {
-            validateWheelSegmentUseCase(EmptyWheelSegment)
-        } returns Result.Failure(WheelSegmentValidationError.Empty)
-
-        coEvery { deleteWheelSegmentUseCase(EmptyWheelSegment.id) } just runs
-
+        // When - on create new segment
+        viewModel.onEvent(EditUiEvent.CreateSegment)
+        // and leave it blank
         viewModel.onEvent(EditUiEvent.FinishSegmentEdit)
 
-        coVerify { deleteWheelSegmentUseCase(EmptyWheelSegment.id) }
-    }
-
-    private fun initViewModel() {
-        viewModel = EditViewModel(
-            getWheelSegmentsStreamUseCase = getWheelSegmentsStreamUseCase,
-            createWheelSegmentUseCase = createWheelSegmentUseCase,
-            deleteWheelSegmentUseCase = deleteWheelSegmentUseCase,
-            validateWheelSegmentUseCase = validateWheelSegmentUseCase,
-            makeWheelSegmentUniqueUseCase = makeWheelSegmentUniqueUseCase,
-            mappers = mappers
-        )
+        // Then - verify just created blank wheel segment was deleted
+        assertTrue(wheelSegmentRepository.getAll().isEmpty())
     }
 }
