@@ -76,6 +76,9 @@ class EditViewModel @Inject constructor(
             mappers.toDomain(uiState, currentlyEditedSegmentThumbnailPath)
         } ?: return
 
+        updateState { it.copy(currentlyEditedSegmentId = null) }
+        currentlyEditedSegmentThumbnailPath = null
+
         viewModelScope.launch {
             validateWheelSegmentUseCase(currentlyEditedSegment)
                 .onFailure { error ->
@@ -85,9 +88,6 @@ class EditViewModel @Inject constructor(
                     }
                 }
         }
-
-        updateState { it.copy(currentlyEditedSegmentId = null) }
-        currentlyEditedSegmentThumbnailPath = null
     }
 
     private fun updateCurrentlyEditedSegment(domainWheelSegments: List<WheelSegment>) {
