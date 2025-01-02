@@ -40,7 +40,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_showsEmptyState_whenNoWheelSegments() {
+    fun showsEmptyState_whenNoWheelSegments() {
         val viewModel = createViewModelWithSegments(emptyList())
         setHomeScreen(viewModel = viewModel)
 
@@ -51,7 +51,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_showsWheelSegmentList_whenSegmentsPresent() {
+    fun showsWheelSegmentList_whenSegmentsPresent() {
         val viewModel = createViewModelWithSegments(
             segments = listOf(WheelSegment(1, "fake", "", null, null))
         )
@@ -69,7 +69,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_hidesSpinButton_whenNoWheelSegments() {
+    fun hidesSpinButton_whenNoWheelSegments() {
         val viewModel = createViewModelWithSegments(emptyList())
         setHomeScreen(viewModel = viewModel)
 
@@ -80,7 +80,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_hidesSpinButton_whenSingleWheelSegment() {
+    fun hidesSpinButton_whenSingleWheelSegment() {
         val viewModel = createViewModelWithSegments(
             segments = listOf(WheelSegment(1, "fake", "", null, null))
         )
@@ -93,7 +93,7 @@ class HomeScreenTest {
     }
 
     @Test
-    fun homeScreen_showsSpinButton_whenWheelSegmentsPresent() {
+    fun showsSpinButton_whenWheelSegmentsPresent() {
         val viewModel = createViewModelWithSegments(
             segments = listOf(
                 WheelSegment(1, "fake", "", null, null),
