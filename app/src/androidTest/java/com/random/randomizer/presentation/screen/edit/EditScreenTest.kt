@@ -7,11 +7,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.MainActivity
 import com.random.randomizer.test_util.testStringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -31,7 +31,7 @@ class EditScreenTest {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
     val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
     val createWheelSegmentUseCase = mockk<CreateWheelSegmentUseCase>()
@@ -99,7 +99,7 @@ class EditScreenTest {
     }
 
     private fun setEditScreen(viewModel: EditViewModel) {
-        composeTestRule.activity.setContent {
+        composeTestRule.setContent {
             EditScreen(
                 navigateBack = {},
                 viewModel = viewModel
