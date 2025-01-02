@@ -46,7 +46,7 @@ class EditViewModelTest {
                 DeleteThumbnailUseCase(thumbnailRepository)
             ),
             ValidateWheelSegmentUseCase(wheelSegmentRepository),
-            MakeWheelSegmentUniqueUseCase(),
+            MakeWheelSegmentUniqueUseCase(wheelSegmentRepository),
             mappers
         )
     }
