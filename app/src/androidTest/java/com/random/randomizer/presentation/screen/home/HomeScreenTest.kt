@@ -2,18 +2,19 @@ package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.filters.MediumTest
+import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
+import com.random.randomizer.data.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
+import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.test_util.testStringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.every
-import io.mockk.mockk
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,12 +28,12 @@ class HomeScreenTest {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
-    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
+    private lateinit var viewModel: HomeViewModel
 
     @Inject
-    lateinit var mappers: HomeMappers
+    lateinit var wheelSegmentRepository: WheelSegmentRepository
 
     @Before
     fun setup() {
@@ -41,28 +42,32 @@ class HomeScreenTest {
 
     @Test
     fun showsEmptyState_whenNoWheelSegments() {
-        val viewModel = createViewModelWithSegments(emptyList())
-        setHomeScreen(viewModel = viewModel)
+        // Given - empty wheel segment list
 
+        // When - on startup
+        setContent()
+
+        // Then - verify empty label is displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
-
         composeTestRule.onNodeWithText(emptyListText)
             .assertIsDisplayed()
     }
 
     @Test
-    fun showsWheelSegmentList_whenSegmentsPresent() {
-        val viewModel = createViewModelWithSegments(
-            segments = listOf(WheelSegment(1, "fake", "", null, null))
-        )
-        setHomeScreen(viewModel = viewModel)
+    fun showsWheelSegmentList_whenSegmentsPresent() = runTest {
+        // Given - single wheel segment
+        wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
+        // When - on startup
+        setContent()
+
+        // Then - verify wheel segment is displayed
         composeTestRule
             .onNodeWithText("fake")
             .assertIsDisplayed()
 
+        // and empty label is not displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
-
         composeTestRule
             .onNodeWithText(emptyListText)
             .assertIsNotDisplayed()
@@ -70,9 +75,12 @@ class HomeScreenTest {
 
     @Test
     fun hidesSpinButton_whenNoWheelSegments() {
-        val viewModel = createViewModelWithSegments(emptyList())
-        setHomeScreen(viewModel = viewModel)
+        // Given - empty wheel segment list
 
+        // When - on startup
+        setContent()
+
+        // Then - verify button is hidden
         val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
@@ -80,12 +88,14 @@ class HomeScreenTest {
     }
 
     @Test
-    fun hidesSpinButton_whenSingleWheelSegment() {
-        val viewModel = createViewModelWithSegments(
-            segments = listOf(WheelSegment(1, "fake", "", null, null))
-        )
-        setHomeScreen(viewModel = viewModel)
+    fun hidesSpinButton_whenSingleWheelSegment() = runTest {
+        // Given - single wheel segment
+        wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
+        // When - on startup
+        setContent()
+
+        // Then - verify button is hidden
         val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
@@ -93,33 +103,33 @@ class HomeScreenTest {
     }
 
     @Test
-    fun showsSpinButton_whenWheelSegmentsPresent() {
-        val viewModel = createViewModelWithSegments(
+    fun showsSpinButton_whenWheelSegmentsPresent() = runTest {
+        // Given - single wheel segment
+        wheelSegmentRepository.addMultiple(
             segments = listOf(
                 WheelSegment(1, "fake", "", null, null),
                 WheelSegment(2, "fake2", "", null, null)
             )
         )
-        setHomeScreen(viewModel = viewModel)
 
+        // When - on startup
+        setContent()
+
+        // Then - verify button is displayed
         val spinButtonText = testStringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
-    private fun setHomeScreen(viewModel: HomeViewModel) {
+    private fun setContent() {
         composeTestRule.setContent {
+            viewModel = hiltViewModel()
             HomeScreen(
                 navigateToSpin = {},
                 navigateToEdit = {},
                 viewModel = viewModel
             )
         }
-    }
-
-    private fun createViewModelWithSegments(segments: List<WheelSegment>): HomeViewModel {
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
-        return HomeViewModel(getWheelSegmentsStreamUseCase, mappers)
     }
 }
