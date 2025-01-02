@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
+import androidx.test.filters.LargeTest
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.MainActivity
 import com.random.randomizer.test_util.testStringResource
@@ -18,6 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@LargeTest
 @HiltAndroidTest
 class NavigationTest {
 

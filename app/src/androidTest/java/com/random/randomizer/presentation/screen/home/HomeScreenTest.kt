@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.filters.MediumTest
 import com.random.randomizer.R
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
@@ -18,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@MediumTest
 @HiltAndroidTest
 class HomeScreenTest {
 

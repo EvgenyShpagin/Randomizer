@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.test.filters.MediumTest
 import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
 import com.random.randomizer.domain.model.WheelSegment
@@ -20,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@MediumTest
 @HiltAndroidTest
 class EditScreenTest {
 
