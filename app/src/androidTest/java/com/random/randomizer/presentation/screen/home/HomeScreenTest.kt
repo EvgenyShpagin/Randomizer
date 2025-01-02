@@ -38,6 +38,7 @@ class HomeScreenTest {
     @Before
     fun setup() {
         hiltRule.inject()
+        setContent()
     }
 
     @Test
@@ -45,7 +46,6 @@ class HomeScreenTest {
         // Given - empty wheel segment list
 
         // When - on startup
-        setContent()
 
         // Then - verify empty label is displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
@@ -59,7 +59,6 @@ class HomeScreenTest {
         wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
         // When - on startup
-        setContent()
 
         // Then - verify wheel segment is displayed
         composeTestRule
@@ -78,7 +77,6 @@ class HomeScreenTest {
         // Given - empty wheel segment list
 
         // When - on startup
-        setContent()
 
         // Then - verify button is hidden
         val spinButtonText = testStringResource(R.string.button_spin)
@@ -93,7 +91,6 @@ class HomeScreenTest {
         wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
         // When - on startup
-        setContent()
 
         // Then - verify button is hidden
         val spinButtonText = testStringResource(R.string.button_spin)
@@ -113,7 +110,6 @@ class HomeScreenTest {
         )
 
         // When - on startup
-        setContent()
 
         // Then - verify button is displayed
         val spinButtonText = testStringResource(R.string.button_spin)

@@ -39,6 +39,7 @@ class EditScreenTest {
     @Before
     fun setup() {
         hiltRule.inject()
+        setContent()
     }
 
     @Test
@@ -46,7 +47,6 @@ class EditScreenTest {
         // Given - empty wheel segment list
 
         // When - on startup
-        setContent()
 
         // Then - verify label is displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
@@ -60,7 +60,6 @@ class EditScreenTest {
         wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
         // When - on startup
-        setContent()
 
         // Then - verify wheel segment is displayed
         composeTestRule
@@ -77,8 +76,6 @@ class EditScreenTest {
     @Test
     fun showsBottomSheet_whenAddButtonClicked() {
         // Given - empty wheel segment list
-
-        setContent()
 
         // When - on add button clicked
         val addButtonContentDescription = testStringResource(R.string.cd_add_new_wheel_segment)
