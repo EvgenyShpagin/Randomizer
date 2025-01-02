@@ -29,4 +29,5 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.mockk.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(project(":shared-test"))
 }
