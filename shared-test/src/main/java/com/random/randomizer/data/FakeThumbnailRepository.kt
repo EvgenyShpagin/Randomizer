@@ -4,8 +4,9 @@ import androidx.annotation.VisibleForTesting
 import com.random.randomizer.domain.repository.ThumbnailRepository
 import java.io.File
 import java.io.InputStream
+import javax.inject.Inject
 
-class FakeThumbnailRepository : ThumbnailRepository {
+class FakeThumbnailRepository @Inject constructor() : ThumbnailRepository {
 
     val savedImages = mutableListOf<File>()
 
