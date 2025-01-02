@@ -42,7 +42,7 @@ class EditScreenTest {
     }
 
     @Test
-    fun editScreen_showsEmptyState_whenNoWheelSegments() {
+    fun showsEmptyState_whenNoWheelSegments() {
         // Given - empty wheel segment list
 
         // When - on startup
@@ -55,7 +55,7 @@ class EditScreenTest {
     }
 
     @Test
-    fun editScreen_showsWheelSegmentList_whenSegmentsPresent() = runTest {
+    fun showsWheelSegmentList_whenSegmentsPresent() = runTest {
         // Given - single wheel segment
         wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
@@ -75,7 +75,7 @@ class EditScreenTest {
     }
 
     @Test
-    fun editScreen_showsBottomSheet_whenAddButtonClicked() {
+    fun showsBottomSheet_whenAddButtonClicked() {
         // Given - empty wheel segment list
 
         setContent()
