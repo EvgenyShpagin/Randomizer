@@ -1,24 +1,20 @@
 package com.random.randomizer.presentation.screen.edit
 
-import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
-import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
+import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.test_util.testStringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,16 +29,10 @@ class EditScreenTest {
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
-    val getWheelSegmentsStreamUseCase = mockk<GetWheelSegmentsStreamUseCase>()
-    val createWheelSegmentUseCase = mockk<CreateWheelSegmentUseCase>()
+    private lateinit var viewModel: EditViewModel
 
     @Inject
-    lateinit var mappers: EditMappers
-
-
-    init {
-        coEvery { createWheelSegmentUseCase() } returns WheelSegment(1, "", "", null, null)
-    }
+    lateinit var wheelSegmentRepository: WheelSegmentRepository
 
     @Before
     fun setup() {
@@ -51,28 +41,32 @@ class EditScreenTest {
 
     @Test
     fun editScreen_showsEmptyState_whenNoWheelSegments() {
-        val viewModel = createViewModelWithSegments(emptyList())
-        setEditScreen(viewModel = viewModel)
+        // Given - empty wheel segment list
 
+        // When - on startup
+        setContent()
+
+        // Then - verify label is displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
-
         composeTestRule.onNodeWithText(emptyListText)
             .assertIsDisplayed()
     }
 
     @Test
-    fun editScreen_showsWheelSegmentList_whenSegmentsPresent() {
-        val viewModel = createViewModelWithSegments(
-            segments = listOf(WheelSegment(1, "fake", "", null, null))
-        )
-        setEditScreen(viewModel = viewModel)
+    fun editScreen_showsWheelSegmentList_whenSegmentsPresent() = runTest {
+        // Given - single wheel segment
+        wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
 
+        // When - on startup
+        setContent()
+
+        // Then - verify wheel segment is displayed
         composeTestRule
             .onNodeWithText("fake")
             .assertIsDisplayed()
 
+        // and also - that empty label is not displayed
         val emptyListText = testStringResource(R.string.label_no_wheel_segments)
-
         composeTestRule
             .onNodeWithText(emptyListText)
             .assertIsNotDisplayed()
@@ -80,42 +74,32 @@ class EditScreenTest {
 
     @Test
     fun editScreen_showsBottomSheet_whenAddButtonClicked() {
-        val viewModel = createViewModelWithSegments(emptyList())
-        setEditScreen(viewModel = viewModel)
+        // Given - empty wheel segment list
 
+        setContent()
+
+        // When - on add button clicked
         val addButtonContentDescription = testStringResource(R.string.cd_add_new_wheel_segment)
-
         composeTestRule
             .onNodeWithContentDescription(addButtonContentDescription)
             .performClick()
 
+        // Then - verify some bottom sheet content is displayed
+        val addImageButtonContentDescription = testStringResource(R.string.cd_add_image_to_segment)
         // Since we return WheelSegment from CreateWheelSegmentUseCase
         // without image, the add button will be visible
-        val addImageButtonContentDescription = testStringResource(R.string.cd_add_image_to_segment)
-
         composeTestRule
             .onNodeWithContentDescription(addImageButtonContentDescription)
             .assertIsDisplayed()
     }
 
-    private fun setEditScreen(viewModel: EditViewModel) {
+    private fun setContent() {
         composeTestRule.setContent {
+            viewModel = hiltViewModel()
             EditScreen(
                 navigateBack = {},
                 viewModel = viewModel
             )
         }
-    }
-
-    private fun createViewModelWithSegments(segments: List<WheelSegment>): EditViewModel {
-        every { getWheelSegmentsStreamUseCase() } returns flow { emit(segments) }
-        return EditViewModel(
-            getWheelSegmentsStreamUseCase = getWheelSegmentsStreamUseCase,
-            createWheelSegmentUseCase = createWheelSegmentUseCase,
-            deleteWheelSegmentUseCase = mockk(),
-            validateWheelSegmentUseCase = mockk(),
-            makeWheelSegmentUniqueUseCase = mockk(),
-            mappers = mappers
-        )
     }
 }
