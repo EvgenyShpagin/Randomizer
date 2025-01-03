@@ -6,6 +6,7 @@ import com.random.randomizer.domain.error.WheelSegmentValidationError.Empty
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.FixSavedWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class EditViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
     private val createWheelSegmentUseCase: CreateWheelSegmentUseCase,
+    private val fixSavedWheelSegmentUseCase: FixSavedWheelSegmentUseCase,
     private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
     private val makeWheelSegmentUniqueUseCase: MakeWheelSegmentUniqueUseCase,
@@ -72,7 +74,7 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onFinishSegmentEdit() {
-        val currentlyEditedSegment = uiState.value.currentlyEditedSegment?.let { uiState ->
+        val editedSegment = uiState.value.currentlyEditedSegment?.let { uiState ->
             mappers.toDomain(uiState, currentlyEditedSegmentThumbnailPath)
         } ?: return
 
@@ -80,11 +82,12 @@ class EditViewModel @Inject constructor(
         currentlyEditedSegmentThumbnailPath = null
 
         viewModelScope.launch {
-            validateWheelSegmentUseCase(currentlyEditedSegment)
+            fixSavedWheelSegmentUseCase(editedSegment.id)
+            validateWheelSegmentUseCase(editedSegment)
                 .onFailure { error ->
                     when (error) {
-                        AlreadyExists -> makeWheelSegmentUniqueUseCase(currentlyEditedSegment.id)
-                        Empty -> deleteWheelSegmentUseCase(currentlyEditedSegment.id)
+                        AlreadyExists -> makeWheelSegmentUniqueUseCase(editedSegment.id)
+                        Empty -> deleteWheelSegmentUseCase(editedSegment.id)
                     }
                 }
         }

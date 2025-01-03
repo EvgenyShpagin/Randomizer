@@ -8,6 +8,7 @@ import com.random.randomizer.domain.model.contentEquals
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.FixSavedWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.domain.usecase.MakeWheelSegmentUniqueUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
@@ -44,6 +45,7 @@ class EditViewModelTest {
         viewModel = EditViewModel(
             GetWheelSegmentsStreamUseCase(wheelSegmentRepository),
             CreateWheelSegmentUseCase(wheelSegmentRepository),
+            FixSavedWheelSegmentUseCase(wheelSegmentRepository),
             DeleteWheelSegmentUseCase(
                 wheelSegmentRepository,
                 DeleteThumbnailUseCase(thumbnailRepository)
@@ -112,6 +114,35 @@ class EditViewModelTest {
 
         // Then - verify just created blank wheel segment was deleted
         assertTrue(wheelSegmentRepository.getAll().isEmpty())
+    }
+
+    @Test
+    fun removesExtraWhitespaces_onFinishEdit() = runTest {
+        // Given - one wheel segment with extra whitespaces
+        wheelSegmentRepository.add(
+            WheelSegment(
+                1, " Title with   some whitespaces  ",
+                "  and   inside description", null, null
+            )
+        )
+
+        val uiStateSegments = viewModel.uiState.value.wheelSegments
+
+        // When - on start edit segment with extra whitespaces
+        viewModel.onEvent(
+            EditUiEvent.EditSegment(uiStateSegments.single())
+        ) // and finish it
+        viewModel.onEvent(EditUiEvent.FinishSegmentEdit)
+
+        val expectedTitle = "Title with some whitespaces"
+        val actualTitle = wheelSegmentRepository.get(1)!!.title
+
+        val expectedDescription = "and inside description"
+        val actualDescription = wheelSegmentRepository.get(1)!!.description
+
+        // Then - verify wheel segment's extra whitespaces were removed
+        assertEquals(expectedTitle, actualTitle)
+        assertEquals(expectedDescription, actualDescription)
     }
 
     @Test
