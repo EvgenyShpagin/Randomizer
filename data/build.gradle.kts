@@ -32,9 +32,12 @@ android {
 
 dependencies {
     implementation(project(path = ":domain"))
-    implementation(libs.androidx.core.ktx)
+
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    // Dependencies for local unit tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
