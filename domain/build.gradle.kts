@@ -24,10 +24,16 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    // Dependencies for local unit tests
     testImplementation(libs.junit)
     testImplementation(libs.mockk.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // AndroidX Test - JVM testing
     testImplementation(project(":shared-test"))
 }
