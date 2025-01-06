@@ -9,6 +9,7 @@ kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 androidxTestExt = "1.2.1"
+androidxTestCore = "1.6.1"
 kotlinxCoroutinesTest = "1.9.0"
 lifecycleRuntimeCompose = "2.8.6"
 lifecycleRuntimeKtx = "2.8.6"
@@ -46,6 +47,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 mockk-mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
