@@ -11,7 +11,7 @@ import com.random.randomizer.R
 import com.random.randomizer.data.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
-import com.random.randomizer.test_util.testStringResource
+import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -48,7 +48,7 @@ class HomeScreenTest {
         // When - on startup
 
         // Then - verify empty label is displayed
-        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
+        val emptyListText = stringResource(R.string.label_no_wheel_segments)
         composeTestRule.onNodeWithText(emptyListText)
             .assertIsDisplayed()
     }
@@ -66,7 +66,7 @@ class HomeScreenTest {
             .assertIsDisplayed()
 
         // and empty label is not displayed
-        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
+        val emptyListText = stringResource(R.string.label_no_wheel_segments)
         composeTestRule
             .onNodeWithText(emptyListText)
             .assertIsNotDisplayed()
@@ -79,7 +79,7 @@ class HomeScreenTest {
         // When - on startup
 
         // Then - verify button is hidden
-        val spinButtonText = testStringResource(R.string.button_spin)
+        val spinButtonText = stringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsNotDisplayed()
@@ -93,7 +93,7 @@ class HomeScreenTest {
         // When - on startup
 
         // Then - verify button is hidden
-        val spinButtonText = testStringResource(R.string.button_spin)
+        val spinButtonText = stringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsNotDisplayed()
@@ -112,7 +112,7 @@ class HomeScreenTest {
         // When - on startup
 
         // Then - verify button is displayed
-        val spinButtonText = testStringResource(R.string.button_spin)
+        val spinButtonText = stringResource(R.string.button_spin)
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsDisplayed()

@@ -12,7 +12,7 @@ import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
-import com.random.randomizer.test_util.testStringResource
+import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
@@ -49,7 +49,7 @@ class EditScreenTest {
         // When - on startup
 
         // Then - verify label is displayed
-        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
+        val emptyListText = stringResource(R.string.label_no_wheel_segments)
         composeTestRule.onNodeWithText(emptyListText)
             .assertIsDisplayed()
     }
@@ -67,7 +67,7 @@ class EditScreenTest {
             .assertIsDisplayed()
 
         // and also - that empty label is not displayed
-        val emptyListText = testStringResource(R.string.label_no_wheel_segments)
+        val emptyListText = stringResource(R.string.label_no_wheel_segments)
         composeTestRule
             .onNodeWithText(emptyListText)
             .assertIsNotDisplayed()
@@ -78,13 +78,13 @@ class EditScreenTest {
         // Given - empty wheel segment list
 
         // When - on add button clicked
-        val addButtonContentDescription = testStringResource(R.string.cd_add_new_wheel_segment)
+        val addButtonContentDescription = stringResource(R.string.cd_add_new_wheel_segment)
         composeTestRule
             .onNodeWithContentDescription(addButtonContentDescription)
             .performClick()
 
         // Then - verify some bottom sheet content is displayed
-        val addImageButtonContentDescription = testStringResource(R.string.cd_add_image_to_segment)
+        val addImageButtonContentDescription = stringResource(R.string.cd_add_image_to_segment)
         // Since we return WheelSegment from CreateWheelSegmentUseCase
         // without image, the add button will be visible
         composeTestRule

@@ -12,7 +12,7 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.filters.LargeTest
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.MainActivity
-import com.random.randomizer.test_util.testStringResource
+import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -49,7 +49,7 @@ class NavigationTest {
 
     @Test
     fun navHost_showsHomeScreen_atStart() {
-        val topBarText = testStringResource(R.string.home_screen_title)
+        val topBarText = stringResource(R.string.home_screen_title)
         composeTestRule
             .onNodeWithText(topBarText)
             .assertIsDisplayed()
@@ -57,8 +57,8 @@ class NavigationTest {
 
     @Test
     fun navHost_navigatesToEdit_whenEditButtonClicked() {
-        val editButtonContentDescription = testStringResource(R.string.cd_edit_wheel_segments)
-        val editTopBarText = testStringResource(R.string.edit_screen_title)
+        val editButtonContentDescription = stringResource(R.string.cd_edit_wheel_segments)
+        val editTopBarText = stringResource(R.string.edit_screen_title)
         composeTestRule
             .onNodeWithContentDescription(editButtonContentDescription)
             .performClick()

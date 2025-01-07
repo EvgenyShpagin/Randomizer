@@ -1,9 +1,10 @@
 package com.random.randomizer.test_util
 
+import android.content.Context
 import androidx.annotation.StringRes
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 
-fun testStringResource(@StringRes id: Int): String {
-    val context = InstrumentationRegistry.getInstrumentation().targetContext
+fun stringResource(@StringRes id: Int): String {
+    val context = getApplicationContext<Context>()
     return context.getString(id)
 }
