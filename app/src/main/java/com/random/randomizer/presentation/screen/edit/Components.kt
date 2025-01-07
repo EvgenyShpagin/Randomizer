@@ -133,7 +133,7 @@ fun AddSegmentImageButton(
     val contentDescription = stringResource(R.string.cd_add_image_to_segment)
     FilledTonalButton(
         onClick = onClickAdd,
-        modifier = modifier // TODO: check role in log
+        modifier = modifier
             .clearAndSetSemantics { this.contentDescription = contentDescription }
             .fillMaxWidth()
     ) {
@@ -269,7 +269,7 @@ fun RemoveSegmentColorIconButton(
             contentColor = MaterialTheme.colorScheme.onErrorContainer
         ),
         shape = ShapeDefaults.Small,
-        modifier = modifier // TODO: check role and contentDescription
+        modifier = modifier
             .clearAndSetSemantics { this.contentDescription = contentDescription }
     ) {
         Icon(
