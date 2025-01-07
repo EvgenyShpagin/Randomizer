@@ -30,8 +30,8 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 @Composable
 fun EditScreen(
     navigateBack: () -> Unit,
-    viewModel: EditViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: EditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -61,9 +61,9 @@ private fun EditScreen(
     onSegmentClicked: (WheelSegmentUiState) -> Unit,
     navigateBack: () -> Unit,
     onFinishSegmentEdit: () -> Unit,
+    modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
-    topAppBarState: TopAppBarState = rememberTopAppBarState(),
-    modifier: Modifier = Modifier
+    topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
     Scaffold(
@@ -90,8 +90,8 @@ private fun EditScreen(
             } else {
                 WheelSegmentList(
                     wheelItems = wheelSegments,
-                    listState = listState,
-                    onClickWheelSegment = onSegmentClicked
+                    onClickWheelSegment = onSegmentClicked,
+                    listState = listState
                 )
             }
         }

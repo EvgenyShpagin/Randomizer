@@ -36,12 +36,12 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 fun EditSegmentBottomSheet(
     currentlyEditedSegmentId: Int,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: EditSegmentViewModel = hiltViewModel(
         creationCallback = { factory: EditSegmentViewModel.Factory ->
             factory.create(currentlyEditedSegmentId)
         }
-    ),
-    modifier: Modifier = Modifier
+    )
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -95,8 +95,8 @@ private fun EditSegmentBottomSheet(
     onClickAddImage: () -> Unit,
     onClickRemoveImage: () -> Unit,
     onPickBackgroundColor: (Color?) -> Unit,
-    backgroundColors: List<Color> = AllSegmentColors,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColors: List<Color> = AllSegmentColors
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,

@@ -117,8 +117,8 @@ private fun WheelSegmentPreview() {
 fun WheelSegmentList(
     wheelItems: List<WheelSegmentUiState>,
     onClickWheelSegment: (WheelSegmentUiState) -> Unit,
-    listState: LazyListState = rememberLazyListState(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState()
 ) {
     val layoutDirection = LocalLayoutDirection.current
     val displayCutout = WindowInsets.displayCutout.asPaddingValues()

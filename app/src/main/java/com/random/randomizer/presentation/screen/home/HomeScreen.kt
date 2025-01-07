@@ -27,8 +27,8 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 fun HomeScreen(
     navigateToSpin: () -> Unit,
     navigateToEdit: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -53,9 +53,9 @@ private fun HomeScreen(
     onClickSpin: () -> Unit,
     onClickEdit: () -> Unit,
     wheelItems: List<WheelSegmentUiState>,
+    modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
-    topAppBarState: TopAppBarState = rememberTopAppBarState(),
-    modifier: Modifier = Modifier
+    topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
     Scaffold(

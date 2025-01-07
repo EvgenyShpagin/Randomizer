@@ -93,8 +93,8 @@ fun AddWheelSegmentButton(
 fun SegmentTitleTextField(
     title: String,
     onInput: (String) -> Unit,
-    maxLines: Int = 1,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxLines: Int = 1
 ) {
     OutlinedTextField(
         value = title,
@@ -111,8 +111,8 @@ fun SegmentTitleTextField(
 fun SegmentDescriptionTextField(
     description: String,
     onInput: (String) -> Unit,
-    maxLines: Int = 1,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxLines: Int = 1
 ) {
     OutlinedTextField(
         value = description,
