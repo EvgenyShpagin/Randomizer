@@ -2,7 +2,7 @@
 compileSdk = "34"
 minSdk = "24"
 targetSdk = "34"
-agp = "8.7.2"
+agp = "8.7.3"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.20"
