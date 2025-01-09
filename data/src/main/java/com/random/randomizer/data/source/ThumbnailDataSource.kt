@@ -13,6 +13,9 @@ class ThumbnailDataSource @Inject constructor(@ApplicationContext context: Conte
     private val saveDirectory = context.filesDir
 
     fun saveThumbnail(id: String, imageInputStream: InputStream): File? {
+        require(!id.contains(ProhibitedSymbolRegex)) {
+            "id must not contain prohibited symbols"
+        }
         return runCatching {
             imageInputStream.use { stream ->
                 val bitmap = decodeBitmapFromStream(stream) ?: return null
@@ -46,5 +49,9 @@ class ThumbnailDataSource @Inject constructor(@ApplicationContext context: Conte
 
     fun deleteThumbnail(filename: String) {
         File(saveDirectory, filename).delete()
+    }
+
+    private companion object {
+        val ProhibitedSymbolRegex = "[\\\\/:*?\"<>|]".toRegex()
     }
 }

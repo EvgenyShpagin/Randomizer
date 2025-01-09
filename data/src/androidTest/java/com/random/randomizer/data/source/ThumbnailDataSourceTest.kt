@@ -8,8 +8,10 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import java.io.ByteArrayInputStream
@@ -59,6 +61,42 @@ class ThumbnailDataSourceTest {
 
         // Then - result should be null
         assertNull(thumbnail)
+    }
+
+    @Test
+    fun saveThumbnail_throwsException_whenFilenameContainsProhibitedSymbols() = runTest {
+        // Given - an image as input
+        val imageInputStream = createImageInputStream(300, 300)
+
+        // When - saving the image with wrong id
+        // Then - exception is thrown
+        assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                thumbnail = thumbnailDataSource.saveThumbnail("/?", imageInputStream)
+            }
+        }
+    }
+
+    @Test
+    fun saveThumbnail_doesNotThrowException_whenFilenameContainsOnlyAllowedSymbols() = runTest {
+        // Given - an image as input
+        val imageInputStream = createImageInputStream(300, 300)
+
+        // When - saving the image with a valid id
+        var exception: Exception? = null
+        try {
+            thumbnail = thumbnailDataSource.saveThumbnail("_09aZ ", imageInputStream)
+        } catch (e: Exception) {
+            exception = e
+        }
+
+        val saveResult = runCatching {
+            thumbnailDataSource.saveThumbnail("_09aZ", imageInputStream)
+        }
+        thumbnail = saveResult.getOrNull()
+
+        // Then - verify no exception is thrown
+        assertTrue(saveResult.isSuccess)
     }
 
     @Test
