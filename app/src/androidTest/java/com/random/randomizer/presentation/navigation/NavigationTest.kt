@@ -43,21 +43,22 @@ class NavigationTest {
 
     @Test
     fun navHost_showsHomeScreen_atStart() {
-        val topBarText = stringResource(R.string.home_screen_title)
+        // Assert HomeScreen title is displayed
         composeTestRule
-            .onNodeWithText(topBarText)
+            .onNodeWithText(stringResource(R.string.home_screen_title))
             .assertIsDisplayed()
     }
 
     @Test
     fun homeScreen_navigatesToEdit_whenEditButtonClicked() {
-        val editButtonContentDescription = stringResource(R.string.cd_edit_wheel_segments)
-        val editTopBarText = stringResource(R.string.edit_screen_title)
+        // Click on edit button
         composeTestRule
-            .onNodeWithContentDescription(editButtonContentDescription)
+            .onNodeWithContentDescription(stringResource(R.string.cd_edit_wheel_segments))
             .performClick()
+
+        // Make sure the current screen is EditScreen
         composeTestRule
-            .onNodeWithText(editTopBarText)
+            .onNodeWithText(stringResource(R.string.edit_screen_title))
             .assertIsDisplayed()
     }
 }
