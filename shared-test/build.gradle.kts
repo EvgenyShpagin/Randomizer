@@ -23,8 +23,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":app"))
-    implementation(project(":domain"))
+    implementation(project(":app"))    // to replace Hilt modules
+    implementation(project(":domain")) // to implement fake repositories
     implementation(libs.junit)
     implementation(libs.kotlinx.coroutines.test)
     implementation(libs.androidx.runner)
