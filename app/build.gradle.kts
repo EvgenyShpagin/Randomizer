@@ -109,6 +109,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.archcore.testing)
     androidTestImplementation(project(":shared-test"))
 
 
