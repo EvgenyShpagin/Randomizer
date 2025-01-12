@@ -10,21 +10,21 @@ class MappersTest {
     val coreMappers = CoreMappersImpl()
 
     @Test
-    fun presentationColor_to_domainColor_mapsCorrectly() {
+    fun toDomain_convertsColorCorrectly() {
         val expectedDomainColor = 0xFFFF0000
         val actualPresentationColorLong = coreMappers.toDomain(Color.Red)
         assertEquals(expectedDomainColor, actualPresentationColorLong)
     }
 
     @Test
-    fun domainColor_to_presentationColor_mapsCorrectly() {
+    fun toPresentation_convertsColorCorrectly() {
         val expectedPresentationColor = Color.Red
         val actualPresentationColor = Color(0xFFFF0000)
         assertEquals(expectedPresentationColor, actualPresentationColor)
     }
 
     @Test
-    fun domainWheelSegment_to_presentationWheelSegmentUiState_mapsCorrectly() {
+    fun toPresentation_converts_wheelSegmentCorrectly() {
         val domain = WheelSegment(
             id = 5,
             title = "Some title",
@@ -46,7 +46,7 @@ class MappersTest {
     }
 
     @Test
-    fun presentationWheelSegmentUiState_to_domainWheelSegment_mapsCorrectly() {
+    fun toDomain_convertsWheelSegmentUiStateCorrectly() {
         val presentationUiState = WheelSegmentUiState(
             id = 5,
             title = "Some title",
