@@ -6,6 +6,9 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.R
+import com.random.randomizer.domain.error.UpdateWheelSegmentError
+import com.random.randomizer.domain.error.UpdateWheelSegmentError.FailedToSaveThumbnail
+import com.random.randomizer.domain.error.UpdateWheelSegmentError.WheelSegmentDoesNotExist
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
@@ -47,7 +50,21 @@ class EditSegmentViewModel @AssistedInject constructor(
     private fun updateWheelSegment(transform: (WheelSegment) -> WheelSegment) {
         viewModelScope.launch {
             updateWheelSegmentUseCase(wheelSegmentId, transform)
+                .onFailure { handleUpdateError(it) }
         }
+    }
+
+    private fun handleUpdateError(error: UpdateWheelSegmentError) {
+        when (error) {
+            FailedToSaveThumbnail -> {
+                triggerEffect(ShowErrorMessage(R.string.message_failed_to_set_image))
+            }
+
+            WheelSegmentDoesNotExist -> {
+                // Do nothing - just wait
+            }
+        }
+
     }
 
     override fun onEvent(event: EditSegmentUiEvent) {
