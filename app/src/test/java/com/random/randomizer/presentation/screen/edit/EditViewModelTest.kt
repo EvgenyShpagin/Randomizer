@@ -1,12 +1,10 @@
 package com.random.randomizer.presentation.screen.edit
 
 import com.random.randomizer.MainCoroutineRule
-import com.random.randomizer.data.FakeThumbnailRepository
 import com.random.randomizer.data.FakeWheelSegmentRepository
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.model.contentEquals
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
-import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.FixSavedWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
@@ -31,7 +29,6 @@ class EditViewModelTest {
     private lateinit var viewModel: EditViewModel
 
     private lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
-    private lateinit var thumbnailRepository: FakeThumbnailRepository
 
     val mappers = FakeEditMappers
 
@@ -41,14 +38,12 @@ class EditViewModelTest {
     @Before
     fun setup() {
         wheelSegmentRepository = FakeWheelSegmentRepository()
-        thumbnailRepository = FakeThumbnailRepository()
         viewModel = EditViewModel(
             GetWheelSegmentsStreamUseCase(wheelSegmentRepository),
             CreateWheelSegmentUseCase(wheelSegmentRepository),
             FixSavedWheelSegmentUseCase(wheelSegmentRepository),
             DeleteWheelSegmentUseCase(
-                wheelSegmentRepository,
-                DeleteThumbnailUseCase(thumbnailRepository)
+                wheelSegmentRepository
             ),
             ValidateWheelSegmentUseCase(wheelSegmentRepository),
             MakeWheelSegmentUniqueUseCase(wheelSegmentRepository),

@@ -29,7 +29,7 @@ class FixSavedWheelSegmentUseCaseTest {
             id = 1,
             title = "  Title    with   extra spaces   ",
             description = "  Description    with   extra spaces   ",
-            thumbnailPath = null,
+            thumbnail = null,
             customColor = null
         )
         wheelSegmentRepository.add(originalSegment)
@@ -50,7 +50,7 @@ class FixSavedWheelSegmentUseCaseTest {
             id = 2,
             title = "Valid Title",
             description = "Valid Description",
-            thumbnailPath = null,
+            thumbnail = null,
             customColor = null
         )
         wheelSegmentRepository.add(originalSegment)

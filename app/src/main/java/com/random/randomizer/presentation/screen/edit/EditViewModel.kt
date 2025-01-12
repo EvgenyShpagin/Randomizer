@@ -3,6 +3,7 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.error.WheelSegmentValidationError.AlreadyExists
 import com.random.randomizer.domain.error.WheelSegmentValidationError.Empty
+import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
@@ -31,8 +32,8 @@ class EditViewModel @Inject constructor(
     initialUiState = EditUiState()
 ) {
 
-    // Path of wheel segment thumbnail required for mapper to domain entity
-    private var currentlyEditedSegmentThumbnailPath: String? = null
+    // Wheel segment's thumbnail required for mapping to domain entity
+    private var currentlyEditedSegmentThumbnail: Image? = null
 
     init {
         getWheelSegmentsStreamUseCase()
@@ -75,11 +76,11 @@ class EditViewModel @Inject constructor(
 
     private fun onFinishSegmentEdit() {
         val editedSegment = uiState.value.currentlyEditedSegment?.let { uiState ->
-            mappers.toDomain(uiState, currentlyEditedSegmentThumbnailPath)
+            mappers.toDomain(uiState, currentlyEditedSegmentThumbnail)
         } ?: return
 
         updateState { it.copy(currentlyEditedSegmentId = null) }
-        currentlyEditedSegmentThumbnailPath = null
+        currentlyEditedSegmentThumbnail = null
 
         viewModelScope.launch {
             fixSavedWheelSegmentUseCase(editedSegment.id)
@@ -95,8 +96,8 @@ class EditViewModel @Inject constructor(
 
     private fun updateCurrentlyEditedSegment(domainWheelSegments: List<WheelSegment>) {
         val currentlyEditedSegmentId = uiState.value.currentlyEditedSegmentId ?: return
-        currentlyEditedSegmentThumbnailPath = domainWheelSegments
+        currentlyEditedSegmentThumbnail = domainWheelSegments
             .find { it.id == currentlyEditedSegmentId }!!
-            .thumbnailPath
+            .thumbnail
     }
 }

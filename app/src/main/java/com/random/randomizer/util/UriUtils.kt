@@ -2,12 +2,12 @@ package com.random.randomizer.util
 
 import android.content.Context
 import android.net.Uri
-import java.io.InputStream
 
-fun Uri.getInputStreamOrNull(context: Context): InputStream? {
+fun Uri.toByteArray(context: Context): ByteArray? {
     return runCatching { context.contentResolver.openInputStream(this) }
         .onFailure { it.printStackTrace() }
         .getOrNull()
+        ?.readBytes()
 }
 
 fun Uri.getUniqueFilename(): String {

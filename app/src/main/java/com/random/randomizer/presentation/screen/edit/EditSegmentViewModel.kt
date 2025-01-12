@@ -2,25 +2,19 @@ package com.random.randomizer.presentation.screen.edit
 
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.R
+import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
-import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditSegmentUiEffect.ShowErrorMessage
-import com.random.randomizer.util.getInputStreamOrNull
 import com.random.randomizer.util.getUniqueFilename
-import com.random.randomizer.util.scaleToSize
-import com.random.randomizer.util.toInputStream
+import com.random.randomizer.util.toByteArray
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,21 +22,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.InputStream
 
 @HiltViewModel(assistedFactory = EditSegmentViewModel.Factory::class)
 class EditSegmentViewModel @AssistedInject constructor(
     @Assisted private val wheelSegmentId: Int,
     getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase,
     private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
-    private val saveImageThumbnailUseCase: SaveImageThumbnailUseCase,
-    private val deleteThumbnailUseCase: DeleteThumbnailUseCase,
     private val mappers: EditSegmentMappers
 ) : MutableStateViewModel<WheelSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
     initialUiState = WheelSegmentUiState()
 ) {
-
-    private var thumbnailPath: String? = null
 
     init {
         getWheelSegmentStreamUseCase(wheelSegmentId)
@@ -53,16 +42,11 @@ class EditSegmentViewModel @AssistedInject constructor(
     private fun handleWheelSegment(wheelSegment: WheelSegment?) {
         if (wheelSegment == null) return
         updateState { mappers.toPresentation(wheelSegment) }
-        thumbnailPath = wheelSegment.thumbnailPath
     }
 
-    private fun updateWheelSegment(
-        onSuccess: () -> Unit = {},
-        transform: (WheelSegment) -> WheelSegment
-    ) {
+    private fun updateWheelSegment(transform: (WheelSegment) -> WheelSegment) {
         viewModelScope.launch {
             updateWheelSegmentUseCase(wheelSegmentId, transform)
-            onSuccess()
         }
     }
 
@@ -88,40 +72,21 @@ class EditSegmentViewModel @AssistedInject constructor(
     private fun onPickImage(context: Context, imageUri: Uri?) = viewModelScope.launch {
         if (imageUri == null) return@launch
 
-        val scaledBitmap = imageUri
-            .getInputStreamOrNull(context)
-            ?.toBitmap()
-            ?.scaleToSize(600)
+        val imageFilename = imageUri.getUniqueFilename()
+        val imageData = imageUri.toByteArray(context)
 
-        if (scaledBitmap == null) {
+        if (imageData == null) {
             triggerEffect(effect = ShowErrorMessage(R.string.message_failed_to_set_image))
             return@launch
         }
 
-        saveImageThumbnailUseCase(
-            imageId = imageUri.getUniqueFilename(),
-            imageInputStream = scaledBitmap.toInputStream()
-        ).onSuccess { path ->
-            updateWheelSegment { it.copy(thumbnailPath = path) }
-        }.onFailure {
-            triggerEffect(effect = ShowErrorMessage(R.string.message_failed_to_set_image))
+        updateWheelSegment {
+            it.copy(thumbnail = Image(imageFilename, imageData))
         }
     }
 
-    private fun InputStream.toBitmap(): ImageBitmap? {
-        return BitmapFactory.decodeStream(this)?.asImageBitmap()
-    }
-
     private fun onRemoveImage() {
-        val thumbnailPath = thumbnailPath ?: return
-        updateWheelSegment(
-            onSuccess = {
-                viewModelScope.launch {
-                    deleteThumbnailUseCase(thumbnailPath)
-                }
-            },
-            transform = { it.copy(thumbnailPath = null) }
-        )
+        updateWheelSegment { it.copy(thumbnail = null) }
     }
 
     private fun onPickBackgroundColor(color: Color?) {

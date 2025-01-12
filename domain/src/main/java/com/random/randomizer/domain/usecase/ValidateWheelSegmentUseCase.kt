@@ -28,7 +28,7 @@ class ValidateWheelSegmentUseCase @Inject constructor(
 
     private fun WheelSegment.isEmpty(): Boolean {
         return title.isBlank()
-                && thumbnailPath == null
+                && thumbnail == null
                 && customColor == null
     }
 }

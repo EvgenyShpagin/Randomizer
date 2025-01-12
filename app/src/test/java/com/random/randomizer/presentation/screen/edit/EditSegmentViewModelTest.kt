@@ -3,16 +3,13 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import com.random.randomizer.MainCoroutineRule
-import com.random.randomizer.data.FakeThumbnailRepository
 import com.random.randomizer.data.FakeWheelSegmentRepository
+import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.DeleteThumbnailUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
-import com.random.randomizer.domain.usecase.SaveImageThumbnailUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -29,7 +26,6 @@ class EditSegmentViewModelTest {
     val mainCoroutineRule = MainCoroutineRule()
 
     private lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
-    private lateinit var thumbnailRepository: FakeThumbnailRepository
 
     // Subject under test
     private lateinit var viewModel: EditSegmentViewModel
@@ -39,20 +35,12 @@ class EditSegmentViewModelTest {
     @Before
     fun setup() {
         wheelSegmentRepository = FakeWheelSegmentRepository()
-        thumbnailRepository = FakeThumbnailRepository()
         viewModel = EditSegmentViewModel(
             SEGMENT_ID,
             GetWheelSegmentStreamUseCase(wheelSegmentRepository),
             UpdateWheelSegmentUseCase(wheelSegmentRepository),
-            SaveImageThumbnailUseCase(thumbnailRepository),
-            DeleteThumbnailUseCase(thumbnailRepository),
             mappers
         )
-    }
-
-    @After
-    fun tearDown() {
-        thumbnailRepository.deleteAllFiles()
     }
 
     @Test
@@ -117,7 +105,8 @@ class EditSegmentViewModelTest {
     @Test
     fun updatesImage_onRemove() = runTest {
         // Given - wheel segment with thumbnail
-        wheelSegmentRepository.add(EmptyWheelSegment.copy(thumbnailPath = "path/to/thumbnail.png"))
+        val wheelSegment = EmptyWheelSegment.copy(thumbnail = Image("id1", ByteArray(4)))
+        wheelSegmentRepository.add(wheelSegment)
 
         // When - on remove thumbnail
         viewModel.onEvent(EditSegmentUiEvent.RemoveImage)

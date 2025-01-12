@@ -29,7 +29,7 @@ class MappersTest {
             id = 5,
             title = "Some title",
             description = "Some description",
-            thumbnailPath = null,
+            thumbnail = null,
             customColor = 0x80FAFAFA
         )
 

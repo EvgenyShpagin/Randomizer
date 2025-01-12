@@ -4,13 +4,13 @@ data class WheelSegment(
     val id: Int,
     val title: String,
     val description: String,
-    val thumbnailPath: String?,
+    val thumbnail: Image?,
     val customColor: Long?
 )
 
 fun WheelSegment.contentEquals(other: WheelSegment): Boolean {
     return this.title == other.title
             && this.description == other.description
-            && this.thumbnailPath == other.thumbnailPath
+            && this.thumbnail == other.thumbnail
             && this.customColor == other.customColor
 }

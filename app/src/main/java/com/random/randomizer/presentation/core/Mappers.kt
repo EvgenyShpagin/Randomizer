@@ -1,15 +1,17 @@
 package com.random.randomizer.presentation.core
 
+import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.util.decodeFile
 import javax.inject.Inject
 
 interface CoreMappers {
     fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState
-    fun toPresentation(imagePath: String): ImageBitmap?
-    fun toDomain(wheelSegmentUiState: WheelSegmentUiState, thumbnailPath: String?): WheelSegment
+    fun toPresentation(thumbnail: Image): ImageBitmap?
+    fun toDomain(wheelSegmentUiState: WheelSegmentUiState, thumbnail: Image?): WheelSegment
     fun toDomain(color: Color): Long
 }
 
@@ -20,24 +22,25 @@ class CoreMappersImpl @Inject constructor() : CoreMappers {
             id = wheelSegment.id,
             title = wheelSegment.title,
             description = wheelSegment.description,
-            image = wheelSegment.thumbnailPath?.let { toPresentation(thumbnailPath = it) },
+            image = wheelSegment.thumbnail?.let { toPresentation(thumbnail = it) },
             customColor = wheelSegment.customColor?.let { Color(it) }
         )
     }
 
-    override fun toPresentation(thumbnailPath: String): ImageBitmap? {
-        return ImageBitmap.decodeFile(thumbnailPath)
+    override fun toPresentation(thumbnail: Image): ImageBitmap? {
+        return BitmapFactory.decodeByteArray(thumbnail.data, 0, thumbnail.data.size)
+            ?.asImageBitmap()
     }
 
     override fun toDomain(
         wheelSegmentUiState: WheelSegmentUiState,
-        thumbnailPath: String?
+        thumbnail: Image?
     ): WheelSegment {
         return WheelSegment(
             id = wheelSegmentUiState.id,
             title = wheelSegmentUiState.title,
             description = wheelSegmentUiState.description,
-            thumbnailPath = thumbnailPath,
+            thumbnail = thumbnail,
             customColor = wheelSegmentUiState.customColor?.let { toDomain(color = it) }
         )
     }
