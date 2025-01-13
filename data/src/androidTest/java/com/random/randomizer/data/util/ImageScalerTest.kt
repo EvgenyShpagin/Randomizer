@@ -1,16 +1,15 @@
-package com.random.randomizer.data.source
+package com.random.randomizer.data.util
 
 import android.graphics.Bitmap
 import android.util.Size
-import com.random.randomizer.data.util.ImageScalerImpl
-import com.random.randomizer.data.util.toBitmap
-import com.random.randomizer.data.util.toByteArray
+import androidx.test.filters.SmallTest
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.util.ImageScaler
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Test
 
+@SmallTest
 class ImageScalerTest {
 
     // Subject under test
