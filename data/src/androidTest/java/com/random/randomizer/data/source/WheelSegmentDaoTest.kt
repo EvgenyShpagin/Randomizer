@@ -3,6 +3,7 @@ package com.random.randomizer.data.source
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.filters.SmallTest
+import com.random.randomizer.domain.model.Image
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.flow.first
@@ -32,7 +33,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -52,7 +53,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -72,7 +73,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -82,7 +83,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 2",
             description = "Description 2",
-            thumbnailId = "thumbnail2.png",
+            thumbnail = "thumbnail2.png".asImage(),
             customColor = null
         )
         database.wheelSegmentDao.upsert(newWheelSegment)
@@ -101,7 +102,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -121,7 +122,7 @@ class WheelSegmentDaoTest {
             id = 0,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
 
@@ -139,7 +140,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -158,7 +159,7 @@ class WheelSegmentDaoTest {
             id = 1,
             title = "Title 1",
             description = "Description 1",
-            thumbnailId = "thumbnail.png",
+            thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
         database.wheelSegmentDao.upsert(wheelSegment)
@@ -169,5 +170,9 @@ class WheelSegmentDaoTest {
         // Then - verify got inserted wheel segment
         assertEquals(1, firstObservedList.count())
         assertEquals(wheelSegment, firstObservedList.single())
+    }
+
+    private fun String.asImage(): Image {
+        return Image(id = this, byteArrayOf())
     }
 }

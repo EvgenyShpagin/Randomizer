@@ -2,6 +2,7 @@ package com.random.randomizer.data.source
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.random.randomizer.domain.model.Image
 
 @Entity(tableName = "wheel_segment")
 data class WheelSegment(
@@ -9,6 +10,6 @@ data class WheelSegment(
     val id: Int,
     val title: String,
     val description: String,
-    val thumbnailId: String?,
+    val thumbnail: Image?,
     val customColor: Long?
 )
