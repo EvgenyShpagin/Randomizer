@@ -29,11 +29,6 @@ class ImageScalerImpl @Inject constructor() : ImageScaler {
         return image.copy(data = scaledImageBitmap.toByteArray())
     }
 
-    //TODO : mb reuse?
-    private fun Image.toBitmap(): Bitmap {
-        return BitmapFactory.decodeByteArray(data, 0, data.size)
-    }
-
     private fun Bitmap.toByteArray(): ByteArray {
         val outputStream = ByteArrayOutputStream()
         compress(Bitmap.CompressFormat.PNG, 100, outputStream)

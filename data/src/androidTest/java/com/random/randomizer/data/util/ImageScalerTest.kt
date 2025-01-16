@@ -22,7 +22,7 @@ class ImageScalerTest {
 
         // When - invoked with correct data
         val actualImage = imageScaler.scale(image, 100)
-        val actualBitmap = actualImage.data.toBitmap()
+        val actualBitmap = actualImage.toBitmap()
 
         // Then - verify bitmap is non-null and scaled to 1/5
         assertNotNull(actualImage)
@@ -40,7 +40,7 @@ class ImageScalerTest {
 
         // When - invoked with correct Bitmap and enlarged side size
         val actualImage = imageScaler.scale(image, 2000)
-        val actualBitmap = actualImage.data.toBitmap()
+        val actualBitmap = actualImage.toBitmap()
 
         // Then - verify bitmap is non-null and scaled to 1/5
         assertNotNull(actualBitmap)
@@ -58,7 +58,7 @@ class ImageScalerTest {
 
         // When - invoked with correct Bitmap and reduced side size
         val actualImage = imageScaler.scale(image, 500)
-        val actualBitmap = actualImage.data.toBitmap()
+        val actualBitmap = actualImage.toBitmap()
 
         // Then - verify bitmap is non-null and scaled to 1/5
         assertNotNull(actualBitmap)
