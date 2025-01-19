@@ -50,6 +50,26 @@ class WheelSegmentDataSourceTest {
         assertEquals(wheelSegment, loadedWheelSegment)
     }
 
+    @Test
+    fun getAll_returnsWheelSegments_whenExist() = runTest {
+        // Given - insert a wheel segment
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        // When - get all wheel segment
+        val loadedWheelSegments = dataSource.getAll()
+
+        // Then - the loaded wheel segment is equal to the expected
+        assertEquals(1, loadedWheelSegments.count())
+        assertEquals(wheelSegment, loadedWheelSegments.single())
+    }
+
     private fun createImage(): Image {
         val bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
         return Image(id = "image.png", data = bitmap.toByteArray())
