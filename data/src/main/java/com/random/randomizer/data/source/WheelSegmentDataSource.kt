@@ -15,12 +15,16 @@ class WheelSegmentDataSource(
     private val imageSaveDirectory = context.filesDir
 
     suspend fun getById(id: Int): WheelSegment? {
-        val wheelSegment = wheelSegmentDao.getById(id) ?: return null
-        if (wheelSegment.thumbnail == null) {
-            return wheelSegment
+        val wheelSegment = wheelSegmentDao.getById(id)
+        return wheelSegment?.withThumbnail()
+    }
+
+    private fun WheelSegment.withThumbnail(): WheelSegment {
+        if (thumbnail == null) {
+            return this
         } else {
-            val thumbnail = getThumbnail(wheelSegment.thumbnail.id)
-            return wheelSegment.copy(thumbnail = thumbnail)
+            val thumbnail = getThumbnail(thumbnail.id)
+            return copy(thumbnail = thumbnail)
         }
     }
 
