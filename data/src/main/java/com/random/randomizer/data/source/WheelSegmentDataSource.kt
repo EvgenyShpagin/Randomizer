@@ -109,6 +109,12 @@ class WheelSegmentDataSource(
         return false
     }
 
+    suspend fun getAll(): List<WheelSegment> {
+        return wheelSegmentDao.getAll().map { wheelSegment ->
+            wheelSegment.withThumbnail()
+        }
+    }
+
     private companion object {
         val ProhibitedSymbolRegex = "[\\\\/:*?\"<>|]".toRegex()
     }
