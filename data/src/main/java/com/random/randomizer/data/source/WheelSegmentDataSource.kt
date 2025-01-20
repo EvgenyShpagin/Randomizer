@@ -50,8 +50,8 @@ class WheelSegmentDataSource(
             }
 
             isThumbnailRemoved(currentWheelSegment, wheelSegment) -> {
-                deleteThumbnail(currentWheelSegment!!.thumbnail!!)
                 wheelSegmentDao.upsert(wheelSegment)
+                    .also { deleteThumbnailIfUnused(currentWheelSegment!!.thumbnail!!) }
             }
 
             else -> wheelSegmentDao.upsert(wheelSegment)
@@ -85,10 +85,6 @@ class WheelSegmentDataSource(
         } else {
             null
         }
-    }
-
-    private fun deleteThumbnail(thumbnail: Image): Boolean {
-        return File(imageSaveDirectory, thumbnail.id).delete()
     }
 
     private fun String.withExtension(): String {
@@ -126,6 +122,10 @@ class WheelSegmentDataSource(
         if (!thumbnailIsUsed) {
             deleteThumbnail(thumbnail)
         }
+    }
+
+    private fun deleteThumbnail(thumbnail: Image): Boolean {
+        return File(imageSaveDirectory, thumbnail.id).delete()
     }
 
     private companion object {
