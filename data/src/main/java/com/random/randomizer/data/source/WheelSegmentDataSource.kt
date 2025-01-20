@@ -115,6 +115,19 @@ class WheelSegmentDataSource(
         }
     }
 
+    suspend fun deleteById(id: Int) {
+        val wheelSegment = getById(id) ?: return
+        wheelSegmentDao.deleteById(id)
+        wheelSegment.thumbnail?.let { deleteThumbnailIfUnused(it) }
+    }
+
+    private suspend fun deleteThumbnailIfUnused(thumbnail: Image) {
+        val thumbnailIsUsed = getAll().any { it.thumbnail?.id == thumbnail.id }
+        if (!thumbnailIsUsed) {
+            deleteThumbnail(thumbnail)
+        }
+    }
+
     private companion object {
         val ProhibitedSymbolRegex = "[\\\\/:*?\"<>|]".toRegex()
     }
