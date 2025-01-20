@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
 import com.random.randomizer.data.util.toBitmap
 import com.random.randomizer.domain.model.Image
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
 
@@ -126,6 +128,12 @@ class WheelSegmentDataSource(
 
     private fun deleteThumbnail(thumbnail: Image): Boolean {
         return File(imageSaveDirectory, thumbnail.id).delete()
+    }
+
+    fun observeById(id: Int): Flow<WheelSegment> {
+        return wheelSegmentDao.observeById(id).map { wheelSegment ->
+            wheelSegment.withThumbnail()
+        }
     }
 
     private companion object {
