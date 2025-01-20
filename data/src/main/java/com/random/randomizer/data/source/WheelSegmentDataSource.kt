@@ -136,6 +136,14 @@ class WheelSegmentDataSource(
         }
     }
 
+    fun observeAll(): Flow<List<WheelSegment>> {
+        return wheelSegmentDao.observeAll().map { wheelSegments ->
+            wheelSegments.map { wheelSegment ->
+                wheelSegment.withThumbnail()
+            }
+        }
+    }
+
     private companion object {
         val ProhibitedSymbolRegex = "[\\\\/:*?\"<>|]".toRegex()
     }
