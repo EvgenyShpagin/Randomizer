@@ -1,16 +1,20 @@
 package com.random.randomizer.data.source
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.random.randomizer.data.util.toByteArray
 import com.random.randomizer.domain.model.Image
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 class WheelSegmentDataSourceTest {
 
@@ -118,8 +122,84 @@ class WheelSegmentDataSourceTest {
         assertNotEquals(wheelSegment.id, id)
     }
 
+    @Test
+    fun deleteById_deletesWheelSegment_whenExists() = runTest {
+        // Given - insert a wheel segment
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        // When - deleting the wheel segment by id
+        dataSource.deleteById(wheelSegment.id)
+
+        // Then - the list is empty
+        val wheelSegments = dataSource.getAll()
+        assertEquals(true, wheelSegments.isEmpty())
+    }
+
+    @Test // Implementation details test
+    fun deleteById_deletesThumbnail_whenUsedByOneSegment() = runTest {
+        // Given - insert a wheel segment
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        val savedWheelSegment = dataSource.getById(wheelSegment.id)
+
+        // When - deleting the wheel segment by id
+        dataSource.deleteById(wheelSegment.id)
+
+        val thumbnailFilename = savedWheelSegment!!.thumbnail!!.id
+        val thumbnailsDir = getApplicationContext<Context>().filesDir
+        val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
+
+        // Then - verify thumbnail has been deleted
+        assertFalse(thumbnailFile.exists())
+    }
+
+    @Test // Implementation details test
+    fun deleteById_doesNotDeleteThumbnail_whenUsedByMultipleSegments() = runTest {
+        // Given - insert wheel segments
+        val wheelSegments = List(2) { i ->
+            WheelSegment(
+                id = i + 1,
+                title = "Title $i",
+                description = "Description $i",
+                thumbnail = createImage(),
+                customColor = 0x112233
+            )
+        }
+        dataSource.upsertMultiple(wheelSegments)
+
+        val savedWheelSegments = dataSource.getAll()
+
+        // When - deleting the wheel segment by id
+        dataSource.deleteById(savedWheelSegments.first().id)
+
+        val thumbnailFilename = savedWheelSegments.first().thumbnail!!.id
+        val thumbnailsDir = getApplicationContext<Context>().filesDir
+        val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
+
+        // Then - verify thumbnail has not been deleted
+        assertTrue(thumbnailFile.exists())
+    }
+
     private fun createImage(): Image {
         val bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
         return Image(id = "image.png", data = bitmap.toByteArray())
+    }
+
+    private suspend fun WheelSegmentDataSource.upsertMultiple(wheelSegments: List<WheelSegment>) {
+        wheelSegments.forEach { upsert(it) }
     }
 }
