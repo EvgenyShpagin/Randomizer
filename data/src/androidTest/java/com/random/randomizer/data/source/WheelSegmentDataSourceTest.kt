@@ -267,6 +267,26 @@ class WheelSegmentDataSourceTest {
         assertEquals(wheelSegment, observed)
     }
 
+    @Test
+    fun observeAll_returnsWheelSegment_whenExists() = runTest {
+        // Given - insert a wheel segment
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        // When - observe given wheel segment
+        val firstObservedList = dataSource.observeAll().first()
+
+        // Then - verify got inserted wheel segment
+        assertEquals(1, firstObservedList.count())
+        assertEquals(wheelSegment, firstObservedList.single())
+    }
+
     private fun createImage(): Image {
         val bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
         return Image(id = "image.png", data = bitmap.toByteArray())
