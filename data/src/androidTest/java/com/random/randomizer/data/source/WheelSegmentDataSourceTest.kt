@@ -123,6 +123,59 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
+    fun upsert_deletesThumbnail_whenRemovedAndUsedBySingleSegment() = runTest {
+        // Given - insert a wheel segment with thumbnail
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        val thumbnailFilename = dataSource.getById(wheelSegment.id)!!.thumbnail!!.id
+
+        // When - update wheel segment by removing the thumbnail
+        val updatedWheelSegment = wheelSegment.copy(thumbnail = null)
+        dataSource.upsert(updatedWheelSegment)
+
+        val thumbnailsDir = getApplicationContext<Context>().filesDir
+        val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
+
+        // Then - verify thumbnail has been deleted
+        assertFalse(thumbnailFile.exists())
+    }
+
+    @Test
+    fun upsert_keepsThumbnail_whenRemovedAndUsedByMultipleSegments() = runTest {
+        // Given - insert wheel segments
+        val wheelSegments = List(2) { i ->
+            WheelSegment(
+                id = i + 1,
+                title = "Title $i",
+                description = "Description $i",
+                thumbnail = createImage(),
+                customColor = 0x112233
+            )
+        }
+        dataSource.upsertMultiple(wheelSegments)
+
+        val savedWheelSegments = dataSource.getAll()
+        val thumbnailFilename = savedWheelSegments.first().thumbnail!!.id
+
+        // When - update the first wheel segment by removing the thumbnail
+        val updatedWheelSegment = savedWheelSegments.first().copy(thumbnail = null)
+        dataSource.upsert(updatedWheelSegment)
+
+        val thumbnailsDir = getApplicationContext<Context>().filesDir
+        val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
+
+        // Then - verify thumbnail has not been deleted
+        assertTrue(thumbnailFile.exists())
+    }
+
+    @Test
     fun deleteById_deletesWheelSegment_whenExists() = runTest {
         // Given - insert a wheel segment
         val wheelSegment = WheelSegment(
