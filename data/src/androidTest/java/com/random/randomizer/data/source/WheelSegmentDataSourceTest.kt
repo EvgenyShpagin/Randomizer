@@ -247,6 +247,25 @@ class WheelSegmentDataSourceTest {
         assertTrue(thumbnailFile.exists())
     }
 
+    @Test
+    fun observeById_returnsWheelSegment_whenExists() = runTest {
+        // Given - insert a wheel segment
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.upsert(wheelSegment)
+
+        // When - observe given wheel segment
+        val observed = dataSource.observeById(wheelSegment.id).first()
+
+        // Then - verify got inserted wheel segment
+        assertEquals(wheelSegment, observed)
+    }
+
     private fun createImage(): Image {
         val bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
         return Image(id = "image.png", data = bitmap.toByteArray())
