@@ -39,7 +39,9 @@ class WheelSegmentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun get(segmentId: Int): WheelSegment? {
-        TODO("Not yet implemented")
+        return withContext(ioDispatcher) {
+            dataSource.getById(segmentId)?.toDomain()
+        }
     }
 
     override fun getStream(segmentId: Int): Flow<WheelSegment?> {
