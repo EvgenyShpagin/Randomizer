@@ -39,7 +39,7 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
-    fun upsertAndGetById() = runTest {
+    fun insertAndGetById() = runTest {
         // Given - wheel segment in database
         val wheelSegment = WheelSegment(
             id = 1,
@@ -48,7 +48,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         // When - get the wheel segment by id
         val loadedWheelSegment = dataSource.getById(wheelSegment.id)
@@ -67,7 +67,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         // When - get all wheel segment
         val loadedWheelSegments = dataSource.getAll()
@@ -78,7 +78,7 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
-    fun upsert_replacesWheelSegment_onConflict() = runTest {
+    fun update_replacesWheelSegment_onConflict() = runTest {
         // Given - insert a wheel segment
         val wheelSegment = WheelSegment(
             id = 1,
@@ -87,9 +87,9 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
-        // When - a wheel segment with the same id is inserted
+        // When - a wheel segment is updated
         val newWheelSegment = WheelSegment(
             id = 1,
             title = "Title 2",
@@ -97,7 +97,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = null
         )
-        dataSource.upsert(newWheelSegment)
+        dataSource.update(newWheelSegment)
 
         // Then - the loaded wheel segment is equal to the new
         val loadedWheelSegment = dataSource.getById(wheelSegment.id)
@@ -106,7 +106,7 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
-    fun upsert_returnsNewId_whenWheelSegmentIdWas0() = runTest {
+    fun insert_returnsNewId_whenWheelSegmentIdWas0() = runTest {
         // Given - insert a wheel segment with id = 0
         val wheelSegment = WheelSegment(
             id = 0,
@@ -117,14 +117,14 @@ class WheelSegmentDataSourceTest {
         )
 
         // When - save wheel segment
-        val id = database.wheelSegmentDao.upsert(wheelSegment)
+        val id = database.wheelSegmentDao.insert(wheelSegment)
 
         // Then - wheel segment's id was updated
         assertNotEquals(wheelSegment.id, id)
     }
 
     @Test
-    fun upsert_deletesThumbnail_whenRemovedAndUsedBySingleSegment() = runTest {
+    fun update_deletesThumbnail_whenRemovedAndUsedBySingleSegment() = runTest {
         // Given - insert a wheel segment with thumbnail
         val wheelSegment = WheelSegment(
             id = 1,
@@ -133,13 +133,13 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         val thumbnailFilename = dataSource.getById(wheelSegment.id)!!.thumbnail!!.id
 
         // When - update wheel segment by removing the thumbnail
         val updatedWheelSegment = wheelSegment.copy(thumbnail = null)
-        dataSource.upsert(updatedWheelSegment)
+        dataSource.update(updatedWheelSegment)
 
         val thumbnailsDir = getApplicationContext<Context>().filesDir
         val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
@@ -149,7 +149,7 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
-    fun upsert_keepsThumbnail_whenRemovedAndUsedByMultipleSegments() = runTest {
+    fun update_keepsThumbnail_whenRemovedAndUsedByMultipleSegments() = runTest {
         // Given - insert wheel segments
         val wheelSegments = List(2) { i ->
             WheelSegment(
@@ -160,14 +160,14 @@ class WheelSegmentDataSourceTest {
                 customColor = 0x112233
             )
         }
-        dataSource.upsertMultiple(wheelSegments)
+        dataSource.insertMultiple(wheelSegments)
 
         val savedWheelSegments = dataSource.getAll()
         val thumbnailFilename = savedWheelSegments.first().thumbnail!!.id
 
         // When - update the first wheel segment by removing the thumbnail
         val updatedWheelSegment = savedWheelSegments.first().copy(thumbnail = null)
-        dataSource.upsert(updatedWheelSegment)
+        dataSource.update(updatedWheelSegment)
 
         val thumbnailsDir = getApplicationContext<Context>().filesDir
         val thumbnailFile = File(thumbnailsDir, thumbnailFilename)
@@ -186,7 +186,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         // When - deleting the wheel segment by id
         dataSource.deleteById(wheelSegment.id)
@@ -206,7 +206,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         val savedWheelSegment = dataSource.getById(wheelSegment.id)
 
@@ -233,7 +233,7 @@ class WheelSegmentDataSourceTest {
                 customColor = 0x112233
             )
         }
-        dataSource.upsertMultiple(wheelSegments)
+        dataSource.insertMultiple(wheelSegments)
 
         val savedWheelSegments = dataSource.getAll()
 
@@ -258,7 +258,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         // When - observe given wheel segment
         val observed = dataSource.observeById(wheelSegment.id).first()
@@ -277,7 +277,7 @@ class WheelSegmentDataSourceTest {
             thumbnail = createImage(),
             customColor = 0x112233
         )
-        dataSource.upsert(wheelSegment)
+        dataSource.insert(wheelSegment)
 
         // When - observe given wheel segment
         val firstObservedList = dataSource.observeAll().first()
@@ -292,7 +292,7 @@ class WheelSegmentDataSourceTest {
         return Image(id = "image.png", data = bitmap.toByteArray())
     }
 
-    private suspend fun WheelSegmentDataSourceImpl.upsertMultiple(wheelSegments: List<WheelSegment>) {
-        wheelSegments.forEach { upsert(it) }
+    private suspend fun WheelSegmentDataSourceImpl.insertMultiple(wheelSegments: List<WheelSegment>) {
+        wheelSegments.forEach { insert(it) }
     }
 }

@@ -27,7 +27,7 @@ class WheelSegmentDaoTest {
     }
 
     @Test
-    fun upsertAndGetById() = runTest {
+    fun insertAndGetById() = runTest {
         // Given - insert a wheel segment
         val wheelSegment = WheelSegment(
             id = 1,
@@ -36,7 +36,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
         // When - get the wheel segment by id
         val loadedWheelSegment = database.wheelSegmentDao.getById(wheelSegment.id)
@@ -56,7 +56,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
         // When - get all wheel segment
         val loadedWheelSegments = database.wheelSegmentDao.getAll()
@@ -67,7 +67,7 @@ class WheelSegmentDaoTest {
     }
 
     @Test
-    fun upsert_replacesWheelSegment_onConflict() = runTest {
+    fun update_replacesWheelSegment_whenExists() = runTest {
         // Given - insert a wheel segment
         val wheelSegment = WheelSegment(
             id = 1,
@@ -76,9 +76,9 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
-        // When - a wheel segment with the same id is inserted
+        // When - update the wheel segment
         val newWheelSegment = WheelSegment(
             id = 1,
             title = "Title 2",
@@ -86,7 +86,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail2.png".asImage(),
             customColor = null
         )
-        database.wheelSegmentDao.upsert(newWheelSegment)
+        database.wheelSegmentDao.update(newWheelSegment)
 
         // Then - the loaded wheel segment is equal to the new
         val loadedWheelSegment = database.wheelSegmentDao.getById(wheelSegment.id)
@@ -105,7 +105,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
         // When - deleting the wheel segment by id
         database.wheelSegmentDao.deleteById(wheelSegment.id)
@@ -127,7 +127,7 @@ class WheelSegmentDaoTest {
         )
 
         // When - save wheel segment
-        val id = database.wheelSegmentDao.upsert(wheelSegment)
+        val id = database.wheelSegmentDao.insert(wheelSegment)
 
         // Then - wheel segment's id was updated
         assertNotEquals(wheelSegment.id, id)
@@ -143,7 +143,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
         // When - observe given wheel segment
         val observed = database.wheelSegmentDao.observeById(wheelSegment.id).first()
@@ -162,7 +162,7 @@ class WheelSegmentDaoTest {
             thumbnail = "thumbnail.png".asImage(),
             customColor = 0x112233
         )
-        database.wheelSegmentDao.upsert(wheelSegment)
+        database.wheelSegmentDao.insert(wheelSegment)
 
         // When - observe given wheel segment
         val firstObservedList = database.wheelSegmentDao.observeAll().first()

@@ -18,10 +18,10 @@ class WheelSegmentDataSourceImpl(
 
     override suspend fun getById(id: Int): WheelSegment? {
         val wheelSegment = wheelSegmentDao.getById(id)
-        return wheelSegment?.withThumbnail()
+        return wheelSegment?.withLoadedThumbnail()
     }
 
-    private fun WheelSegment.withThumbnail(): WheelSegment {
+    private fun WheelSegment.withLoadedThumbnail(): WheelSegment {
         if (thumbnail == null) {
             return this
         } else {
@@ -40,23 +40,41 @@ class WheelSegmentDataSourceImpl(
         }
     }
 
-    override suspend fun upsert(wheelSegment: WheelSegment): Long {
-        val currentWheelSegment = getById(wheelSegment.id)
+    override suspend fun insert(wheelSegment: WheelSegment): Long {
+        return wheelSegmentDao.insert(
+            wheelSegment.withoutId().withSavedThumbnail()
+        )
+    }
 
-        return when {
+    private fun WheelSegment.withoutId(): WheelSegment {
+        return if (id == 0) {
+            this
+        } else {
+            copy(id = 0)
+        }
+    }
+
+    private fun WheelSegment.withSavedThumbnail(): WheelSegment {
+        if (thumbnail == null) return this
+        val savedThumbnail = saveThumbnail(thumbnail)
+            ?: throw IllegalStateException("Failed to save image")
+        return copy(thumbnail = savedThumbnail)
+    }
+
+    override suspend fun update(wheelSegment: WheelSegment) {
+        val currentWheelSegment = getById(wheelSegment.id) ?: return
+
+        when {
             isThumbnailChanged(currentWheelSegment, wheelSegment) -> {
-                val savedThumbnail = saveThumbnail(wheelSegment.thumbnail!!)
-                    ?: throw IllegalStateException("Failed to save image")
-                val wheelSegmentWithSavedThumbnail = wheelSegment.copy(thumbnail = savedThumbnail)
-                wheelSegmentDao.upsert(wheelSegmentWithSavedThumbnail)
+                wheelSegmentDao.update(wheelSegment.withSavedThumbnail())
             }
 
             isThumbnailRemoved(currentWheelSegment, wheelSegment) -> {
-                wheelSegmentDao.upsert(wheelSegment)
-                    .also { deleteThumbnailIfUnused(currentWheelSegment!!.thumbnail!!) }
+                wheelSegmentDao.update(wheelSegment)
+                deleteThumbnailIfUnused(currentWheelSegment.thumbnail!!)
             }
 
-            else -> wheelSegmentDao.upsert(wheelSegment)
+            else -> wheelSegmentDao.update(wheelSegment)
         }
     }
 
@@ -68,11 +86,11 @@ class WheelSegmentDataSourceImpl(
     }
 
     private fun isThumbnailChanged(
-        currentWheelSegment: WheelSegment?,
+        currentWheelSegment: WheelSegment,
         newWheelSegment: WheelSegment
     ): Boolean {
         return newWheelSegment.thumbnail != null &&
-                currentWheelSegment?.thumbnail != newWheelSegment.thumbnail
+                currentWheelSegment.thumbnail != newWheelSegment.thumbnail
     }
 
     private fun saveThumbnail(image: Image): Image? {
@@ -109,7 +127,7 @@ class WheelSegmentDataSourceImpl(
 
     override suspend fun getAll(): List<WheelSegment> {
         return wheelSegmentDao.getAll().map { wheelSegment ->
-            wheelSegment.withThumbnail()
+            wheelSegment.withLoadedThumbnail()
         }
     }
 
@@ -132,14 +150,14 @@ class WheelSegmentDataSourceImpl(
 
     override fun observeById(id: Int): Flow<WheelSegment> {
         return wheelSegmentDao.observeById(id).map { wheelSegment ->
-            wheelSegment.withThumbnail()
+            wheelSegment.withLoadedThumbnail()
         }
     }
 
     override fun observeAll(): Flow<List<WheelSegment>> {
         return wheelSegmentDao.observeAll().map { wheelSegments ->
             wheelSegments.map { wheelSegment ->
-                wheelSegment.withThumbnail()
+                wheelSegment.withLoadedThumbnail()
             }
         }
     }
