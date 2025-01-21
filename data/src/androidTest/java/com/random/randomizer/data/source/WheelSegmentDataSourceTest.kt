@@ -20,7 +20,7 @@ import java.io.File
 class WheelSegmentDataSourceTest {
 
     // Subject under test
-    lateinit var dataSource: WheelSegmentDataSource
+    lateinit var dataSource: WheelSegmentDataSourceImpl
 
     // using an in-memory database to store data while process is running
     private lateinit var database: WheelSegmentDatabase
@@ -32,7 +32,7 @@ class WheelSegmentDataSourceTest {
             WheelSegmentDatabase::class.java
         ).allowMainThreadQueries().build()
 
-        dataSource = WheelSegmentDataSource(
+        dataSource = WheelSegmentDataSourceImpl(
             context = getApplicationContext(),
             wheelSegmentDao = database.wheelSegmentDao
         )
@@ -292,7 +292,7 @@ class WheelSegmentDataSourceTest {
         return Image(id = "image.png", data = bitmap.toByteArray())
     }
 
-    private suspend fun WheelSegmentDataSource.upsertMultiple(wheelSegments: List<WheelSegment>) {
+    private suspend fun WheelSegmentDataSourceImpl.upsertMultiple(wheelSegments: List<WheelSegment>) {
         wheelSegments.forEach { upsert(it) }
     }
 }
