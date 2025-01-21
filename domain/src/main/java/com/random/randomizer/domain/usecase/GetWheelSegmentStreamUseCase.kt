@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetWheelSegmentStreamUseCase @Inject constructor(
     private val wheelSegmentRepository: WheelSegmentRepository
 ) {
-    operator fun invoke(wheelSegmentId: Int): Flow<WheelSegment?> {
+    operator fun invoke(wheelSegmentId: Int): Flow<WheelSegment> {
         return wheelSegmentRepository.getStream(wheelSegmentId)
     }
 }

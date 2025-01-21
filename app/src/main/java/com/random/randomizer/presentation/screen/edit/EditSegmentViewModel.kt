@@ -42,8 +42,7 @@ class EditSegmentViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun handleWheelSegment(wheelSegment: WheelSegment?) {
-        if (wheelSegment == null) return
+    private fun handleWheelSegment(wheelSegment: WheelSegment) {
         updateState { mappers.toPresentation(wheelSegment) }
     }
 
