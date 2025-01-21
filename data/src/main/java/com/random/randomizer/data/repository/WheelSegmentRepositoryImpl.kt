@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -49,7 +50,11 @@ class WheelSegmentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun update(segment: WheelSegment) {
-        TODO("Not yet implemented")
+        withContext(ioDispatcher) {
+            externalScope.launch {
+                dataSource.update(segment.toData())
+            }.join()
+        }
     }
 
     override suspend fun deleteById(segmentId: Int) {
