@@ -2,6 +2,7 @@ package com.random.randomizer.data.repository
 
 import com.random.randomizer.data.source.FakeWheelSegmentDataSource
 import com.random.randomizer.data.source.WheelSegmentDataSource
+import com.random.randomizer.data.util.toData
 import com.random.randomizer.data.util.toDomain
 import com.random.randomizer.domain.model.WheelSegment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,4 +63,23 @@ class WheelSegmentRepositoryTest {
         // Then - verify returned id has changed
         assertNotEquals(existingSegment.id, newSegmentId)
     }
+
+    @Test
+    fun getAll_returnsAllSegments_whenExist() = testScope.runTest {
+        // Given - multiple saved segments
+        repeat(5) { i ->
+            val wheelSegment = WheelSegment(i, "Title $i", "", null, null).toData()
+            dataSource.insert(wheelSegment)
+        }
+
+        // When - getAll called
+        val wheelSegments = repository.getAll()
+
+        // Then - verify the segments are the same
+        assertEquals(
+            dataSource.getAll().toDomain(),
+            wheelSegments
+        )
+    }
+
 }
