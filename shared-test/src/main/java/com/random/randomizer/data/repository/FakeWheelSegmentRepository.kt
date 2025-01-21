@@ -1,4 +1,4 @@
-package com.random.randomizer.data
+package com.random.randomizer.data.repository
 
 import androidx.annotation.VisibleForTesting
 import com.random.randomizer.domain.model.WheelSegment

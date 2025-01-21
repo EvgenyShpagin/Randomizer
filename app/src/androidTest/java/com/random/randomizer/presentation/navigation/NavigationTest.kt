@@ -12,7 +12,7 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.filters.LargeTest
 import com.random.randomizer.HiltTestActivity
 import com.random.randomizer.R
-import com.random.randomizer.data.addMultiple
+import com.random.randomizer.data.repository.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.test_util.stringResource

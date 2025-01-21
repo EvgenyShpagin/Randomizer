@@ -1,7 +1,7 @@
 package com.random.randomizer.domain.usecase
 
-import com.random.randomizer.data.FakeWheelSegmentRepository
-import com.random.randomizer.data.addMultiple
+import com.random.randomizer.data.repository.FakeWheelSegmentRepository
+import com.random.randomizer.data.repository.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import junit.framework.TestCase.assertEquals

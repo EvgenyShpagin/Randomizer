@@ -3,7 +3,7 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import com.random.randomizer.MainCoroutineRule
-import com.random.randomizer.data.FakeWheelSegmentRepository
+import com.random.randomizer.data.repository.FakeWheelSegmentRepository
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase

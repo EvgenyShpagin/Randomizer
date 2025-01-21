@@ -1,6 +1,6 @@
 package com.random.randomizer.di
 
-import com.random.randomizer.data.FakeWheelSegmentRepository
+import com.random.randomizer.data.repository.FakeWheelSegmentRepository
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.Binds
 import dagger.Module
