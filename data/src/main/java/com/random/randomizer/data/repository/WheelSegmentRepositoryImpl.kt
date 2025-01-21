@@ -4,6 +4,7 @@ import com.random.randomizer.data.di.ApplicationScope
 import com.random.randomizer.data.di.IoDispatcher
 import com.random.randomizer.data.source.WheelSegmentDataSource
 import com.random.randomizer.data.util.toData
+import com.random.randomizer.data.util.toDomain
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,7 +29,9 @@ class WheelSegmentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAll(): List<WheelSegment> {
-        TODO("Not yet implemented")
+        return withContext(ioDispatcher) {
+            dataSource.getAll().toDomain()
+        }
     }
 
     override fun getAllStream(): Flow<List<WheelSegment>> {
