@@ -141,4 +141,19 @@ class WheelSegmentRepositoryTest {
         assertEquals(expected, actual)
     }
 
+    @Test
+    fun update_modifiesWheelSegment_whenExists() = testScope.runTest {
+        // Given - saved wheel segment
+        val savedWheelSegment = WheelSegment(1, "Title", "", null, null)
+        dataSource.insert(savedWheelSegment.toData())
+
+        // When - after update is called
+        val changedWheelSegment = savedWheelSegment.copy(title = "Other Title")
+        repository.update(changedWheelSegment)
+
+        // Then - verify the segment has been changed
+        val loadedWheelSegment = repository.get(1)
+        assertEquals(changedWheelSegment, loadedWheelSegment)
+    }
+
 }
