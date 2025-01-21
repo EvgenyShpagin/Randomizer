@@ -58,6 +58,10 @@ class WheelSegmentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteById(segmentId: Int) {
-        TODO("Not yet implemented")
+        withContext(ioDispatcher) {
+            externalScope.launch {
+                dataSource.deleteById(segmentId)
+            }.join()
+        }
     }
 }
