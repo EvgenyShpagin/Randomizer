@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
@@ -154,6 +155,19 @@ class WheelSegmentRepositoryTest {
         // Then - verify the segment has been changed
         val loadedWheelSegment = repository.get(1)
         assertEquals(changedWheelSegment, loadedWheelSegment)
+    }
+
+    @Test
+    fun deleteById_removesSegment_whenExists() = testScope.runTest {
+        // Given - saved wheel segment
+        val segment = WheelSegment(1, "Title", "Description", null, null)
+        dataSource.insert(segment.toData())
+
+        // When - after delete called
+        repository.deleteById(1)
+
+        // Then - verify wheel segment has been deleted
+        assertNull(dataSource.getById(1))
     }
 
 }
