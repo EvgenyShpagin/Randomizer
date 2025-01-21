@@ -127,4 +127,18 @@ class WheelSegmentRepositoryTest {
         assertEquals(null, actual)
     }
 
+    @Test
+    fun getStream_emitsSegment_whenExists() = testScope.runTest {
+        // Given - saved wheel segment
+        val wheelSegment = WheelSegment(1, "Title 0", "", null, null).toData()
+        dataSource.insert(wheelSegment)
+
+        // When - item is collected
+        val actual = repository.getStream(wheelSegment.id).first()
+
+        // Then - verify the segment is the same
+        val expected = dataSource.getById(wheelSegment.id)!!.toDomain()
+        assertEquals(expected, actual)
+    }
+
 }
