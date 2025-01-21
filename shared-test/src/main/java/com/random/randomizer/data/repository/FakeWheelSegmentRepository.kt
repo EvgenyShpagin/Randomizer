@@ -5,6 +5,7 @@ import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -70,7 +71,7 @@ class FakeWheelSegmentRepository @Inject constructor() : WheelSegmentRepository 
         return wheelSegmentList.find { segment -> segment.id == segmentId }
     }
 
-    override fun getStream(segmentId: Int): Flow<WheelSegment?> {
+    override fun getStream(segmentId: Int): Flow<WheelSegment> {
         val wheelSegment = wheelSegment
         if (wheelSegment == null || wheelSegment.id != segmentId) {
             val gotSegment = runBlocking { get(segmentId) }
@@ -80,7 +81,7 @@ class FakeWheelSegmentRepository @Inject constructor() : WheelSegmentRepository 
             }
         }
 
-        return wheelSegmentFlow
+        return wheelSegmentFlow.filterNotNull()
     }
 
     override suspend fun update(segment: WheelSegment) {

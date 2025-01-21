@@ -44,7 +44,7 @@ class WheelSegmentRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getStream(segmentId: Int): Flow<WheelSegment?> {
+    override fun getStream(segmentId: Int): Flow<WheelSegment> {
         return dataSource.observeById(segmentId).toDomain()
     }
 
