@@ -6,6 +6,7 @@ import com.random.randomizer.data.util.toData
 import com.random.randomizer.data.util.toDomain
 import com.random.randomizer.domain.model.WheelSegment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -74,6 +75,23 @@ class WheelSegmentRepositoryTest {
 
         // When - getAll called
         val wheelSegments = repository.getAll()
+
+        // Then - verify the segments are the same
+        assertEquals(
+            dataSource.getAll().toDomain(),
+            wheelSegments
+        )
+    }
+
+    @Test
+    fun getAllStream_emitsSegments_whenExist() = testScope.runTest {
+        // Given - multiple saved segments
+        repeat(5) { i ->
+            val wheelSegment = WheelSegment(i, "Title $i", "", null, null).toData()
+            dataSource.insert(wheelSegment)
+        }
+        // When - items collected
+        val wheelSegments = repository.getAllStream().first()
 
         // Then - verify the segments are the same
         assertEquals(
