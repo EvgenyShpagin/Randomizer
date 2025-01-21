@@ -3,11 +3,14 @@ package com.random.randomizer.data.repository
 import com.random.randomizer.data.di.ApplicationScope
 import com.random.randomizer.data.di.IoDispatcher
 import com.random.randomizer.data.source.WheelSegmentDataSource
+import com.random.randomizer.data.util.toData
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class WheelSegmentRepositoryImpl @Inject constructor(
@@ -17,7 +20,11 @@ class WheelSegmentRepositoryImpl @Inject constructor(
 ) : WheelSegmentRepository {
 
     override suspend fun add(segment: WheelSegment): Int {
-        TODO("Not yet implemented")
+        return withContext(ioDispatcher) {
+            externalScope.async {
+                dataSource.insert(segment.toData()).toInt()
+            }.await()
+        }
     }
 
     override suspend fun getAll(): List<WheelSegment> {
