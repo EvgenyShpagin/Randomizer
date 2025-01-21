@@ -100,4 +100,31 @@ class WheelSegmentRepositoryTest {
         )
     }
 
+    @Test
+    fun get_returnsSavedSegment_whenExists() = testScope.runTest {
+        // Given - saved wheel segment
+        val segment = WheelSegment(1, "Title", "Description", null, null)
+        dataSource.insert(segment.toData())
+
+        // When - getting segment by id
+        val actual = repository.get(1)
+
+        // Then - verify got saved wheel segment
+        val expected = dataSource.getById(1)!!.toDomain()
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun get_returnsNull_whenDoesNotExist() = testScope.runTest {
+        // Given - saved wheel segment
+        val segment = WheelSegment(1, "Title", "Description", null, null)
+        dataSource.insert(segment.toData())
+
+        // When - getting segment by id of non-existing one
+        val actual = repository.get(999)
+
+        // Then - verify got saved wheel segment
+        assertEquals(null, actual)
+    }
+
 }
