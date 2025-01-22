@@ -41,9 +41,8 @@ class WheelSegmentDataSourceImpl(
     }
 
     override suspend fun insert(wheelSegment: WheelSegment): Long {
-        return wheelSegmentDao.insert(
-            wheelSegment.withoutId().withSavedThumbnail()
-        )
+        wheelSegment.thumbnail?.let { saveThumbnail(it) }
+        return wheelSegmentDao.insert(wheelSegment.withoutId())
     }
 
     private fun WheelSegment.withoutId(): WheelSegment {
@@ -54,19 +53,13 @@ class WheelSegmentDataSourceImpl(
         }
     }
 
-    private fun WheelSegment.withSavedThumbnail(): WheelSegment {
-        if (thumbnail == null) return this
-        val savedThumbnail = saveThumbnail(thumbnail)
-            ?: throw IllegalStateException("Failed to save image")
-        return copy(thumbnail = savedThumbnail)
-    }
-
     override suspend fun update(wheelSegment: WheelSegment) {
         val currentWheelSegment = getById(wheelSegment.id) ?: return
 
         when {
             isThumbnailChanged(currentWheelSegment, wheelSegment) -> {
-                wheelSegmentDao.update(wheelSegment.withSavedThumbnail())
+                wheelSegment.thumbnail?.let { saveThumbnail(it) }
+                wheelSegmentDao.update(wheelSegment)
             }
 
             isThumbnailRemoved(currentWheelSegment, wheelSegment) -> {
@@ -93,23 +86,12 @@ class WheelSegmentDataSourceImpl(
                 currentWheelSegment.thumbnail != newWheelSegment.thumbnail
     }
 
-    private fun saveThumbnail(image: Image): Image? {
+    private fun saveThumbnail(image: Image): Boolean {
         require(!image.id.contains(ProhibitedSymbolRegex)) {
             "id must not contain prohibited symbols"
         }
         val bitmap = image.toBitmap()
-        val filename = image.id.withExtension()
-        val isSaved = saveBitmap(bitmap, filename)
-        return if (isSaved) {
-            image.copy(id = filename)
-        } else {
-            null
-        }
-    }
-
-    private fun String.withExtension(): String {
-        if (endsWith(".png")) return this
-        return "$this.png"
+        return saveBitmap(bitmap, image.id)
     }
 
     private fun saveBitmap(bitmap: Bitmap, filename: String): Boolean {
