@@ -16,6 +16,9 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.FileTime
 
 class WheelSegmentDataSourceTest {
 
@@ -249,6 +252,31 @@ class WheelSegmentDataSourceTest {
     }
 
     @Test
+    fun insert_replacesImageWithSameId_whenExists() = runTest {
+        // Given - an inserted wheel segment with thumbnail
+        val wheelSegment = WheelSegment(
+            id = 1,
+            title = "Title 1",
+            description = "Description 1",
+            thumbnail = createImage(),
+            customColor = 0x112233
+        )
+        dataSource.insert(wheelSegment)
+
+        val thumbnailFilename = wheelSegment.thumbnail!!.id
+        val thumbnailsDir = getApplicationContext<Context>().filesDir
+        val firstThumbnailCreationTime = File(thumbnailsDir, thumbnailFilename).creationTime()
+
+        // When - insert wheel segment with existing thumbnail
+        Thread.sleep(2000)
+        dataSource.insert(wheelSegment)
+
+        // Then - verify image has been replaced
+        val secondThumbnailCreationTime = File(thumbnailsDir, thumbnailFilename).creationTime()
+        assertNotEquals(firstThumbnailCreationTime, secondThumbnailCreationTime)
+    }
+
+    @Test
     fun observeById_returnsWheelSegment_whenExists() = runTest {
         // Given - insert a wheel segment
         val wheelSegment = WheelSegment(
@@ -294,5 +322,10 @@ class WheelSegmentDataSourceTest {
 
     private suspend fun WheelSegmentDataSourceImpl.insertMultiple(wheelSegments: List<WheelSegment>) {
         wheelSegments.forEach { insert(it) }
+    }
+
+    private fun File.creationTime(): FileTime {
+        return Files.readAttributes(toPath(), BasicFileAttributes::class.java)
+            .creationTime()
     }
 }
