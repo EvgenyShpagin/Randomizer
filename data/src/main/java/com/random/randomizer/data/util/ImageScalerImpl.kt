@@ -1,7 +1,6 @@
 package com.random.randomizer.data.util
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.util.ImageScaler
 import java.io.ByteArrayOutputStream
@@ -18,7 +17,7 @@ class ImageScalerImpl @Inject constructor() : ImageScaler {
 
         val smallerSideSize = min(imageBitmap.width, imageBitmap.height).toFloat()
         if (smallerSideSize <= minSideSize) {
-            return image.copy(data = imageBitmap.toByteArray())
+            return image
         }
 
         val scale = minSideSize / smallerSideSize
