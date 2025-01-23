@@ -5,13 +5,15 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
 import com.random.randomizer.data.util.toBitmap
 import com.random.randomizer.domain.model.Image
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
-class WheelSegmentDataSourceImpl(
-    context: Context,
+class WheelSegmentDataSourceImpl @Inject constructor(
+    @ApplicationContext context: Context,
     private val wheelSegmentDao: WheelSegmentDao
 ) : WheelSegmentDataSource {
     private val imageSaveDirectory = context.filesDir
