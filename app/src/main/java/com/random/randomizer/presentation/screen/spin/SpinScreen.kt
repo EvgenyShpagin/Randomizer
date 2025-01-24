@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,16 +48,22 @@ fun SpinScreen(
         }
     }
 
+    val layoutDirection = LocalLayoutDirection.current
+
     val safeContentPadding = WindowInsets.systemBars.asPaddingValues()
     val topPadding = safeContentPadding.calculateTopPadding()
     val bottomPadding = safeContentPadding.calculateBottomPadding()
+    val startPadding = safeContentPadding.calculateStartPadding(layoutDirection)
+    val endPadding = safeContentPadding.calculateEndPadding(layoutDirection)
 
     SpinScreen(
         wheelSegments = uiState.wheelSegments,
         lazyListState = lazyListState,
         modifier = modifier.padding(
             top = topPadding,
-            bottom = bottomPadding
+            start = startPadding,
+            bottom = bottomPadding,
+            end = endPadding
         )
     )
 }
