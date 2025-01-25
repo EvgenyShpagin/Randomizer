@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
@@ -15,12 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.util.DayAndNightPreview
 import com.random.randomizer.presentation.util.HandleUiEffects
+import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,6 +93,24 @@ private fun HomeScreen(
                     listState = listState
                 )
             }
+        }
+    }
+}
+
+@DayAndNightPreview
+@Composable
+private fun HomeScreenPreview(
+    @PreviewParameter(WheelSegmentListParameterProvider::class)
+    wheelSegments: List<WheelSegmentUiState>
+) {
+    @OptIn(ExperimentalMaterial3Api::class)
+    AppTheme {
+        Surface {
+            HomeScreen(
+                wheelItems = wheelSegments,
+                onClickEdit = {},
+                onClickSpin = {}
+            )
         }
     }
 }
