@@ -158,7 +158,10 @@ class SpinScreenTest {
     private fun setContent() {
         composeTestRule.setContent {
             viewModel = hiltViewModel()
-            SpinScreen(viewModel = viewModel)
+            SpinScreen(
+                viewModel = viewModel,
+                navigateToResults = {}
+            )
         }
     }
 

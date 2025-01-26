@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
+import com.random.randomizer.presentation.screen.results.ResultsScreen
 import com.random.randomizer.presentation.screen.spin.SpinScreen
 
 @Composable
@@ -41,6 +42,25 @@ fun RandomizerNavHost(
         }
         composable<Destination.SpinWheel> {
             SpinScreen(
+                navigateToResults = { winnerId ->
+                    navController.navigate(Destination.Results(winnerId))
+                },
+                viewModel = hiltViewModel()
+            )
+        }
+        composable<Destination.Results> {
+            ResultsScreen(
+                navigateToHome = {
+                    navController.popBackStack(
+                        Destination.Home,
+                        inclusive = false
+                    )
+                },
+                navigateToSpin = {
+                    navController.navigate(Destination.SpinWheel) {
+                        popUpTo<Destination.SpinWheel>()
+                    }
+                },
                 viewModel = hiltViewModel()
             )
         }

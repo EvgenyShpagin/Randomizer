@@ -4,6 +4,8 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -22,11 +24,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 
 @Composable
 fun SpinScreen(
+    navigateToResults: (winnerId: Int) -> Unit,
     viewModel: SpinViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -46,6 +50,8 @@ fun SpinScreen(
             lazyListState.spinToItem(uiState.targetIndex, screenHeight)
             viewModel.onEvent(SpinUiEvent.SpinFinished)
         }
+        delay(1000)
+        navigateToResults(uiState.targetId)
     }
 
     val layoutDirection = LocalLayoutDirection.current

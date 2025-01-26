@@ -9,4 +9,6 @@ data class SpinUiState(
     val isSpinning: Boolean = false,
     val targetIndex: Int = -1,
     val wheelSegments: List<WheelSegmentUiState> = emptyList()
-) : UiState
+) : UiState {
+    val targetId: Int get() = wheelSegments[targetIndex].id
+}
