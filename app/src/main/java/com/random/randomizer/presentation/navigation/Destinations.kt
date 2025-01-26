@@ -11,4 +11,7 @@ sealed interface Destination {
 
     @Serializable
     data object SpinWheel : Destination
+
+    @Serializable
+    data class Results(val winnerWheelSegmentId: Int) : Destination
 }

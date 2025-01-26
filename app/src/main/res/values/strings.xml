@@ -17,4 +17,5 @@
     <string name="label_segment_description">Description</string>
     <string name="cd_remove_color">Remove color</string>
     <string name="message_failed_to_set_image">Failed to set image</string>
+    <string name="button_delete_and_spin">Delete and spin</string>
 </resources>
