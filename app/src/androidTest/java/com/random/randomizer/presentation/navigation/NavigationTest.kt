@@ -104,6 +104,22 @@ class NavigationTest {
         }
     }
 
+    @Test
+    fun resultsScreen_navigatesToSpin_whenButtonClicked() = runTest {
+        // Given - minimum required item count to be able to scroll
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        navController.navigate(Destination.Results(wheelSegments.first().id))
+
+        // When - navigate button is clicked
+        composeTestRule
+            .onNodeWithText(stringResource(R.string.button_spin))
+            .performClick()
+
+        // Then - verify we are navigated to spin screen
+        assertTrue(navController.isCurrentDestination<Destination.SpinWheel>())
+    }
+
     private fun setContent() {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current).apply {
