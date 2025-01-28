@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.navigation.NavController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.filters.LargeTest
@@ -92,6 +93,23 @@ class NavigationTest {
         )
     }
 
+    @Test
+    fun spinScreen_navigatesToResults_whenSpinFinished() = runTest {
+        // Given - minimum required item count to be able to scroll
+        val fewWheelSegments = listOf(
+            WheelSegment(1, "Title 1", "", null, null),
+            WheelSegment(2, "Title 2", "", null, null),
+        )
+        wheelSegmentRepository.addMultiple(fewWheelSegments)
+
+        navController.navigate(Destination.SpinWheel)
+
+        // Assert it is navigated to Results screen
+        composeTestRule.waitUntil(20_000) {
+            navController.isCurrentDestination<Destination.SpinWheel>()
+        }
+    }
+
     private fun setContent() {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current).apply {
@@ -99,5 +117,11 @@ class NavigationTest {
             }
             RandomizerNavHost(navController)
         }
+    }
+
+    private inline fun <reified T> NavController.isCurrentDestination(): Boolean {
+        val route = currentDestination?.route
+        val routeWithoutArguments = route?.substringBefore('/')
+        return T::class.qualifiedName == routeWithoutArguments
     }
 }
