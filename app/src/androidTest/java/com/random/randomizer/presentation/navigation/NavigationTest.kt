@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.filters.LargeTest
@@ -129,9 +130,7 @@ class NavigationTest {
         }
     }
 
-    private inline fun <reified T> NavController.isCurrentDestination(): Boolean {
-        val route = currentDestination?.route
-        val routeWithoutArguments = route?.substringBefore('/')
-        return T::class.qualifiedName == routeWithoutArguments
+    private inline fun <reified T : Destination> NavController.isCurrentDestination(): Boolean {
+        return currentBackStackEntry?.destination?.hasRoute(T::class) == true
     }
 }
