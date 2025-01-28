@@ -19,7 +19,7 @@ import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -44,6 +44,11 @@ class NavigationTest {
     lateinit var wheelSegmentRepository: WheelSegmentRepository
 
     private lateinit var navController: TestNavHostController
+
+    private val wheelSegments = listOf(
+        WheelSegment(1, "Title 1", "", null, null),
+        WheelSegment(2, "Title 2", "", null, null),
+    )
 
     @Before
     fun setup() {
@@ -75,11 +80,7 @@ class NavigationTest {
     @Test
     fun homeScreen_navigatesToSpin_whenSpinButtonClicked() = runTest {
         // Add some items to be available to navigate to SpinScreen
-        val fewWheelSegments = listOf(
-            WheelSegment(1, "Title 1", "", null, null),
-            WheelSegment(2, "Title 2", "", null, null),
-        )
-        wheelSegmentRepository.addMultiple(fewWheelSegments)
+        wheelSegmentRepository.addMultiple(wheelSegments)
 
         // Click spin button to navigate
         composeTestRule
@@ -87,20 +88,13 @@ class NavigationTest {
             .performClick()
 
         // Assert we are on SpinScreen
-        assertEquals(
-            Destination.SpinWheel::class.qualifiedName,
-            navController.currentDestination?.route
-        )
+        assertTrue(navController.isCurrentDestination<Destination.SpinWheel>())
     }
 
     @Test
     fun spinScreen_navigatesToResults_whenSpinFinished() = runTest {
         // Given - minimum required item count to be able to scroll
-        val fewWheelSegments = listOf(
-            WheelSegment(1, "Title 1", "", null, null),
-            WheelSegment(2, "Title 2", "", null, null),
-        )
-        wheelSegmentRepository.addMultiple(fewWheelSegments)
+        wheelSegmentRepository.addMultiple(wheelSegments)
 
         navController.navigate(Destination.SpinWheel)
 
