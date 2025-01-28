@@ -9,12 +9,14 @@ import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
 import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import com.random.randomizer.presentation.navigation.Destination
 import com.random.randomizer.presentation.screen.results.ResultsUiEffect.NavigateToSpin
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ResultsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase,
