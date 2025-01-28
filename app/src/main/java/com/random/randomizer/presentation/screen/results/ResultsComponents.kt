@@ -33,7 +33,7 @@ fun ResultsTopAppBar(
     modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
-        title = { Text("Winner") },
+        title = { Text(stringResource(R.string.results_screen_title)) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, null)
