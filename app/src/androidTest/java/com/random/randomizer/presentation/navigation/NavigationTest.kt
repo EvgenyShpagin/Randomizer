@@ -2,10 +2,13 @@ package com.random.randomizer.presentation.navigation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -27,6 +30,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@OptIn(ExperimentalTestApi::class)
 @LargeTest
 @HiltAndroidTest
 class NavigationTest {
@@ -119,6 +123,68 @@ class NavigationTest {
 
         // Then - verify we are navigated to spin screen
         assertTrue(navController.isCurrentDestination<Destination.SpinWheel>())
+    }
+
+    @Test
+    fun editScreen_navigatesToHome_whenNavigationButtonClicked() = runTest {
+        // Given - minimum required item count to be able to scroll
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        navController.navigate(Destination.Edit)
+
+        // Wait until screen is visible
+        composeTestRule.waitUntilExactlyOneExists(
+            hasText(stringResource(R.string.edit_screen_title))
+        )
+        // When - back button is clicked
+        composeTestRule.onNodeWithText(
+            stringResource(R.string.edit_screen_title),
+            useUnmergedTree = true
+        ).onSibling().performClick()
+
+        // Then - verify current destination is Home
+        assertTrue(navController.isCurrentDestination<Destination.Home>())
+    }
+
+    @Test
+    fun resultsScreen_navigatesToHome_whenSystemBackButtonClicked() = runTest {
+        // Given - minimum required item count to be able to scroll
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        navController.navigate(Destination.Results(wheelSegments.first().id))
+
+        // Wait until screen is visible
+        composeTestRule.waitUntilExactlyOneExists(
+            hasText(stringResource(R.string.results_screen_title))
+        )
+        // When - back button is clicked
+        composeTestRule.runOnUiThread {
+            composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Then - verify current destination is Home
+        assertTrue(navController.isCurrentDestination<Destination.Home>())
+    }
+
+    @Test
+    fun resultsScreen_navigatesToHome_whenNavigationButtonClicked() = runTest {
+        // Given - minimum required item count to be able to scroll
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        navController.navigate(Destination.Results(wheelSegments.first().id))
+
+        // Wait until screen is visible
+        composeTestRule.waitUntilExactlyOneExists(
+            hasText(stringResource(R.string.results_screen_title))
+        )
+        // When - back button is clicked
+        composeTestRule.onNodeWithText(
+            stringResource(R.string.results_screen_title),
+            useUnmergedTree = true
+        ).onSibling().performClick()
+
+        // Then - verify current destination is Home
+        assertTrue(navController.isCurrentDestination<Destination.Home>())
     }
 
     private fun setContent() {
