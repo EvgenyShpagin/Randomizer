@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.results
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -38,6 +39,10 @@ fun ResultsScreen(
         when (effect) {
             ResultsUiEffect.NavigateToSpin -> navigateToSpin()
         }
+    }
+
+    BackHandler {
+        navigateToHome()
     }
 
     val layoutDirection = LocalLayoutDirection.current
