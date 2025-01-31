@@ -14,7 +14,7 @@ import com.random.randomizer.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditSegmentTopAppBar(
+fun WheelSegmentTopAppBar(
     onNavigationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

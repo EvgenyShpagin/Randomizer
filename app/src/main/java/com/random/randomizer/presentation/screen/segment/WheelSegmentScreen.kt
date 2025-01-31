@@ -70,7 +70,7 @@ fun WheelSegmentScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            EditSegmentTopAppBar(onNavigationClick = { viewModel.onEvent(WheelSegmentUiEvent.FinishEdit) })
+            WheelSegmentTopAppBar(onNavigationClick = { viewModel.onEvent(WheelSegmentUiEvent.FinishEdit) })
         },
         content = { innerPadding ->
             WheelSegmentContent(
