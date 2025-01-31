@@ -97,6 +97,7 @@ class EditScreenTest {
             viewModel = hiltViewModel()
             EditScreen(
                 navigateBack = {},
+                navigateToEditDetails = {},
                 viewModel = viewModel
             )
         }

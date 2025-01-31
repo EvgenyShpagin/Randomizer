@@ -19,4 +19,5 @@
     <string name="message_failed_to_set_image">Failed to set image</string>
     <string name="button_delete_and_spin">Delete and spin</string>
     <string name="results_screen_title">Winner</string>
+    <string name="edit_segment_screen">Wheel Segment</string>
 </resources>

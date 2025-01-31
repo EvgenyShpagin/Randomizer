@@ -21,15 +21,13 @@ import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.CreateSegment
-import com.random.randomizer.presentation.screen.edit.EditUiEvent.EditSegment
-import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishSegmentEdit
-import com.random.randomizer.presentation.screen.edit.EditUiEvent.NavigateBack
 import com.random.randomizer.presentation.util.HandleUiEffects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(
     navigateBack: () -> Unit,
+    navigateToEditDetails: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: EditViewModel = hiltViewModel()
 ) {
@@ -37,17 +35,17 @@ fun EditScreen(
 
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
-            EditUiEffect.NavigateToHome -> navigateBack()
+            is EditUiEffect.NavigateToSegmentEdit -> {
+                navigateToEditDetails(effect.segmentId)
+            }
         }
     }
 
     EditScreen(
         wheelSegments = uiState.wheelSegments,
-        currentlyEditedSegmentId = uiState.currentlyEditedSegmentId,
         onAddSegmentClicked = { viewModel.onEvent(CreateSegment) },
-        onSegmentClicked = { viewModel.onEvent(EditSegment(it)) },
-        navigateBack = { viewModel.onEvent(NavigateBack) },
-        onFinishSegmentEdit = { viewModel.onEvent(FinishSegmentEdit) },
+        onSegmentClicked = { navigateToEditDetails(it) },
+        navigateBack = { navigateBack() },
         modifier = modifier
     )
 }
@@ -56,11 +54,9 @@ fun EditScreen(
 @Composable
 private fun EditScreen(
     wheelSegments: List<WheelSegmentUiState>,
-    currentlyEditedSegmentId: Int?,
     onAddSegmentClicked: () -> Unit,
-    onSegmentClicked: (WheelSegmentUiState) -> Unit,
+    onSegmentClicked: (Int) -> Unit,
     navigateBack: () -> Unit,
-    onFinishSegmentEdit: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     topAppBarState: TopAppBarState = rememberTopAppBarState()
@@ -90,17 +86,10 @@ private fun EditScreen(
             } else {
                 WheelSegmentList(
                     wheelItems = wheelSegments,
-                    onClickWheelSegment = onSegmentClicked,
+                    onClickWheelSegment = { onSegmentClicked(it.id) },
                     listState = listState
                 )
             }
-        }
-
-        if (currentlyEditedSegmentId != null) {
-            EditSegmentBottomSheet(
-                currentlyEditedSegmentId = currentlyEditedSegmentId,
-                onDismiss = onFinishSegmentEdit
-            )
         }
     }
 }

@@ -2,12 +2,19 @@ package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.lifecycle.SavedStateHandle
 import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
+import com.random.randomizer.data.util.ImageScalerImpl
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.FixSavedWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
+import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent
+import com.random.randomizer.presentation.screen.segment.WheelSegmentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -28,17 +35,20 @@ class EditSegmentViewModelTest {
     private lateinit var wheelSegmentRepository: FakeWheelSegmentRepository
 
     // Subject under test
-    private lateinit var viewModel: EditSegmentViewModel
+    private lateinit var viewModel: WheelSegmentViewModel
 
     val mappers = FakeEditSegmentMappers
 
     @Before
     fun setup() {
         wheelSegmentRepository = FakeWheelSegmentRepository()
-        viewModel = EditSegmentViewModel(
-            SEGMENT_ID,
+        viewModel = WheelSegmentViewModel(
+            SavedStateHandle(mapOf("wheelSegmentId" to SEGMENT_ID)),
             GetWheelSegmentStreamUseCase(wheelSegmentRepository),
-            UpdateWheelSegmentUseCase(wheelSegmentRepository),
+            FixSavedWheelSegmentUseCase(wheelSegmentRepository),
+            DeleteWheelSegmentUseCase(wheelSegmentRepository),
+            ValidateWheelSegmentUseCase(wheelSegmentRepository),
+            UpdateWheelSegmentUseCase(wheelSegmentRepository, ImageScalerImpl()),
             mappers
         )
     }
@@ -63,7 +73,7 @@ class EditSegmentViewModelTest {
         wheelSegmentRepository.add(EmptyWheelSegment)
 
         // When - on title input
-        viewModel.onEvent(EditSegmentUiEvent.InputTitle("User input string"))
+        viewModel.onEvent(WheelSegmentUiEvent.InputTitle("User input string"))
 
         val expected = "User input string"
         val actual = viewModel.uiState.value.title
@@ -78,7 +88,7 @@ class EditSegmentViewModelTest {
         wheelSegmentRepository.add(EmptyWheelSegment)
 
         // When - on description input
-        viewModel.onEvent(EditSegmentUiEvent.InputDescription("User input string"))
+        viewModel.onEvent(WheelSegmentUiEvent.InputDescription("User input string"))
 
         val expected = "User input string"
         val actual = viewModel.uiState.value.description
@@ -93,7 +103,7 @@ class EditSegmentViewModelTest {
         wheelSegmentRepository.add(EmptyWheelSegment)
 
         // When - on color pick
-        viewModel.onEvent(EditSegmentUiEvent.PickColor(Color.Red))
+        viewModel.onEvent(WheelSegmentUiEvent.PickColor(Color.Red))
 
         val expected = Color.Red
         val actual = viewModel.uiState.value.customColor
@@ -109,7 +119,7 @@ class EditSegmentViewModelTest {
         wheelSegmentRepository.add(wheelSegment)
 
         // When - on remove thumbnail
-        viewModel.onEvent(EditSegmentUiEvent.RemoveImage)
+        viewModel.onEvent(WheelSegmentUiEvent.RemoveImage)
 
         val expected: ImageBitmap? = null
         val actual = viewModel.uiState.value.image

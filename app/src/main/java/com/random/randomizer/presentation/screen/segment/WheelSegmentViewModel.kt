@@ -1,45 +1,59 @@
-package com.random.randomizer.presentation.screen.edit
+package com.random.randomizer.presentation.screen.segment
 
 
 import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.random.randomizer.R
 import com.random.randomizer.domain.error.UpdateWheelSegmentError
 import com.random.randomizer.domain.error.UpdateWheelSegmentError.FailedToSaveThumbnail
 import com.random.randomizer.domain.error.UpdateWheelSegmentError.WheelSegmentDoesNotExist
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
+import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.FixSavedWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
+import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.screen.edit.EditSegmentUiEffect.ShowErrorMessage
+import com.random.randomizer.presentation.navigation.Destination
+import com.random.randomizer.presentation.screen.edit.EditSegmentMappers
 import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = EditSegmentViewModel.Factory::class)
-class EditSegmentViewModel @AssistedInject constructor(
-    @Assisted private val wheelSegmentId: Int,
+@HiltViewModel
+class WheelSegmentViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase,
+    private val fixSavedWheelSegmentUseCase: FixSavedWheelSegmentUseCase,
+    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
+    private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
     private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
     private val mappers: EditSegmentMappers
-) : MutableStateViewModel<WheelSegmentUiState, EditSegmentUiEvent, EditSegmentUiEffect>(
+) : MutableStateViewModel<WheelSegmentUiState, WheelSegmentUiEvent, WheelSegmentUiEffect>(
     initialUiState = WheelSegmentUiState()
 ) {
+
+    private val route = savedStateHandle.toRoute<Destination.WheelSegment>()
+    private val wheelSegmentId = route.wheelSegmentId
 
     init {
         getWheelSegmentStreamUseCase(wheelSegmentId)
             .onEach { segment -> handleWheelSegment(segment) }
             .launchIn(viewModelScope)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 
     private fun handleWheelSegment(wheelSegment: WheelSegment) {
@@ -56,7 +70,7 @@ class EditSegmentViewModel @AssistedInject constructor(
     private fun handleUpdateError(error: UpdateWheelSegmentError) {
         when (error) {
             FailedToSaveThumbnail -> {
-                triggerEffect(ShowErrorMessage(R.string.message_failed_to_set_image))
+                triggerEffect(WheelSegmentUiEffect.ShowErrorMessage(R.string.message_failed_to_set_image))
             }
 
             WheelSegmentDoesNotExist -> {
@@ -66,14 +80,15 @@ class EditSegmentViewModel @AssistedInject constructor(
 
     }
 
-    override fun onEvent(event: EditSegmentUiEvent) {
+    override fun onEvent(event: WheelSegmentUiEvent) {
         when (event) {
-            is EditSegmentUiEvent.InputTitle -> onInputTitle(event.text)
-            is EditSegmentUiEvent.InputDescription -> onInputDescription(event.text)
-            is EditSegmentUiEvent.PickImage -> onPickImage(event.context, event.uri)
-            is EditSegmentUiEvent.PickColor -> onPickBackgroundColor(event.color)
-            EditSegmentUiEvent.RemoveImage -> onRemoveImage()
-            EditSegmentUiEvent.OpenImagePicker -> onOpenImagePicker()
+            is WheelSegmentUiEvent.InputTitle -> onInputTitle(event.text)
+            is WheelSegmentUiEvent.InputDescription -> onInputDescription(event.text)
+            is WheelSegmentUiEvent.PickImage -> onPickImage(event.context, event.uri)
+            is WheelSegmentUiEvent.PickColor -> onPickBackgroundColor(event.color)
+            WheelSegmentUiEvent.RemoveImage -> onRemoveImage()
+            WheelSegmentUiEvent.OpenImagePicker -> onOpenImagePicker()
+            WheelSegmentUiEvent.FinishEdit -> onFinishEdit()
         }
     }
 
@@ -92,7 +107,7 @@ class EditSegmentViewModel @AssistedInject constructor(
         val imageData = imageUri.toByteArray(context)
 
         if (imageData == null) {
-            triggerEffect(effect = ShowErrorMessage(R.string.message_failed_to_set_image))
+            triggerEffect(effect = WheelSegmentUiEffect.ShowErrorMessage(R.string.message_failed_to_set_image))
             return@launch
         }
 
@@ -111,14 +126,11 @@ class EditSegmentViewModel @AssistedInject constructor(
     }
 
     private fun onOpenImagePicker() {
-        triggerEffect(EditSegmentUiEffect.OpenImagePicker)
+        triggerEffect(WheelSegmentUiEffect.OpenImagePicker)
     }
 
-    /**
-     * Factory for passing in wheel segment being edited
-     */
-    @AssistedFactory
-    interface Factory {
-        fun create(wheelSegmentId: Int): EditSegmentViewModel
+    private fun onFinishEdit() {
+        // TODO: implement
+        triggerEffect(WheelSegmentUiEffect.NavigateBack)
     }
 }

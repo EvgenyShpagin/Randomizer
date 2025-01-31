@@ -10,6 +10,9 @@ sealed interface Destination {
     data object Edit : Destination
 
     @Serializable
+    data class WheelSegment(val wheelSegmentId: Int) : Destination
+
+    @Serializable
     data object SpinWheel : Destination
 
     @Serializable
