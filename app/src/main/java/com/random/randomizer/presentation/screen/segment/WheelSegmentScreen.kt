@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
@@ -30,7 +31,9 @@ import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.Inp
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.OpenImagePicker
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.PickColor
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.RemoveImage
+import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
+import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,6 +136,20 @@ private fun WheelSegmentContent(
     }
 }
 
+@Preview
+@Composable
+private fun WheelSegmentContentPreview() {
+    AppTheme {
+        WheelSegmentContent(
+            segmentUiState = PreviewWheelSegmentList.first(),
+            onInputTitle = {},
+            onInputDescription = {},
+            onClickAddImage = {},
+            onClickRemoveImage = {},
+            onPickBackgroundColor = {}
+        )
+    }
+}
 
 private val AllSegmentColors = listOf(
     Color(0xFFEF9A9A),
