@@ -20,4 +20,7 @@
     <string name="button_delete_and_spin">Delete and spin</string>
     <string name="results_screen_title">Winner</string>
     <string name="edit_segment_screen">Wheel Segment</string>
+    <string name="label_preview">Preview</string>
+    <string name="label_details">Details</string>
+    <string name="button_save">Save</string>
 </resources>

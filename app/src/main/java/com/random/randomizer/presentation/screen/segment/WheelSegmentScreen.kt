@@ -7,25 +7,34 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.random.randomizer.R
+import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.AddSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.RemoveSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.SegmentColorsRow
 import com.random.randomizer.presentation.screen.edit.SegmentDescriptionTextField
 import com.random.randomizer.presentation.screen.edit.SegmentTitleTextField
+import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.FinishEdit
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.InputTitle
 import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.OpenImagePicker
@@ -70,7 +79,7 @@ fun WheelSegmentScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            WheelSegmentTopAppBar(onNavigationClick = { viewModel.onEvent(WheelSegmentUiEvent.FinishEdit) })
+            WheelSegmentTopAppBar(onNavigationClick = { viewModel.onEvent(FinishEdit) })
         },
         content = { innerPadding ->
             WheelSegmentContent(
@@ -90,6 +99,9 @@ fun WheelSegmentScreen(
                 onPickBackgroundColor = { color ->
                     viewModel.onEvent(PickColor(color))
                 },
+                onSaveClicked = {
+                    viewModel.onEvent(FinishEdit)
+                },
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -100,6 +112,7 @@ fun WheelSegmentScreen(
 @Composable
 private fun WheelSegmentContent(
     segmentUiState: WheelSegmentUiState,
+    onSaveClicked: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
     onClickAddImage: () -> Unit,
@@ -108,32 +121,56 @@ private fun WheelSegmentContent(
     modifier: Modifier = Modifier,
     backgroundColors: List<Color> = AllSegmentColors
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(16.dp)
     ) {
-        SegmentTitleTextField(
-            title = segmentUiState.title,
-            onInput = onInputTitle
-        )
-        SegmentDescriptionTextField(
-            description = segmentUiState.description,
-            onInput = onInputDescription
-        )
-        if (segmentUiState.image == null) {
-            AddSegmentImageButton(onClickAdd = onClickAddImage)
-        } else {
-            RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
+        Column(
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            SectionHeader(stringResource(R.string.label_preview).uppercase())
+            Spacer(modifier = Modifier.height(4.dp))
+            WheelSegment(
+                itemUiState = segmentUiState,
+                isClickable = false,
+                onClick = {}
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            SectionHeader(stringResource(R.string.label_details).uppercase())
+            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                SegmentTitleTextField(
+                    title = segmentUiState.title,
+                    onInput = onInputTitle
+                )
+                SegmentDescriptionTextField(
+                    description = segmentUiState.description,
+                    onInput = onInputDescription
+                )
+                if (segmentUiState.image == null) {
+                    AddSegmentImageButton(onClickAdd = onClickAddImage)
+                } else {
+                    RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
+                }
+                SegmentColorsRow(
+                    colors = backgroundColors,
+                    onCheckColor = onPickBackgroundColor,
+                    onRemoveColor = { onPickBackgroundColor(null) },
+                    checkedColor = segmentUiState.customColor
+                )
+            }
         }
-        SegmentColorsRow(
-            colors = backgroundColors,
-            onCheckColor = onPickBackgroundColor,
-            onRemoveColor = { onPickBackgroundColor(null) },
-            checkedColor = segmentUiState.customColor
+        SaveButton(
+            onClick = onSaveClicked,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
         )
     }
+
 }
 
 @Preview
@@ -146,7 +183,8 @@ private fun WheelSegmentContentPreview() {
             onInputDescription = {},
             onClickAddImage = {},
             onClickRemoveImage = {},
-            onPickBackgroundColor = {}
+            onPickBackgroundColor = {},
+            onSaveClicked = {}
         )
     }
 }
