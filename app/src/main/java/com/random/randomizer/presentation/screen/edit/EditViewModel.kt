@@ -1,7 +1,6 @@
 package com.random.randomizer.presentation.screen.edit
 
 import androidx.lifecycle.viewModelScope
-import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
@@ -9,13 +8,11 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EditViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
-    private val createWheelSegmentUseCase: CreateWheelSegmentUseCase,
     private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
     private val mappers: EditMappers
 ) : MutableStateViewModel<EditUiState, EditUiEvent, EditUiEffect>(
@@ -42,12 +39,6 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onCreateSegment() {
-        viewModelScope.launch {
-            val newWheelSegmentUiState = mappers.toPresentation(createWheelSegmentUseCase())
-            updateState {
-                it.copy(wheelSegments = it.wheelSegments + newWheelSegmentUiState)
-            }
-            onEditSegment(newWheelSegmentUiState)
-        }
+        triggerEffect(EditUiEffect.NavigateToSegmentEdit(null))
     }
 }

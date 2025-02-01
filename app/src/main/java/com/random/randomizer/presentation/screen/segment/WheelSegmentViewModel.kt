@@ -45,11 +45,14 @@ class WheelSegmentViewModel @Inject constructor(
 
     private val route = savedStateHandle.toRoute<Destination.WheelSegment>()
     private val wheelSegmentId = route.wheelSegmentId
+    private val isWheelSegmentCreated get() = wheelSegmentId != null
 
     init {
-        getWheelSegmentStreamUseCase(wheelSegmentId)
-            .onEach { segment -> handleWheelSegment(segment) }
-            .launchIn(viewModelScope)
+        if (isWheelSegmentCreated) {
+            getWheelSegmentStreamUseCase(wheelSegmentId!!)
+                .onEach { segment -> handleWheelSegment(segment) }
+                .launchIn(viewModelScope)
+        }
     }
 
     override fun onCleared() {
@@ -61,8 +64,9 @@ class WheelSegmentViewModel @Inject constructor(
     }
 
     private fun updateWheelSegment(transform: (WheelSegment) -> WheelSegment) {
+        if (!isWheelSegmentCreated) return
         viewModelScope.launch {
-            updateWheelSegmentUseCase(wheelSegmentId, transform)
+            updateWheelSegmentUseCase(wheelSegmentId!!, transform)
                 .onFailure { handleUpdateError(it) }
         }
     }

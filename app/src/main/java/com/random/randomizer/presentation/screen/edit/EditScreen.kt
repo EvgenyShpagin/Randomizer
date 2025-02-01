@@ -27,7 +27,7 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 @Composable
 fun EditScreen(
     navigateBack: () -> Unit,
-    navigateToEditDetails: (Int) -> Unit,
+    navigateToEditDetails: (Int?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: EditViewModel = hiltViewModel()
 ) {
