@@ -21,7 +21,6 @@ import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.navigation.Destination
-import com.random.randomizer.presentation.screen.edit.EditSegmentMappers
 import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,10 +37,10 @@ class WheelSegmentViewModel @Inject constructor(
     private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
     private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
-    private val mappers: EditSegmentMappers
 ) : MutableStateViewModel<WheelSegmentUiState, WheelSegmentUiEvent, WheelSegmentUiEffect>(
     initialUiState = WheelSegmentUiState()
 ) {
+    private val mappers: WheelSegmentMappers
 
     private val route = savedStateHandle.toRoute<Destination.WheelSegment>()
     private val wheelSegmentId = route.wheelSegmentId

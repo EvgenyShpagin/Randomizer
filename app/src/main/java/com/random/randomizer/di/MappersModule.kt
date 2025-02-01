@@ -4,8 +4,8 @@ import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.CoreMappersImpl
 import com.random.randomizer.presentation.screen.edit.EditMappers
 import com.random.randomizer.presentation.screen.edit.EditMappersImpl
-import com.random.randomizer.presentation.screen.edit.EditSegmentMappers
-import com.random.randomizer.presentation.screen.edit.EditSegmentMappersImpl
+import com.random.randomizer.presentation.screen.segment.WheelSegmentMappers
+import com.random.randomizer.presentation.screen.segment.WheelSegmentMappersImpl
 import com.random.randomizer.presentation.screen.home.HomeMappers
 import com.random.randomizer.presentation.screen.home.HomeMappersImpl
 import com.random.randomizer.presentation.screen.results.ResultsMappers
@@ -30,7 +30,7 @@ abstract class MappersModule {
     abstract fun bindEditMappers(impl: EditMappersImpl): EditMappers
 
     @Binds
-    abstract fun bindEditSegmentMappers(impl: EditSegmentMappersImpl): EditSegmentMappers
+    abstract fun bindEditSegmentMappers(impl: WheelSegmentMappersImpl): WheelSegmentMappers
 
     @Binds
     abstract fun bindSpinMappers(impl: SpinMappersImpl): SpinMappers
