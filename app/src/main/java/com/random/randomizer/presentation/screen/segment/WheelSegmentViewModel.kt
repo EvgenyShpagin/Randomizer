@@ -55,10 +55,6 @@ class WheelSegmentViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
     private fun handleWheelSegment(wheelSegment: WheelSegment) {
         updateState { mappers.toPresentation(wheelSegment) }
     }
