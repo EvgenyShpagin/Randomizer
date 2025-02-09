@@ -7,12 +7,7 @@ import javax.inject.Inject
 class CreateWheelSegmentUseCase @Inject constructor(
     private val wheelSegmentRepository: WheelSegmentRepository
 ) {
-    suspend operator fun invoke(): WheelSegment {
-        val id = wheelSegmentRepository.add(EmptyWheelSegment)
-        return EmptyWheelSegment.copy(id = id)
-    }
-
-    private companion object {
-        val EmptyWheelSegment = WheelSegment(-1, "", "", null, null)
+    suspend operator fun invoke(wheelSegment: WheelSegment) {
+        wheelSegmentRepository.add(wheelSegment)
     }
 }
