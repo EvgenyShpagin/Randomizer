@@ -7,9 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
-import com.random.randomizer.presentation.screen.segment.WheelSegmentScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
 import com.random.randomizer.presentation.screen.results.ResultsScreen
+import com.random.randomizer.presentation.screen.segment.WheelSegmentScreen
 import com.random.randomizer.presentation.screen.spin.SpinScreen
 
 @Composable
