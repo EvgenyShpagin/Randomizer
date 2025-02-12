@@ -1,10 +1,12 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
+import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -37,7 +39,8 @@ class CreateWheelSegmentUseCaseTest {
 
     @Test
     fun replacesId() = runTest {
-        val createdSegmentId = createWheelSegmentUseCase(wheelSegment)
-        assertNotEquals(wheelSegment.id, createdSegmentId)
+        val createResult = createWheelSegmentUseCase(wheelSegment) as? Result.Success
+        assertNotNull(createResult)
+        assertNotEquals(wheelSegment.id, createResult!!.data)
     }
 }
