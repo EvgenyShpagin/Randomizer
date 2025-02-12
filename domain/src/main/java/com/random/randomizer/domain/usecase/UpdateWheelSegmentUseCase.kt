@@ -14,24 +14,21 @@ class UpdateWheelSegmentUseCase @Inject constructor(
     private val imageScaler: ImageScaler
 ) {
     suspend operator fun invoke(
-        wheelSegmentId: Int,
-        transform: (WheelSegment) -> WheelSegment
+        wheelSegment: WheelSegment
     ): Result<Unit, UpdateWheelSegmentError> {
-        val currentWheelSegment = wheelSegmentRepository.get(wheelSegmentId)
+        val currentWheelSegment = wheelSegmentRepository.get(wheelSegment.id)
             ?: return Result.Failure(WheelSegmentDoesNotExist)
 
-        val expectedWheelSegment = transform(currentWheelSegment)
-
-        if (hasImageBeenReplaced(currentWheelSegment, expectedWheelSegment)) {
-            val scaledImage = imageScaler.scale(expectedWheelSegment.thumbnail!!, 600)
-            wheelSegmentRepository.update(expectedWheelSegment.copy(thumbnail = scaledImage))
+        if (hasImageBeenReplaced(currentWheelSegment, wheelSegment)) {
+            val scaledImage = imageScaler.scale(wheelSegment.thumbnail!!, 600)
+            wheelSegmentRepository.update(wheelSegment.copy(thumbnail = scaledImage))
         } else {
-            wheelSegmentRepository.update(expectedWheelSegment)
+            wheelSegmentRepository.update(wheelSegment)
         }
 
         // Assert non-null as it was checked earlier
-        val actualWheelSegment = wheelSegmentRepository.get(wheelSegmentId)!!
-        if (expectedWheelSegment.thumbnail != null && actualWheelSegment.thumbnail == null) {
+        val actualWheelSegment = wheelSegmentRepository.get(wheelSegment.id)!!
+        if (wheelSegment.thumbnail != null && actualWheelSegment.thumbnail == null) {
             return Result.Failure(FailedToSaveThumbnail)
         }
 
