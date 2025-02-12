@@ -8,8 +8,8 @@ import javax.inject.Inject
 class CreateWheelSegmentUseCase @Inject constructor(
     private val wheelSegmentRepository: WheelSegmentRepository
 ) {
-    suspend operator fun invoke(wheelSegment: WheelSegment) {
-        wheelSegmentRepository.add(wheelSegment.withFixedThumbnail())
+    suspend operator fun invoke(wheelSegment: WheelSegment): Int {
+        return wheelSegmentRepository.add(wheelSegment.withFixedThumbnail())
     }
 
     private fun WheelSegment.withFixedThumbnail(): WheelSegment {
