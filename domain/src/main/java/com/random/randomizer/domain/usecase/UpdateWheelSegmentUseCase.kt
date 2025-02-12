@@ -10,6 +10,7 @@ import com.random.randomizer.domain.util.ImageScaler
 import javax.inject.Inject
 
 class UpdateWheelSegmentUseCase @Inject constructor(
+    private val fixThumbnailUseCase: FixThumbnailUseCase,
     private val wheelSegmentRepository: WheelSegmentRepository,
     private val imageScaler: ImageScaler
 ) {
@@ -21,7 +22,8 @@ class UpdateWheelSegmentUseCase @Inject constructor(
 
         if (hasImageBeenReplaced(currentWheelSegment, wheelSegment)) {
             val scaledImage = imageScaler.scale(wheelSegment.thumbnail!!, 600)
-            wheelSegmentRepository.update(wheelSegment.copy(thumbnail = scaledImage))
+            val fixedImage = fixThumbnailUseCase(scaledImage)
+            wheelSegmentRepository.update(wheelSegment.copy(thumbnail = fixedImage))
         } else {
             wheelSegmentRepository.update(wheelSegment)
         }
