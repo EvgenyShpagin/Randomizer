@@ -28,7 +28,7 @@ class FakeWheelSegmentRepository @Inject constructor() : WheelSegmentRepository 
     }
 
     private fun WheelSegment.withCorrectId(): WheelSegment {
-        val generateId = id < 0 || wheelSegmentList.any { it.id == id }
+        val generateId = id <= 0 || wheelSegmentList.any { it.id == id }
         return if (generateId) {
             copy(id = getNewSegmentId())
         } else {
@@ -37,7 +37,7 @@ class FakeWheelSegmentRepository @Inject constructor() : WheelSegmentRepository 
     }
 
     private fun getNewSegmentId(): Int {
-        return wheelSegmentList.maxOfOrNull { segment -> segment.id + 1 } ?: 0
+        return wheelSegmentList.maxOfOrNull { segment -> segment.id + 1 } ?: 1
     }
 
     private fun updateWheelSegmentFlow() {
