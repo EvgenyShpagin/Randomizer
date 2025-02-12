@@ -34,7 +34,9 @@ class UpdateWheelSegmentUseCaseTest {
     @Before
     fun setup() {
         repository = FakeWheelSegmentRepository()
-        updateWheelSegmentUseCase = UpdateWheelSegmentUseCase(repository, imageScaler)
+        updateWheelSegmentUseCase = UpdateWheelSegmentUseCase(
+            FixThumbnailUseCase(), repository, imageScaler
+        )
     }
 
     @Test
