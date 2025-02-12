@@ -5,7 +5,6 @@ import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -27,7 +26,7 @@ class CreateWheelSegmentUseCaseTest {
     @Before
     fun setup() {
         repository = FakeWheelSegmentRepository()
-        createWheelSegmentUseCase = CreateWheelSegmentUseCase(repository)
+        createWheelSegmentUseCase = CreateWheelSegmentUseCase(FixThumbnailUseCase(), repository)
     }
 
     @Test
@@ -40,13 +39,5 @@ class CreateWheelSegmentUseCaseTest {
     fun replacesId() = runTest {
         val createdSegmentId = createWheelSegmentUseCase(wheelSegment)
         assertNotEquals(wheelSegment.id, createdSegmentId)
-    }
-
-    @Test
-    fun replacesThumbnailId() = runTest {
-        val segmentId = createWheelSegmentUseCase(wheelSegment)
-        val saved = repository.get(segmentId)
-        assertNotNull(saved?.thumbnail)
-        assertNotEquals(wheelSegment.thumbnail, saved!!.thumbnail)
     }
 }
