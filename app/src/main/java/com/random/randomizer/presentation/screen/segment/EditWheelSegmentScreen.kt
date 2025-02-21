@@ -47,7 +47,7 @@ import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 
 @Composable
 fun EditWheelSegmentScreen(
-    viewModel: WheelSegmentViewModel,
+    viewModel: EditWheelSegmentViewModel,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {

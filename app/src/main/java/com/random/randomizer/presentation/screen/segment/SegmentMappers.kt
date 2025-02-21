@@ -8,10 +8,14 @@ import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import javax.inject.Inject
 
-    fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState
 interface EditWheelSegmentMappers {
     fun toPresentation(thumbnail: Image): ImageBitmap?
+    fun toPresentation(color: Long): Color
     fun toDomain(color: Color): Long
+    fun toDomain(
+        wheelSegmentUiState: WheelSegmentUiState,
+        thumbnail: Image?
+    ): WheelSegment
 }
 
 class EditWheelSegmentMappersImpl @Inject constructor(
@@ -21,7 +25,18 @@ class EditWheelSegmentMappersImpl @Inject constructor(
         return coreMappers.toPresentation(thumbnail)
     }
 
+    override fun toPresentation(color: Long): Color {
+        return Color(color)
+    }
+
     override fun toDomain(color: Color): Long {
         return coreMappers.toDomain(color)
+    }
+
+    override fun toDomain(
+        wheelSegmentUiState: WheelSegmentUiState,
+        thumbnail: Image?
+    ): WheelSegment {
+        return coreMappers.toDomain(wheelSegmentUiState, thumbnail)
     }
 }
