@@ -87,7 +87,7 @@ fun EditWheelSegmentScreen(
         },
         content = { innerPadding ->
             EditWheelSegmentContent(
-                segmentUiState = uiState,
+                uiState = uiState,
                 onInputTitle = { title ->
                     viewModel.onEvent(InputTitle(title))
                 },
@@ -113,8 +113,8 @@ fun EditWheelSegmentScreen(
 }
 
 @Composable
-    segmentUiState: WheelSegmentUiState,
 private fun EditWheelSegmentContent(
+    uiState: EditWheelSegmentUiState,
     onSaveClicked: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
@@ -135,7 +135,7 @@ private fun EditWheelSegmentContent(
             SectionHeader(stringResource(R.string.label_preview).uppercase())
             Spacer(modifier = Modifier.height(4.dp))
             WheelSegment(
-                itemUiState = segmentUiState,
+                itemUiState = uiState.segmentUiState,
                 isClickable = false,
                 onClick = {}
             )
@@ -146,14 +146,14 @@ private fun EditWheelSegmentContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 SegmentTitleTextField(
-                    title = segmentUiState.title,
+                    title = uiState.segmentUiState.title,
                     onInput = onInputTitle
                 )
                 SegmentDescriptionTextField(
-                    description = segmentUiState.description,
+                    description = uiState.segmentUiState.description,
                     onInput = onInputDescription
                 )
-                if (segmentUiState.image == null) {
+                if (uiState.segmentUiState.image == null) {
                     AddSegmentImageButton(onClickAdd = onClickAddImage)
                 } else {
                     RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
@@ -162,7 +162,7 @@ private fun EditWheelSegmentContent(
                     colors = backgroundColors,
                     onCheckColor = onPickBackgroundColor,
                     onRemoveColor = { onPickBackgroundColor(null) },
-                    checkedColor = segmentUiState.customColor
+                    checkedColor = uiState.segmentUiState.customColor
                 )
             }
         }
@@ -180,8 +180,11 @@ private fun EditWheelSegmentContent(
 @Composable
 private fun EditWheelSegmentContentPreview() {
     AppTheme {
-        WheelSegmentContent(
-            segmentUiState = PreviewWheelSegmentList.first(),
+        EditWheelSegmentContent(
+            uiState = EditWheelSegmentUiState(
+                PreviewWheelSegmentList.first(),
+                canSave = true
+            ),
             onInputTitle = {},
             onInputDescription = {},
             onClickAddImage = {},
