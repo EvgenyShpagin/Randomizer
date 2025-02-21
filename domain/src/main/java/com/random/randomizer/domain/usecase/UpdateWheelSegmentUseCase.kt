@@ -3,7 +3,6 @@ package com.random.randomizer.domain.usecase
 import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.error.UpdateWheelSegmentError
 import com.random.randomizer.domain.error.UpdateWheelSegmentError.FailedToSaveThumbnail
-import com.random.randomizer.domain.error.UpdateWheelSegmentError.WheelSegmentDoesNotExist
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.domain.util.ImageScaler
@@ -17,8 +16,7 @@ class UpdateWheelSegmentUseCase @Inject constructor(
     suspend operator fun invoke(
         wheelSegment: WheelSegment
     ): Result<Unit, UpdateWheelSegmentError> {
-        val currentWheelSegment = wheelSegmentRepository.get(wheelSegment.id)
-            ?: return Result.Failure(WheelSegmentDoesNotExist)
+        val currentWheelSegment = wheelSegmentRepository.get(wheelSegment.id)!!
 
         if (hasImageBeenReplaced(currentWheelSegment, wheelSegment)) {
             val scaledImage = imageScaler.scale(wheelSegment.thumbnail!!, 600)
