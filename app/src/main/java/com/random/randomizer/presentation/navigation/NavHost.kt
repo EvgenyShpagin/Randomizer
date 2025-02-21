@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
 import com.random.randomizer.presentation.screen.results.ResultsScreen
-import com.random.randomizer.presentation.screen.segment.WheelSegmentScreen
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentScreen
 import com.random.randomizer.presentation.screen.spin.SpinScreen
 
 @Composable
@@ -39,7 +39,7 @@ fun RandomizerNavHost(
                     navController.navigateUp()
                 },
                 navigateToEditDetails = { wheelSegmentId ->
-                    navController.navigate(Destination.WheelSegment(wheelSegmentId))
+                    navController.navigate(Destination.EditWheelSegment(wheelSegmentId))
                 },
                 viewModel = hiltViewModel()
             )
@@ -68,8 +68,8 @@ fun RandomizerNavHost(
                 viewModel = hiltViewModel()
             )
         }
-        composable<Destination.WheelSegment> {
-            WheelSegmentScreen(
+        composable<Destination.EditWheelSegment> {
+            EditWheelSegmentScreen(
                 navigateBack = {
                     navController.navigateUp()
                 },

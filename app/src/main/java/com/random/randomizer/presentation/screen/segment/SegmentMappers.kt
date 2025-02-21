@@ -8,19 +8,15 @@ import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import javax.inject.Inject
 
-interface WheelSegmentMappers {
     fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState
+interface EditWheelSegmentMappers {
     fun toPresentation(thumbnail: Image): ImageBitmap?
     fun toDomain(color: Color): Long
 }
 
-class WheelSegmentMappersImpl @Inject constructor(
+class EditWheelSegmentMappersImpl @Inject constructor(
     private val coreMappers: CoreMappers
-) : WheelSegmentMappers {
-    override fun toPresentation(wheelSegment: WheelSegment): WheelSegmentUiState {
-        return coreMappers.toPresentation(wheelSegment)
-    }
-
+) : EditWheelSegmentMappers {
     override fun toPresentation(thumbnail: Image): ImageBitmap? {
         return coreMappers.toPresentation(thumbnail)
     }

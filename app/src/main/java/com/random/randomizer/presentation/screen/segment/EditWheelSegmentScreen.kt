@@ -28,25 +28,25 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.edit.AddSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.RemoveSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.SegmentColorsRow
 import com.random.randomizer.presentation.screen.edit.SegmentDescriptionTextField
 import com.random.randomizer.presentation.screen.edit.SegmentTitleTextField
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.FinishEdit
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.InputDescription
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.InputTitle
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.OpenImagePicker
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.PickColor
-import com.random.randomizer.presentation.screen.segment.WheelSegmentUiEvent.RemoveImage
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputDescription
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputTitle
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.OpenImagePicker
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickColor
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickImage
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.RemoveImage
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 
 
 @Composable
-fun WheelSegmentScreen(
+fun EditWheelSegmentScreen(
     viewModel: WheelSegmentViewModel,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -56,7 +56,7 @@ fun WheelSegmentScreen(
     val context = LocalContext.current
 
     val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
-        viewModel.onEvent(WheelSegmentUiEvent.PickImage(context, uri))
+        viewModel.onEvent(PickImage(context, uri))
     }
     BackHandler {
         viewModel.onEvent(FinishEdit(doSave = false))
@@ -64,15 +64,15 @@ fun WheelSegmentScreen(
 
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
-            WheelSegmentUiEffect.OpenImagePicker -> {
+            EditWheelSegmentUiEffect.OpenImagePicker -> {
                 pickMedia.launchImagePicker()
             }
 
-            WheelSegmentUiEffect.NavigateBack -> {
+            EditWheelSegmentUiEffect.NavigateBack -> {
                 navigateBack()
             }
 
-            is WheelSegmentUiEffect.ShowErrorMessage -> {
+            is EditWheelSegmentUiEffect.ShowErrorMessage -> {
                 Toast.makeText(context, effect.textId, Toast.LENGTH_SHORT).show()
             }
         }
@@ -86,7 +86,7 @@ fun WheelSegmentScreen(
             })
         },
         content = { innerPadding ->
-            WheelSegmentContent(
+            EditWheelSegmentContent(
                 segmentUiState = uiState,
                 onInputTitle = { title ->
                     viewModel.onEvent(InputTitle(title))
@@ -113,8 +113,8 @@ fun WheelSegmentScreen(
 }
 
 @Composable
-private fun WheelSegmentContent(
     segmentUiState: WheelSegmentUiState,
+private fun EditWheelSegmentContent(
     onSaveClicked: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
@@ -178,7 +178,7 @@ private fun WheelSegmentContent(
 
 @Preview
 @Composable
-private fun WheelSegmentContentPreview() {
+private fun EditWheelSegmentContentPreview() {
     AppTheme {
         WheelSegmentContent(
             segmentUiState = PreviewWheelSegmentList.first(),
