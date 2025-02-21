@@ -11,6 +11,6 @@ sealed interface WheelSegmentUiEvent : UiEvent {
     data class PickImage(val context: Context, val uri: Uri?) : WheelSegmentUiEvent
     data object OpenImagePicker : WheelSegmentUiEvent
     data object RemoveImage : WheelSegmentUiEvent
-    data object FinishEdit : WheelSegmentUiEvent
+    data class FinishEdit(val doSave: Boolean) : WheelSegmentUiEvent
     data class PickColor(val color: Color?) : WheelSegmentUiEvent
 }

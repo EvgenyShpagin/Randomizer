@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +44,6 @@ import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WheelSegmentScreen(
     viewModel: WheelSegmentViewModel,
@@ -79,7 +77,9 @@ fun WheelSegmentScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            WheelSegmentTopAppBar(onNavigationClick = { viewModel.onEvent(FinishEdit) })
+            WheelSegmentTopAppBar(onNavigationClick = {
+                viewModel.onEvent(FinishEdit(doSave = false))
+            })
         },
         content = { innerPadding ->
             WheelSegmentContent(
@@ -100,7 +100,7 @@ fun WheelSegmentScreen(
                     viewModel.onEvent(PickColor(color))
                 },
                 onSaveClicked = {
-                    viewModel.onEvent(FinishEdit)
+                    viewModel.onEvent(FinishEdit(doSave = true))
                 },
                 modifier = Modifier.padding(innerPadding)
             )
@@ -108,7 +108,6 @@ fun WheelSegmentScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WheelSegmentContent(
     segmentUiState: WheelSegmentUiState,

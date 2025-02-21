@@ -87,7 +87,7 @@ class WheelSegmentViewModel @Inject constructor(
             is WheelSegmentUiEvent.PickColor -> onPickBackgroundColor(event.color)
             WheelSegmentUiEvent.RemoveImage -> onRemoveImage()
             WheelSegmentUiEvent.OpenImagePicker -> onOpenImagePicker()
-            WheelSegmentUiEvent.FinishEdit -> onFinishEdit()
+            is WheelSegmentUiEvent.FinishEdit -> onFinishEdit(doSave = event.doSave)
         }
     }
 
@@ -128,8 +128,8 @@ class WheelSegmentViewModel @Inject constructor(
         triggerEffect(WheelSegmentUiEffect.OpenImagePicker)
     }
 
-    private fun onFinishEdit() {
         // TODO: implement
         triggerEffect(WheelSegmentUiEffect.NavigateBack)
+    private fun onFinishEdit(doSave: Boolean) {
     }
 }
