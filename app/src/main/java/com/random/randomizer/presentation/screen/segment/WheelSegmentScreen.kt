@@ -2,6 +2,7 @@ package com.random.randomizer.presentation.screen.segment
 
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -56,6 +57,9 @@ fun WheelSegmentScreen(
 
     val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         viewModel.onEvent(WheelSegmentUiEvent.PickImage(context, uri))
+    }
+    BackHandler {
+        viewModel.onEvent(FinishEdit(doSave = false))
     }
 
     HandleUiEffects(viewModel.uiEffect) { effect ->
