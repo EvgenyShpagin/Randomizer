@@ -1,18 +1,15 @@
 package com.random.randomizer.domain.usecase
 
-import com.random.randomizer.domain.repository.WheelSegmentRepository
+import com.random.randomizer.domain.model.WheelSegment
 import javax.inject.Inject
 
-class FixSavedWheelSegmentUseCase @Inject constructor(
-    private val wheelSegmentRepository: WheelSegmentRepository
-) {
-    suspend operator fun invoke(wheelSegmentId: Int) {
-        val wheelSegment = wheelSegmentRepository.get(wheelSegmentId)!!
+class FixWheelSegmentUseCase @Inject constructor() {
+    operator fun invoke(wheelSegment: WheelSegment): WheelSegment {
         val fixedWheelSegment = wheelSegment.copy(
             title = wheelSegment.title.fixWhitespaces(),
             description = wheelSegment.description.fixWhitespaces()
         )
-        wheelSegmentRepository.update(fixedWheelSegment)
+        return fixedWheelSegment
     }
 
     private fun String.fixWhitespaces(): String {
