@@ -18,9 +18,10 @@ import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.FakeCoreMappers
 import com.random.randomizer.presentation.navigation.Destination
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputTitle
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickColor
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickImage
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.RemoveImage
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiState
@@ -139,7 +140,7 @@ class EditWheelSegmentViewModelTest {
         viewModel.uiState.first()
 
         // When - on color pick
-        viewModel.onEvent(EditWheelSegmentUiEvent.PickColor(Color.Red))
+        viewModel.onEvent(PickColor(Color.Red))
 
         val expected = Color.Red
         val actual = viewModel.uiState.first().segmentUiState.customColor
@@ -174,6 +175,44 @@ class EditWheelSegmentViewModelTest {
         val actual = viewModel.uiState.first().segmentUiState.image
 
         // Then - verify segment's thumbnail was removed
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun savesWheelSegment_onFinishWithSave() = runTest {
+        // Given - wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
+
+        // Setup initial UI
+        viewModel.uiState.first()
+
+        // When - on finish WITH save after some edit
+        viewModel.onEvent(InputTitle("Changed title"))
+        viewModel.onEvent(FinishEdit(doSave = true))
+
+        val expected = EmptyWheelSegment.copy(title = "Changed title")
+        val actual = wheelSegmentRepository.get(SEGMENT_ID)
+
+        // Then - verify saved wheel segment changed
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun doesNotSave_onFinishWithoutSave() = runTest {
+        // Given - wheel segment
+        wheelSegmentRepository.add(EmptyWheelSegment)
+
+        // Setup initial UI
+        viewModel.uiState.first()
+
+        // When - on finish WITHOUT save after some edit
+        viewModel.onEvent(InputTitle("Changed title"))
+        viewModel.onEvent(FinishEdit(doSave = false))
+
+        val expected = EmptyWheelSegment
+        val actual = wheelSegmentRepository.get(SEGMENT_ID)
+
+        // Then - verify saved wheel segment changed
         assertEquals(expected, actual)
     }
 
