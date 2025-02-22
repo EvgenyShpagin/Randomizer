@@ -3,7 +3,6 @@ package com.random.randomizer.presentation.screen.edit
 import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
 import com.random.randomizer.domain.model.WheelSegment
-import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +32,6 @@ class EditViewModelTest {
         wheelSegmentRepository = FakeWheelSegmentRepository()
         viewModel = EditViewModel(
             GetWheelSegmentsStreamUseCase(wheelSegmentRepository),
-            CreateWheelSegmentUseCase(wheelSegmentRepository),
             DeleteWheelSegmentUseCase(
                 wheelSegmentRepository
             ),
@@ -53,19 +51,5 @@ class EditViewModelTest {
 
         // Then - verify UI state is the same as expected
         assertEquals(expectedSegments, actualSegments)
-    }
-
-    @Test
-    fun createsSegment_onAddEvent() = runTest {
-        // Given - empty repository
-
-        // When - on create segment event
-        viewModel.onEvent(EditUiEvent.CreateSegment)
-
-        // Then - verify wheel segment was saved
-        assertEquals(
-            wheelSegmentRepository.getAll().count(),
-            1
-        )
     }
 }
