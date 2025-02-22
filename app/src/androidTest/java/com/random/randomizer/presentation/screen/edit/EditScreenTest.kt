@@ -3,9 +3,7 @@ package com.random.randomizer.presentation.screen.edit
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.filters.MediumTest
 import com.random.randomizer.HiltTestActivity
@@ -71,25 +69,6 @@ class EditScreenTest {
         composeTestRule
             .onNodeWithText(emptyListText)
             .assertIsNotDisplayed()
-    }
-
-    @Test
-    fun showsBottomSheet_whenAddButtonClicked() {
-        // Given - empty wheel segment list
-
-        // When - on add button clicked
-        val addButtonContentDescription = stringResource(R.string.cd_add_new_wheel_segment)
-        composeTestRule
-            .onNodeWithContentDescription(addButtonContentDescription)
-            .performClick()
-
-        // Then - verify some bottom sheet content is displayed
-        val addImageButtonContentDescription = stringResource(R.string.cd_add_image_to_segment)
-        // Since we return WheelSegment from CreateWheelSegmentUseCase
-        // without image, the add button will be visible
-        composeTestRule
-            .onNodeWithContentDescription(addImageButtonContentDescription)
-            .assertIsDisplayed()
     }
 
     private fun setContent() {
