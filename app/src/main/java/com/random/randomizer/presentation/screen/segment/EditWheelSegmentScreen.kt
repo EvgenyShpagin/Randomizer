@@ -33,6 +33,8 @@ import com.random.randomizer.presentation.screen.edit.RemoveSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.SegmentColorsRow
 import com.random.randomizer.presentation.screen.edit.SegmentDescriptionTextField
 import com.random.randomizer.presentation.screen.edit.SegmentTitleTextField
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.NavigateBack
+import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.ShowErrorMessage
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputTitle
@@ -63,11 +65,11 @@ fun EditWheelSegmentScreen(
 
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
-            EditWheelSegmentUiEffect.NavigateBack -> {
+            NavigateBack -> {
                 navigateBack()
             }
 
-            is EditWheelSegmentUiEffect.ShowErrorMessage -> {
+            is ShowErrorMessage -> {
                 Toast.makeText(context, effect.textId, Toast.LENGTH_SHORT).show()
             }
         }
