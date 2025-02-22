@@ -36,7 +36,6 @@ import com.random.randomizer.presentation.screen.edit.SegmentTitleTextField
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputDescription
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputTitle
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.OpenImagePicker
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickColor
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickImage
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.RemoveImage
@@ -64,10 +63,6 @@ fun EditWheelSegmentScreen(
 
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
-            EditWheelSegmentUiEffect.OpenImagePicker -> {
-                pickMedia.launchImagePicker()
-            }
-
             EditWheelSegmentUiEffect.NavigateBack -> {
                 navigateBack()
             }
@@ -95,7 +90,7 @@ fun EditWheelSegmentScreen(
                     viewModel.onEvent(InputDescription(description))
                 },
                 onClickAddImage = {
-                    viewModel.onEvent(OpenImagePicker)
+                    pickMedia.launchImagePicker()
                 },
                 onClickRemoveImage = {
                     viewModel.onEvent(RemoveImage)

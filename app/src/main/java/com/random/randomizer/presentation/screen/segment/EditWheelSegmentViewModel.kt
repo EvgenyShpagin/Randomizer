@@ -106,7 +106,6 @@ class EditWheelSegmentViewModel @Inject constructor(
             is EditWheelSegmentUiEvent.PickImage -> onPickImage(event.context, event.uri)
             is EditWheelSegmentUiEvent.PickColor -> onPickBackgroundColor(event.color)
             EditWheelSegmentUiEvent.RemoveImage -> onRemoveImage()
-            EditWheelSegmentUiEvent.OpenImagePicker -> onOpenImagePicker()
             is EditWheelSegmentUiEvent.FinishEdit -> onFinishEdit(doSave = event.doSave)
         }
     }
@@ -141,10 +140,6 @@ class EditWheelSegmentViewModel @Inject constructor(
     private fun onPickBackgroundColor(color: Color?) {
         val domainColor = color?.let { mappers.toDomain(color) }
         savedStateHandle[KEY_COLOR] = domainColor
-    }
-
-    private fun onOpenImagePicker() {
-        triggerEffect(EditWheelSegmentUiEffect.OpenImagePicker)
     }
 
     private fun onFinishEdit(doSave: Boolean) {
