@@ -8,3 +8,8 @@ fun stringResource(@StringRes id: Int): String {
     val context = getApplicationContext<Context>()
     return context.getString(id)
 }
+
+fun stringResource(@StringRes id: Int, vararg formatArgs: Any): String {
+    val context = getApplicationContext<Context>()
+    return context.getString(id, *formatArgs)
+}

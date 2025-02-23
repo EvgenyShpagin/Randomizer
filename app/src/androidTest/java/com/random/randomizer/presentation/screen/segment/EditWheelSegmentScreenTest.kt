@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.filters.MediumTest
 import com.random.randomizer.HiltTestActivity
@@ -28,6 +30,7 @@ import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -65,6 +68,7 @@ class EditWheelSegmentScreenTest {
     @Test
     fun displaysEmptyWheelSegment_whenJustCreated() = runTest {
         // Given - just created wheel segment
+        // When - on startup
         setContent(wheelSegmentId = null)
 
         // Then - verify blank wheel segment is displayed
@@ -80,6 +84,7 @@ class EditWheelSegmentScreenTest {
         // Given - saved wheel segment
         repository.add(savedWheelSegment)
 
+        // When - on startup
         setContent(wheelSegmentId = savedWheelSegment.id)
 
         // Then - verify content is displayed
@@ -98,6 +103,101 @@ class EditWheelSegmentScreenTest {
         composeTestRule
             .onNodeWithContentDescription(stringResource(R.string.cd_remove_color))
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun updatesTitle_onInput() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        // When - on title input
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.title)
+        ).performTextReplacement("Some other title text")
+
+        // Then - verify title has changed
+        assertEquals(
+            "Some other title text",
+            viewModel.uiState.value.segmentUiState.title
+        )
+    }
+
+    @Test
+    fun updatesDescription_onInput() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        // When - on description input
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.description)
+        ).performTextReplacement("Some other description")
+
+        // Then - verify description has changed
+        assertEquals(
+            "Some other description",
+            viewModel.uiState.value.segmentUiState.description
+        )
+    }
+
+    @Test
+    fun updatesColor_onPick() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        val color = AllSegmentColors[0]
+
+        // When - on color pick
+        composeTestRule.onNodeWithContentDescription(
+            stringResource(R.string.cd_unchecked_color_circle, color.toString())
+        ).performClick()
+
+        // Then - verify color has changed
+        assertEquals(color, viewModel.uiState.value.segmentUiState.customColor)
+    }
+
+    @Test
+    fun keepsState_whenActivityRecreated() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        // Input title
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.title)
+        ).performTextReplacement("Some other title text")
+
+        // Input description
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.description)
+        ).performTextReplacement("Some other description")
+
+        val color = AllSegmentColors[0]
+        composeTestRule.onNodeWithContentDescription(
+            stringResource(R.string.cd_unchecked_color_circle, color.toString())
+        ).performClick()
+
+        // When - activity was recreated
+        composeTestRule.activityRule.scenario.recreate()
+
+        // Then - verify title has changed
+        assertEquals(
+            "Some other title text",
+            viewModel.uiState.value.segmentUiState.title
+        )
+        // Then - verify description has changed
+        assertEquals(
+            "Some other description",
+            viewModel.uiState.value.segmentUiState.description
+        )
+        // Then - verify color has changed
+        assertEquals(color, viewModel.uiState.value.segmentUiState.customColor)
     }
 
     private fun setContent(wheelSegmentId: Int? = savedWheelSegment.id) {
