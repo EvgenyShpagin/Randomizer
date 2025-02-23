@@ -180,8 +180,8 @@ fun SegmentColorsRow(
     colors: List<Color>,
     onCheckColor: (Color) -> Unit,
     onRemoveColor: () -> Unit,
-    checkedColor: Color? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    checkedColor: Color? = null
 ) {
     val itemModifier = Modifier
         .padding(4.dp)
