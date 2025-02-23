@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.SavedStateHandle
@@ -198,6 +199,52 @@ class EditWheelSegmentScreenTest {
         )
         // Then - verify color has changed
         assertEquals(color, viewModel.uiState.value.segmentUiState.customColor)
+    }
+
+    @Test
+    fun updatesWheelSegment_whenFinishWithSave() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.title)
+        ).performTextReplacement("Some other title text")
+
+        // When - on save button click
+        composeTestRule
+            .onNodeWithText(stringResource(R.string.button_save))
+            .performClick()
+
+        // Then - verify wheel segment has been saved
+        assertEquals(
+            savedWheelSegment.copy(title = "Some other title text"),
+            repository.get(savedWheelSegment.id)
+        )
+    }
+
+    @Test
+    fun doesNotUpdateWheelSegment_whenFinishWithoutSave() = runTest {
+        // Given - saved wheel segment
+        repository.add(savedWheelSegment)
+
+        setContent()
+
+        composeTestRule.onNode(
+            hasSetTextAction() and hasText(savedWheelSegment.title)
+        ).performTextReplacement("Some other title text")
+
+        // When - back button is clicked
+        composeTestRule.runOnUiThread {
+            composeTestRule.activity.onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Then - verify wheel segment has not been updated
+        assertEquals(
+            savedWheelSegment,
+            repository.get(savedWheelSegment.id)
+        )
     }
 
     private fun setContent(wheelSegmentId: Int? = savedWheelSegment.id) {

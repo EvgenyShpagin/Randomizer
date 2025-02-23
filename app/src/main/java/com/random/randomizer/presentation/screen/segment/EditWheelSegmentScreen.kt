@@ -7,6 +7,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -191,8 +192,8 @@ private fun EditWheelSegmentContentPreview() {
         )
     }
 }
-
-private val AllSegmentColors = listOf(
+@VisibleForTesting
+val AllSegmentColors = listOf(
     Color(0xFFEF9A9A),
     Color(0xFFF48FB1),
     Color(0xFFCE93D8),
