@@ -26,6 +26,7 @@ import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffec
 import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,6 +38,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditWheelSegmentViewModel @Inject constructor(
+    @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle,
     private val getWheelSegmentUseCase: GetWheelSegmentUseCase,
     private val fixWheelSegmentUseCase: FixWheelSegmentUseCase,
@@ -51,6 +53,7 @@ class EditWheelSegmentViewModel @Inject constructor(
     private val color = savedStateHandle.getStateFlow<Long?>(KEY_COLOR, null)
     private val imagePath = savedStateHandle.getStateFlow<String?>(KEY_IMAGE_PATH, null)
     private var latestImage: Image? = null
+    private val imageCacheDir = context.cacheDir
 
     private val route = savedStateHandle.toRoute<Destination.EditWheelSegment>()
     private val wheelSegmentId = route.wheelSegmentId
@@ -96,7 +99,7 @@ class EditWheelSegmentViewModel @Inject constructor(
         savedStateHandle[KEY_TITLE] = savedWheelSegment.title
         savedStateHandle[KEY_DESCRIPTION] = savedWheelSegment.description
         savedStateHandle[KEY_COLOR] = savedWheelSegment.customColor
-        savedStateHandle[KEY_IMAGE_PATH] = savedWheelSegment.thumbnail?.id
+        savedWheelSegment.thumbnail?.let { cacheImage(it) }
     }
 
     override fun onEvent(event: EditWheelSegmentUiEvent) {
@@ -129,7 +132,7 @@ class EditWheelSegmentViewModel @Inject constructor(
             return@launch
         }
 
-        cacheImage(context, Image(imageFilename, imageData))
+        cacheImage(Image(imageFilename, imageData))
     }
 
     private fun onRemoveImage() {
@@ -176,9 +179,8 @@ class EditWheelSegmentViewModel @Inject constructor(
         }
     }
 
-    private fun cacheImage(context: Context, image: Image) {
-        val cacheDirectory = context.cacheDir
-        val imageFile = File(cacheDirectory, image.id)
+    private fun cacheImage(image: Image) {
+        val imageFile = File(imageCacheDir, image.id)
         runCatching {
             imageFile.writeBytes(image.data)
         }.onFailure {
