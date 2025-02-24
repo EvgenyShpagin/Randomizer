@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.filters.MediumTest
 import com.random.randomizer.HiltTestActivity
@@ -15,6 +17,7 @@ import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -116,6 +119,26 @@ class HomeScreenTest {
         composeTestRule
             .onNodeWithText(spinButtonText, useUnmergedTree = true)
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun deletesWheelSegment_whenWheelSegmentSwiped() = runTest {
+        // Given - multiple wheel segments
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        // When - item is swiped
+        composeTestRule
+            .onNodeWithText(wheelSegments.first().title)
+            .performTouchInput { swipeLeft() }
+
+        composeTestRule.waitForIdle()
+
+        // Then - verify item has been deleted
+        val resultWheelSegments = wheelSegmentRepository.getAll()
+        assertEquals(
+            listOf(wheelSegments.last()),
+            resultWheelSegments
+        )
     }
 
     private fun setContent() {
