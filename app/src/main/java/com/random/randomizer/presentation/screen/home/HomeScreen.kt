@@ -44,7 +44,7 @@ fun HomeScreen(
     HomeScreen(
         onClickSpin = { navigateToSpin() },
         onClickAdd = { navigateToEdit(null) },
-        onClickWheelSegment = { id -> navigateToEdit(id) },
+        onClickWheelSegment = { navigateToEdit(it.id) },
         onDeleteWheelSegment = { viewModel.onEvent(DeleteSegment(it)) },
         wheelItems = uiState.wheelSegments,
         modifier = modifier
@@ -56,7 +56,7 @@ fun HomeScreen(
 private fun HomeScreen(
     onClickSpin: () -> Unit,
     onClickAdd: () -> Unit,
-    onClickWheelSegment: (Int) -> Unit,
+    onClickWheelSegment: (WheelSegmentUiState) -> Unit,
     onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
     wheelItems: List<WheelSegmentUiState>,
     modifier: Modifier = Modifier,
@@ -91,7 +91,7 @@ private fun HomeScreen(
             } else {
                 DeletableWheelSegmentList(
                     wheelItems = wheelItems,
-                    onClick = { onClickWheelSegment(it.id) },
+                    onClick = onClickWheelSegment,
                     onDelete = onDeleteWheelSegment,
                     listState = listState
                 )
