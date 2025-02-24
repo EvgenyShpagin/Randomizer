@@ -36,7 +36,7 @@ class HomeScreenTest {
     private lateinit var viewModel: HomeViewModel
 
     @Inject
-    lateinit var wheelSegmentRepository: WheelSegmentRepository
+    lateinit var repository: WheelSegmentRepository
 
     private val wheelSegments = listOf(
         WheelSegment(1, "fake", "", null, null),
@@ -64,7 +64,7 @@ class HomeScreenTest {
     @Test
     fun showsWheelSegmentList_whenSegmentsPresent() = runTest {
         // Given - single wheel segment
-        wheelSegmentRepository.add(wheelSegments.first())
+        repository.add(wheelSegments.first())
 
         // When - on startup
 
@@ -96,7 +96,7 @@ class HomeScreenTest {
     @Test
     fun hidesSpinButton_whenSingleWheelSegment() = runTest {
         // Given - single wheel segment
-        wheelSegmentRepository.add(wheelSegments.first())
+        repository.add(wheelSegments.first())
 
         // When - on startup
 
@@ -110,7 +110,7 @@ class HomeScreenTest {
     @Test
     fun showsSpinButton_whenWheelSegmentsPresent() = runTest {
         // Given - multiple wheel segments
-        wheelSegmentRepository.addMultiple(wheelSegments)
+        repository.addMultiple(wheelSegments)
 
         // When - on startup
 
@@ -124,7 +124,7 @@ class HomeScreenTest {
     @Test
     fun deletesWheelSegment_whenWheelSegmentSwiped() = runTest {
         // Given - multiple wheel segments
-        wheelSegmentRepository.addMultiple(wheelSegments)
+        repository.addMultiple(wheelSegments)
 
         // When - item is swiped
         composeTestRule
@@ -134,7 +134,7 @@ class HomeScreenTest {
         composeTestRule.waitForIdle()
 
         // Then - verify item has been deleted
-        val resultWheelSegments = wheelSegmentRepository.getAll()
+        val resultWheelSegments = repository.getAll()
         assertEquals(
             listOf(wheelSegments.last()),
             resultWheelSegments
