@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.segment
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -250,7 +251,8 @@ class EditWheelSegmentScreenTest {
     private fun setContent(wheelSegmentId: Int? = savedWheelSegment.id) {
         composeTestRule.setContent {
             viewModel = EditWheelSegmentViewModel(
-                savedStateHandle = SavedStateHandle(mapOf("wheelSegmentId" to wheelSegmentId)),
+                LocalContext.current,
+                SavedStateHandle(mapOf("wheelSegmentId" to wheelSegmentId)),
                 GetWheelSegmentUseCase(repository),
                 FixWheelSegmentUseCase(),
                 CreateWheelSegmentUseCase(FixThumbnailUseCase(), repository),
