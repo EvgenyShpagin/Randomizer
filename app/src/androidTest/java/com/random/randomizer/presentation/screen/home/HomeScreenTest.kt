@@ -101,7 +101,7 @@ class HomeScreenTest {
 
     @Test
     fun showsSpinButton_whenWheelSegmentsPresent() = runTest {
-        // Given - single wheel segment
+        // Given - multiple wheel segments
         wheelSegmentRepository.addMultiple(
             segments = listOf(
                 WheelSegment(1, "fake", "", null, null),
