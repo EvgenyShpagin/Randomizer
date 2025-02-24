@@ -9,6 +9,7 @@ import com.random.randomizer.presentation.screen.home.HomeUiEffect.NavigateToSeg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,6 +34,7 @@ class HomeViewModel @Inject constructor(
         when (event) {
             HomeUiEvent.CreateSegment -> onCreateSegment()
             is HomeUiEvent.EditSegment -> onEditSegment(event.wheelSegment)
+            is HomeUiEvent.DeleteSegment -> onDeleteSegment(event.wheelSegment)
         }
     }
 
@@ -42,5 +44,11 @@ class HomeViewModel @Inject constructor(
 
     private fun onCreateSegment() {
         triggerEffect(NavigateToSegmentEdit(null))
+    }
+
+    private fun onDeleteSegment(wheelSegment: WheelSegmentUiState) {
+        viewModelScope.launch {
+            deleteWheelSegmentUseCase(wheelSegment.id)
+        }
     }
 }

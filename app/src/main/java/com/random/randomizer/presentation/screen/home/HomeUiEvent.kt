@@ -6,4 +6,5 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 sealed interface HomeUiEvent : UiEvent {
     data object CreateSegment : HomeUiEvent
     data class EditSegment(val wheelSegment: WheelSegmentUiState) : HomeUiEvent
+    data class DeleteSegment(val wheelSegment: WheelSegmentUiState) : HomeUiEvent
 }

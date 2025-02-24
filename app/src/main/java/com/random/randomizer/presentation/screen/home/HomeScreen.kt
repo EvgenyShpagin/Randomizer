@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
-import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.DayAndNightPreview
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
@@ -45,6 +45,7 @@ fun HomeScreen(
         onClickSpin = { navigateToSpin() },
         onClickAdd = { navigateToEdit(null) },
         onClickWheelSegment = { id -> navigateToEdit(id) },
+        onDeleteWheelSegment = { viewModel.onEvent(DeleteSegment(it)) },
         wheelItems = uiState.wheelSegments,
         modifier = modifier
     )
@@ -56,6 +57,7 @@ private fun HomeScreen(
     onClickSpin: () -> Unit,
     onClickAdd: () -> Unit,
     onClickWheelSegment: (Int) -> Unit,
+    onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
     wheelItems: List<WheelSegmentUiState>,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
@@ -87,9 +89,10 @@ private fun HomeScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
-                WheelSegmentList(
+                DeletableWheelSegmentList(
                     wheelItems = wheelItems,
-                    onClickWheelSegment = { onClickWheelSegment(it.id) },
+                    onClick = { onClickWheelSegment(it.id) },
+                    onDelete = onDeleteWheelSegment,
                     listState = listState
                 )
             }
@@ -110,6 +113,7 @@ private fun HomeScreenPreview(
                 onClickSpin = {},
                 onClickAdd = {},
                 onClickWheelSegment = {},
+                onDeleteWheelSegment = {},
                 wheelItems = wheelSegments,
             )
         }
