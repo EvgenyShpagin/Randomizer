@@ -2,8 +2,6 @@ package com.random.randomizer.di
 
 import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.CoreMappersImpl
-import com.random.randomizer.presentation.screen.edit.EditMappers
-import com.random.randomizer.presentation.screen.edit.EditMappersImpl
 import com.random.randomizer.presentation.screen.home.HomeMappers
 import com.random.randomizer.presentation.screen.home.HomeMappersImpl
 import com.random.randomizer.presentation.screen.results.ResultsMappers
@@ -25,9 +23,6 @@ abstract class MappersModule {
 
     @Binds
     abstract fun bindHomeMappers(impl: HomeMappersImpl): HomeMappers
-
-    @Binds
-    abstract fun bindEditMappers(impl: EditMappersImpl): EditMappers
 
     @Binds
     abstract fun bindEditSegmentMappers(impl: EditWheelSegmentMappersImpl): EditWheelSegmentMappers

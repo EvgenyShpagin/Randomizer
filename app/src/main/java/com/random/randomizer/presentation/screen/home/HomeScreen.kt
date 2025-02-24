@@ -1,8 +1,11 @@
 package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -14,9 +17,11 @@ import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
@@ -24,29 +29,22 @@ import com.random.randomizer.presentation.core.WheelSegmentList
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.DayAndNightPreview
-import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToSpin: () -> Unit,
-    navigateToEdit: () -> Unit,
+    navigateToEdit: (Int?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    HandleUiEffects(viewModel.uiEffect) { effect ->
-        when (effect) {
-            HomeUiEffect.NavigateToEdit -> navigateToEdit()
-            HomeUiEffect.NavigateToSpin -> navigateToSpin()
-        }
-    }
-
     HomeScreen(
-        onClickSpin = { viewModel.onEvent(HomeUiEvent.Spin) },
-        onClickEdit = { viewModel.onEvent(HomeUiEvent.Edit) },
+        onClickSpin = { navigateToSpin() },
+        onClickAdd = { navigateToEdit(null) },
+        onClickWheelSegment = { id -> navigateToEdit(id) },
         wheelItems = uiState.wheelSegments,
         modifier = modifier
     )
@@ -56,7 +54,8 @@ fun HomeScreen(
 @Composable
 private fun HomeScreen(
     onClickSpin: () -> Unit,
-    onClickEdit: () -> Unit,
+    onClickAdd: () -> Unit,
+    onClickWheelSegment: (Int) -> Unit,
     wheelItems: List<WheelSegmentUiState>,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
@@ -65,14 +64,15 @@ private fun HomeScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
     Scaffold(
         topBar = {
-            HomeTopBar(
-                onClickEdit = onClickEdit,
-                scrollBehavior = scrollBehavior
-            )
+            HomeTopBar(scrollBehavior = scrollBehavior)
         },
         floatingActionButton = {
-            if (wheelItems.count() > 1) {
-                SpinButton(onClick = onClickSpin)
+            Column(horizontalAlignment = Alignment.End) {
+                AddSegmentButton(onClick = onClickAdd)
+                if (wheelItems.count() > 1) {
+                    Spacer(Modifier.height(16.dp))
+                    SpinButton(onClick = onClickSpin)
+                }
             }
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -89,7 +89,7 @@ private fun HomeScreen(
             } else {
                 WheelSegmentList(
                     wheelItems = wheelItems,
-                    onClickWheelSegment = {},
+                    onClickWheelSegment = { onClickWheelSegment(it.id) },
                     listState = listState
                 )
             }
@@ -107,9 +107,10 @@ private fun HomeScreenPreview(
     AppTheme {
         Surface {
             HomeScreen(
+                onClickSpin = {},
+                onClickAdd = {},
+                onClickWheelSegment = {},
                 wheelItems = wheelSegments,
-                onClickEdit = {},
-                onClickSpin = {}
             )
         }
     }

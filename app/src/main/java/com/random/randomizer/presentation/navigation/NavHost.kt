@@ -6,7 +6,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.random.randomizer.presentation.screen.edit.EditScreen
 import com.random.randomizer.presentation.screen.home.HomeScreen
 import com.random.randomizer.presentation.screen.results.ResultsScreen
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentScreen
@@ -27,18 +26,7 @@ fun RandomizerNavHost(
                 navigateToSpin = {
                     navController.navigate(Destination.SpinWheel)
                 },
-                navigateToEdit = {
-                    navController.navigate(Destination.Edit)
-                },
-                viewModel = hiltViewModel()
-            )
-        }
-        composable<Destination.Edit> {
-            EditScreen(
-                navigateBack = {
-                    navController.navigateUp()
-                },
-                navigateToEditDetails = { wheelSegmentId ->
+                navigateToEdit = { wheelSegmentId ->
                     navController.navigate(Destination.EditWheelSegment(wheelSegmentId))
                 },
                 viewModel = hiltViewModel()

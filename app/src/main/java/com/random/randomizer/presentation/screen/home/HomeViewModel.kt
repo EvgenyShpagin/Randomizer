@@ -1,8 +1,11 @@
 package com.random.randomizer.presentation.screen.home
 
 import androidx.lifecycle.viewModelScope
+import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
+import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.screen.home.HomeUiEffect.NavigateToSegmentEdit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -11,6 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
+    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
     private val mappers: HomeMappers
 ) : MutableStateViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(
     initialUiState = HomeUiState()
@@ -27,16 +31,16 @@ class HomeViewModel @Inject constructor(
 
     override fun onEvent(event: HomeUiEvent) {
         when (event) {
-            HomeUiEvent.Edit -> onEdit()
-            HomeUiEvent.Spin -> onSpin()
+            HomeUiEvent.CreateSegment -> onCreateSegment()
+            is HomeUiEvent.EditSegment -> onEditSegment(event.wheelSegment)
         }
     }
 
-    private fun onSpin() {
-        triggerEffect(HomeUiEffect.NavigateToSpin)
+    private fun onEditSegment(wheelSegment: WheelSegmentUiState) {
+        triggerEffect(NavigateToSegmentEdit(wheelSegment.id))
     }
 
-    private fun onEdit() {
-        triggerEffect(HomeUiEffect.NavigateToEdit)
+    private fun onCreateSegment() {
+        triggerEffect(NavigateToSegmentEdit(null))
     }
 }

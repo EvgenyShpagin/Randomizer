@@ -7,9 +7,6 @@ sealed interface Destination {
     data object Home : Destination
 
     @Serializable
-    data object Edit : Destination
-
-    @Serializable
     data class EditWheelSegment(val wheelSegmentId: Int?) : Destination
 
     @Serializable

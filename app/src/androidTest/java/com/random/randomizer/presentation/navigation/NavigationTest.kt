@@ -6,7 +6,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performClick
@@ -70,19 +69,6 @@ class NavigationTest {
     }
 
     @Test
-    fun homeScreen_navigatesToEdit_whenEditButtonClicked() {
-        // Click on edit button
-        composeTestRule
-            .onNodeWithContentDescription(stringResource(R.string.cd_edit_wheel_segments))
-            .performClick()
-
-        // Make sure the current screen is EditScreen
-        composeTestRule
-            .onNodeWithText(stringResource(R.string.edit_screen_title))
-            .assertIsDisplayed()
-    }
-
-    @Test
     fun homeScreen_navigatesToSpin_whenSpinButtonClicked() = runTest {
         // Add some items to be available to navigate to SpinScreen
         wheelSegmentRepository.addMultiple(wheelSegments)
@@ -123,27 +109,6 @@ class NavigationTest {
 
         // Then - verify we are navigated to spin screen
         assertTrue(navController.isCurrentDestination<Destination.SpinWheel>())
-    }
-
-    @Test
-    fun editScreen_navigatesToHome_whenNavigationButtonClicked() = runTest {
-        // Given - minimum required item count to be able to scroll
-        wheelSegmentRepository.addMultiple(wheelSegments)
-
-        navController.navigate(Destination.Edit)
-
-        // Wait until screen is visible
-        composeTestRule.waitUntilExactlyOneExists(
-            hasText(stringResource(R.string.edit_screen_title))
-        )
-        // When - back button is clicked
-        composeTestRule.onNodeWithText(
-            stringResource(R.string.edit_screen_title),
-            useUnmergedTree = true
-        ).onSibling().performClick()
-
-        // Then - verify current destination is Home
-        assertTrue(navController.isCurrentDestination<Destination.Home>())
     }
 
     @Test

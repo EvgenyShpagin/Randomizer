@@ -40,12 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.screen.edit.AddSegmentImageButton
-import com.random.randomizer.presentation.screen.edit.ColorsRowDefaults
-import com.random.randomizer.presentation.screen.edit.RemoveSegmentImageButton
-import com.random.randomizer.presentation.screen.edit.SegmentColorsRow
-import com.random.randomizer.presentation.screen.edit.SegmentDescriptionTextField
-import com.random.randomizer.presentation.screen.edit.SegmentTitleTextField
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.ShowErrorMessage
 import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
