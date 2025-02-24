@@ -35,6 +35,11 @@ class HomeScreenTest {
     @Inject
     lateinit var wheelSegmentRepository: WheelSegmentRepository
 
+    private val wheelSegments = listOf(
+        WheelSegment(1, "fake", "", null, null),
+        WheelSegment(2, "fake2", "", null, null)
+    )
+
     @Before
     fun setup() {
         hiltRule.inject()
@@ -56,7 +61,7 @@ class HomeScreenTest {
     @Test
     fun showsWheelSegmentList_whenSegmentsPresent() = runTest {
         // Given - single wheel segment
-        wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
+        wheelSegmentRepository.add(wheelSegments.first())
 
         // When - on startup
 
@@ -88,7 +93,7 @@ class HomeScreenTest {
     @Test
     fun hidesSpinButton_whenSingleWheelSegment() = runTest {
         // Given - single wheel segment
-        wheelSegmentRepository.add(WheelSegment(1, "fake", "", null, null))
+        wheelSegmentRepository.add(wheelSegments.first())
 
         // When - on startup
 
@@ -102,12 +107,7 @@ class HomeScreenTest {
     @Test
     fun showsSpinButton_whenWheelSegmentsPresent() = runTest {
         // Given - multiple wheel segments
-        wheelSegmentRepository.addMultiple(
-            segments = listOf(
-                WheelSegment(1, "fake", "", null, null),
-                WheelSegment(2, "fake2", "", null, null)
-            )
-        )
+        wheelSegmentRepository.addMultiple(wheelSegments)
 
         // When - on startup
 
