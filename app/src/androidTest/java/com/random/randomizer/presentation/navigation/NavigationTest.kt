@@ -6,6 +6,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performClick
@@ -150,6 +151,35 @@ class NavigationTest {
 
         // Then - verify current destination is Home
         assertTrue(navController.isCurrentDestination<Destination.Home>())
+    }
+
+    @Test
+    fun homeScreen_navigatesToEdit_whenAddButtonClicked() = runTest {
+        // Given - empty list
+
+        // When - button clicked
+        composeTestRule
+            .onNodeWithContentDescription(stringResource(R.string.cd_add_new_wheel_segment))
+            .assertIsDisplayed()
+            .performClick()
+
+        // Then - verify current destination is EditWheelSegment
+        assertTrue(navController.isCurrentDestination<Destination.EditWheelSegment>())
+    }
+
+    @Test
+    fun homeScreen_navigatesToEdit_whenWheelSegmentClicked() = runTest {
+        // Given - multiple wheel segments
+        wheelSegmentRepository.addMultiple(wheelSegments)
+
+        // When - wheel segment is clicked
+        composeTestRule
+            .onNodeWithText(wheelSegments.first().title)
+            .assertIsDisplayed()
+            .performClick()
+
+        // Then - verify current destination is EditWheelSegment
+        assertTrue(navController.isCurrentDestination<Destination.EditWheelSegment>())
     }
 
     private fun setContent() {
