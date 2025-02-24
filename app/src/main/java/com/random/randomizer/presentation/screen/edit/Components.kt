@@ -184,8 +184,8 @@ fun SegmentColorsRow(
     checkedColor: Color? = null
 ) {
     val itemModifier = Modifier
-        .padding(4.dp)
-        .size(40.dp)
+        .padding(ColorsRowDefaults.Padding)
+        .size(ColorsRowDefaults.Height - ColorsRowDefaults.Padding * 2)
 
     Row(modifier = modifier) {
         AnimatedVisibility(
@@ -195,10 +195,10 @@ fun SegmentColorsRow(
         ) {
             Row {
                 RemoveSegmentColorIconButton(onCheck = onRemoveColor, modifier = itemModifier)
-                Spacer(Modifier.padding(end = 4.dp))
+                Spacer(Modifier.padding(end = ColorsRowDefaults.InnerSpace))
             }
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(ColorsRowDefaults.InnerSpace)) {
             if (checkedColor != null && checkedColor !in colors) {
                 item {
                     SegmentColorCircle(
@@ -251,8 +251,11 @@ fun SegmentColorCircle(
             }
     ) {
         if (isChecked) {
-            drawCircle(color = color, style = Stroke(2.dp.toPx()))
-            inset(4.dp.toPx()) {
+            drawCircle(
+                color = color,
+                style = Stroke(ColorsRowDefaults.CheckedCircleStrokeWidth.toPx())
+            )
+            inset(ColorsRowDefaults.CheckedCircleInset.toPx()) {
                 drawCircle(color = color, style = Fill)
             }
         } else {
@@ -294,4 +297,14 @@ private fun SegmentColorsRowPreview() {
         onRemoveColor = {},
         onCheckColor = {}
     )
+}
+
+object ColorsRowDefaults {
+
+    val InnerSpace = 4.dp
+    val Height = 48.dp
+    val Padding = 4.dp
+    val CheckedCircleInset = 4.dp
+    val CheckedCircleStrokeWidth = 2.dp
+
 }

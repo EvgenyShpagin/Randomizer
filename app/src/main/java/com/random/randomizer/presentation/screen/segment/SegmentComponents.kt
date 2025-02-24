@@ -13,6 +13,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,12 +26,14 @@ import com.random.randomizer.presentation.theme.AppTheme
 @Composable
 fun WheelSegmentTopAppBar(
     onNavigationClick: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
         title = {
             Text(stringResource(R.string.edit_segment_screen))
         },
+        scrollBehavior = scrollBehavior,
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
                 Icon(Icons.Default.Close, contentDescription = null)
@@ -39,11 +43,15 @@ fun WheelSegmentTopAppBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun WheelSegmentTopAppBarPreview() {
     AppTheme {
-        WheelSegmentTopAppBar(onNavigationClick = {})
+        WheelSegmentTopAppBar(
+            onNavigationClick = {},
+            scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+        )
     }
 }
 

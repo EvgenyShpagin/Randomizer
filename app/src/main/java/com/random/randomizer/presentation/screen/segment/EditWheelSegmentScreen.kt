@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.random.randomizer.presentation.screen.segment
 
 import android.net.Uri
@@ -12,16 +14,25 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.screen.edit.AddSegmentImageButton
+import com.random.randomizer.presentation.screen.edit.ColorsRowDefaults
 import com.random.randomizer.presentation.screen.edit.RemoveSegmentImageButton
 import com.random.randomizer.presentation.screen.edit.SegmentColorsRow
 import com.random.randomizer.presentation.screen.edit.SegmentDescriptionTextField
@@ -76,12 +88,15 @@ fun EditWheelSegmentScreen(
         }
     }
 
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            WheelSegmentTopAppBar(onNavigationClick = {
-                viewModel.onEvent(FinishEdit(doSave = false))
-            })
+            WheelSegmentTopAppBar(
+                onNavigationClick = { viewModel.onEvent(FinishEdit(doSave = false)) },
+                scrollBehavior = scrollBehavior
+            )
         },
         content = { innerPadding ->
             EditWheelSegmentContent(
@@ -104,7 +119,10 @@ fun EditWheelSegmentScreen(
                 onSaveClicked = {
                     viewModel.onEvent(FinishEdit(doSave = true))
                 },
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .windowInsetsPadding(WindowInsets.displayCutout)
             )
         }
     )
@@ -125,6 +143,7 @@ private fun EditWheelSegmentContent(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
         Column(
@@ -163,6 +182,7 @@ private fun EditWheelSegmentContent(
                     checkedColor = uiState.segmentUiState.customColor
                 )
             }
+            Spacer(Modifier.height(ColorsRowDefaults.Height + 16.dp))
         }
         SaveButton(
             onClick = onSaveClicked,
@@ -192,6 +212,7 @@ private fun EditWheelSegmentContentPreview() {
         )
     }
 }
+
 @VisibleForTesting
 val AllSegmentColors = listOf(
     Color(0xFFEF9A9A),
