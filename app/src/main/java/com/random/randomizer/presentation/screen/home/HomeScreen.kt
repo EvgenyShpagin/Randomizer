@@ -70,10 +70,12 @@ private fun HomeScreen(
         },
         floatingActionButton = {
             Column(horizontalAlignment = Alignment.End) {
-                AddSegmentButton(onClick = onClickAdd)
                 if (wheelItems.count() > 1) {
+                    AddSegmentSmallButton(onClick = onClickAdd)
                     Spacer(Modifier.height(16.dp))
                     SpinButton(onClick = onClickSpin)
+                } else {
+                    AddSegmentButton(onClick = onClickAdd)
                 }
             }
         },

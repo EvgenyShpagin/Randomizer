@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
@@ -116,7 +117,7 @@ private fun HomeTopBarPreview() {
 }
 
 @Composable
-fun AddSegmentButton(
+fun AddSegmentSmallButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -126,11 +127,41 @@ fun AddSegmentButton(
         contentColor = MaterialTheme.colorScheme.secondary,
         modifier = modifier
     ) {
-        Icon(
-            Icons.Default.Add,
-            stringResource(R.string.cd_add_new_wheel_segment)
-        )
+        AddSegmentIcon()
     }
+}
+
+@Preview
+@Composable
+private fun AddSegmentSmallButtonPreview() {
+    AppTheme {
+        Surface {
+            AddSegmentButton(onClick = {})
+        }
+    }
+}
+
+@Composable
+fun AddSegmentButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondary,
+        modifier = modifier
+    ) {
+        AddSegmentIcon()
+    }
+}
+
+@Composable
+private fun AddSegmentIcon() {
+    Icon(
+        Icons.Default.Add,
+        stringResource(R.string.cd_add_new_wheel_segment)
+    )
 }
 
 @Preview
@@ -138,7 +169,7 @@ fun AddSegmentButton(
 private fun AddSegmentButtonPreview() {
     AppTheme {
         Surface {
-            AddSegmentButton(onClick = {})
+            AddSegmentSmallButton(onClick = {})
         }
     }
 }
