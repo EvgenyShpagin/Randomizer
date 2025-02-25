@@ -160,7 +160,7 @@ fun DeletableWheelSegment(
 }
 
 @Composable
-fun SwipeWheelSegmentContainer(
+private fun SwipeWheelSegmentContainer(
     onDelete: () -> Unit,
     animationDuration: Int = 500,
     wheelSegment: @Composable () -> Unit
