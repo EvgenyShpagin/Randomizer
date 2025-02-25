@@ -180,6 +180,7 @@ private fun EditWheelSegmentContent(
         }
         SaveButton(
             onClick = onSaveClicked,
+            isEnabled = uiState.canSave,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)

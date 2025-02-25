@@ -111,11 +111,13 @@ private fun SectionHeaderPreview() {
 @Composable
 fun SaveButton(
     onClick: () -> Unit,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
+        enabled = isEnabled,
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding
     ) {
         Icon(
@@ -131,7 +133,7 @@ fun SaveButton(
 @Preview
 @Composable
 private fun SaveButtonPreview() {
-    SaveButton(onClick = {})
+    SaveButton(isEnabled = true, onClick = {})
 }
 
 @Composable
