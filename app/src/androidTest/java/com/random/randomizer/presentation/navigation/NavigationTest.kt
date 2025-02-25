@@ -164,7 +164,7 @@ class NavigationTest {
             .performClick()
 
         // Then - verify current destination is EditWheelSegment
-        assertTrue(navController.isCurrentDestination<Destination.EditWheelSegment>())
+        assertTrue(navController.isCurrentDestination<Destination.Edit>())
     }
 
     @Test
@@ -179,7 +179,7 @@ class NavigationTest {
             .performClick()
 
         // Then - verify current destination is EditWheelSegment
-        assertTrue(navController.isCurrentDestination<Destination.EditWheelSegment>())
+        assertTrue(navController.isCurrentDestination<Destination.Edit>())
     }
 
     private fun setContent() {

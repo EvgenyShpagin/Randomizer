@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.screen.segment
+package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
@@ -59,7 +59,7 @@ import com.random.randomizer.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WheelSegmentTopAppBar(
+fun EditTopAppBar(
     onNavigationClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     modifier: Modifier = Modifier
@@ -81,9 +81,9 @@ fun WheelSegmentTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun WheelSegmentTopAppBarPreview() {
+private fun EditTopAppBarPreview() {
     AppTheme {
-        WheelSegmentTopAppBar(
+        EditTopAppBar(
             onNavigationClick = {},
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         )

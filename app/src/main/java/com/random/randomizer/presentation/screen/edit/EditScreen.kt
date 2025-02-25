@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.random.randomizer.presentation.screen.segment
+package com.random.randomizer.presentation.screen.edit
 
 import android.net.Uri
 import android.widget.Toast
@@ -40,22 +40,22 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.NavigateBack
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.ShowErrorMessage
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.FinishEdit
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputDescription
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.InputTitle
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickColor
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.PickImage
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEvent.RemoveImage
+import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
+import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishEdit
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.InputDescription
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.InputTitle
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickColor
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickImage
+import com.random.randomizer.presentation.screen.edit.EditUiEvent.RemoveImage
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 
 
 @Composable
-fun EditWheelSegmentScreen(
-    viewModel: EditWheelSegmentViewModel,
+fun EditScreen(
+    viewModel: EditViewModel,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,13 +87,13 @@ fun EditWheelSegmentScreen(
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            WheelSegmentTopAppBar(
+            EditTopAppBar(
                 onNavigationClick = { viewModel.onEvent(FinishEdit(doSave = false)) },
                 scrollBehavior = scrollBehavior
             )
         },
         content = { innerPadding ->
-            EditWheelSegmentContent(
+            EditContent(
                 uiState = uiState,
                 onInputTitle = { title ->
                     viewModel.onEvent(InputTitle(title))
@@ -123,8 +123,8 @@ fun EditWheelSegmentScreen(
 }
 
 @Composable
-private fun EditWheelSegmentContent(
-    uiState: EditWheelSegmentUiState,
+private fun EditContent(
+    uiState: EditUiState,
     onSaveClicked: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
@@ -193,8 +193,8 @@ private fun EditWheelSegmentContent(
 @Composable
 private fun EditWheelSegmentContentPreview() {
     AppTheme {
-        EditWheelSegmentContent(
-            uiState = EditWheelSegmentUiState(
+        EditContent(
+            uiState = EditUiState(
                 PreviewWheelSegmentList.first(),
                 canSave = true
             ),

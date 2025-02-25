@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.screen.segment
+package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -8,7 +8,7 @@ import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import javax.inject.Inject
 
-interface EditWheelSegmentMappers {
+interface EditMappers {
     fun toPresentation(thumbnail: Image): ImageBitmap?
     fun toPresentation(color: Long): Color
     fun toDomain(color: Color): Long
@@ -18,9 +18,9 @@ interface EditWheelSegmentMappers {
     ): WheelSegment
 }
 
-class EditWheelSegmentMappersImpl @Inject constructor(
+class EditMappersImpl @Inject constructor(
     private val coreMappers: CoreMappers
-) : EditWheelSegmentMappers {
+) : EditMappers {
     override fun toPresentation(thumbnail: Image): ImageBitmap? {
         return coreMappers.toPresentation(thumbnail)
     }

@@ -1,15 +1,13 @@
-package com.random.randomizer.presentation.screen.segment
+package com.random.randomizer.presentation.screen.edit
 
 
 import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.random.randomizer.R
-import com.random.randomizer.data.util.toBitmap
 import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.error.CreateWheelSegmentError
 import com.random.randomizer.domain.error.UpdateWheelSegmentError
@@ -22,7 +20,7 @@ import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.navigation.Destination
-import com.random.randomizer.presentation.screen.segment.EditWheelSegmentUiEffect.ShowErrorMessage
+import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
 import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +35,7 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class EditWheelSegmentViewModel @Inject constructor(
+class EditViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle,
     private val getWheelSegmentUseCase: GetWheelSegmentUseCase,
@@ -45,8 +43,8 @@ class EditWheelSegmentViewModel @Inject constructor(
     private val createWheelSegmentUseCase: CreateWheelSegmentUseCase,
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
     private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
-    private val mappers: EditWheelSegmentMappers
-) : ImmutableStateViewModel<EditWheelSegmentUiState, EditWheelSegmentUiEvent, EditWheelSegmentUiEffect>() {
+    private val mappers: EditMappers
+) : ImmutableStateViewModel<EditUiState, EditUiEvent, EditUiEffect>() {
 
     private val title = savedStateHandle.getStateFlow(KEY_TITLE, "")
     private val description = savedStateHandle.getStateFlow(KEY_DESCRIPTION, "")
@@ -55,11 +53,11 @@ class EditWheelSegmentViewModel @Inject constructor(
     private var latestImage: Image? = null
     private val imageCacheDir = context.cacheDir
 
-    private val route = savedStateHandle.toRoute<Destination.EditWheelSegment>()
+    private val route = savedStateHandle.toRoute<Destination.Edit>()
     private val wheelSegmentId = route.wheelSegmentId
     private val isWheelSegmentCreated get() = wheelSegmentId != null
 
-    override val uiState: StateFlow<EditWheelSegmentUiState> = combine(
+    override val uiState: StateFlow<EditUiState> = combine(
         title, description, color, imagePath
     ) { title, description, color, imagePath ->
         if (latestImage?.id != imagePath) {
@@ -75,7 +73,7 @@ class EditWheelSegmentViewModel @Inject constructor(
         val validateResult = validateWheelSegmentUseCase(
             mappers.toDomain(wheelSegmentUiState, latestImage)
         )
-        EditWheelSegmentUiState(
+        EditUiState(
             segmentUiState = wheelSegmentUiState,
             canSave = validateResult is Result.Success
         )
@@ -84,7 +82,7 @@ class EditWheelSegmentViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        EditWheelSegmentUiState()
+        EditUiState()
     )
 
     private fun getImageFromPath(path: String): Image {
@@ -102,14 +100,14 @@ class EditWheelSegmentViewModel @Inject constructor(
         savedWheelSegment.thumbnail?.let { cacheImage(it) }
     }
 
-    override fun onEvent(event: EditWheelSegmentUiEvent) {
+    override fun onEvent(event: EditUiEvent) {
         when (event) {
-            is EditWheelSegmentUiEvent.InputTitle -> onInputTitle(event.text)
-            is EditWheelSegmentUiEvent.InputDescription -> onInputDescription(event.text)
-            is EditWheelSegmentUiEvent.PickImage -> onPickImage(event.context, event.uri)
-            is EditWheelSegmentUiEvent.PickColor -> onPickBackgroundColor(event.color)
-            EditWheelSegmentUiEvent.RemoveImage -> onRemoveImage()
-            is EditWheelSegmentUiEvent.FinishEdit -> onFinishEdit(doSave = event.doSave)
+            is EditUiEvent.InputTitle -> onInputTitle(event.text)
+            is EditUiEvent.InputDescription -> onInputDescription(event.text)
+            is EditUiEvent.PickImage -> onPickImage(event.context, event.uri)
+            is EditUiEvent.PickColor -> onPickBackgroundColor(event.color)
+            EditUiEvent.RemoveImage -> onRemoveImage()
+            is EditUiEvent.FinishEdit -> onFinishEdit(doSave = event.doSave)
         }
     }
 
@@ -151,7 +149,7 @@ class EditWheelSegmentViewModel @Inject constructor(
                 save()
             }
             deleteCachedImage()
-            triggerEffect(EditWheelSegmentUiEffect.NavigateBack)
+            triggerEffect(EditUiEffect.NavigateBack)
         }
     }
 

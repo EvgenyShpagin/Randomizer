@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.screen.segment
+package com.random.randomizer.presentation.screen.edit
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertAll
@@ -41,7 +41,7 @@ import javax.inject.Inject
 
 @MediumTest
 @HiltAndroidTest
-class EditWheelSegmentScreenTest {
+class EditScreenTest {
 
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
@@ -52,7 +52,7 @@ class EditWheelSegmentScreenTest {
     @Inject
     lateinit var repository: WheelSegmentRepository
 
-    private lateinit var viewModel: EditWheelSegmentViewModel
+    private lateinit var viewModel: EditViewModel
 
     private val savedWheelSegment = WheelSegment(
         id = 1,
@@ -250,7 +250,7 @@ class EditWheelSegmentScreenTest {
 
     private fun setContent(wheelSegmentId: Int? = savedWheelSegment.id) {
         composeTestRule.setContent {
-            viewModel = EditWheelSegmentViewModel(
+            viewModel = EditViewModel(
                 LocalContext.current,
                 SavedStateHandle(mapOf("wheelSegmentId" to wheelSegmentId)),
                 GetWheelSegmentUseCase(repository),
@@ -262,9 +262,9 @@ class EditWheelSegmentScreenTest {
                     repository,
                     ImageScalerImpl()
                 ),
-                EditWheelSegmentMappersImpl(CoreMappersImpl())
+                EditMappersImpl(CoreMappersImpl())
             )
-            EditWheelSegmentScreen(
+            EditScreen(
                 viewModel = viewModel,
                 navigateBack = {}
             )
