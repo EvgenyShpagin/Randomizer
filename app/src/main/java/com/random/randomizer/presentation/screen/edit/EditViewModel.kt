@@ -69,7 +69,7 @@ class EditWheelSegmentViewModel @Inject constructor(
             id = wheelSegmentId ?: 0,
             title = title,
             description = description,
-            image = latestImage?.toBitmap()?.asImageBitmap(),
+            image = latestImage?.let { mappers.toPresentation(it) },
             customColor = color?.let { mappers.toPresentation(it) }
         )
         val validateResult = validateWheelSegmentUseCase(
