@@ -7,6 +7,7 @@ import com.random.randomizer.data.util.toBitmap
 import com.random.randomizer.domain.model.Image
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
@@ -133,9 +134,11 @@ class WheelSegmentDataSourceImpl @Inject constructor(
     }
 
     override fun observeById(id: Int): Flow<WheelSegment> {
-        return wheelSegmentDao.observeById(id).map { wheelSegment ->
-            wheelSegment.withLoadedThumbnail()
-        }
+        return wheelSegmentDao.observeById(id)
+            .filterNotNull()
+            .map { wheelSegment ->
+                wheelSegment.withLoadedThumbnail()
+            }
     }
 
     override fun observeAll(): Flow<List<WheelSegment>> {

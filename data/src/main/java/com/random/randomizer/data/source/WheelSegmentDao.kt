@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface WheelSegmentDao {
 
     @Query("SELECT * FROM wheel_segment WHERE id = :id")
-    fun observeById(id: Int): Flow<WheelSegment>
+    fun observeById(id: Int): Flow<WheelSegment?>
 
     @Query("SELECT * FROM wheel_segment")
     fun observeAll(): Flow<List<WheelSegment>>
