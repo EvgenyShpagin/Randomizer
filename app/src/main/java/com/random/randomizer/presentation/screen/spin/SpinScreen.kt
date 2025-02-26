@@ -1,5 +1,8 @@
 package com.random.randomizer.presentation.screen.spin
 
+import android.util.Log
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -47,11 +51,25 @@ fun SpinScreen(
         }
         val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
         if (uiState.isSpinning) {
-            lazyListState.spinToItem(uiState.targetIndex, screenHeight)
-            viewModel.onEvent(SpinUiEvent.SpinFinished)
+            lazyListState.smoothScrollToCalculateItemSizes(
+                originListItemCount = uiState.originListSize,
+                onItemSizesCalculated = { sizes ->
+                    lazyListState.smoothScrollToIndex(
+                        targetIndex = uiState.targetIndex,
+                        screenHeight = screenHeight,
+                        originListSizes = sizes,
+                        padding = lazyListState.layoutInfo.mainAxisItemSpacing
+                    )
+                    viewModel.onEvent(SpinUiEvent.SpinFinished)
+                    Log.d(
+                        "TAG_1",
+                        "first visible index = ${lazyListState.layoutInfo.visibleItemsInfo.first().index}"
+                    )
+                    delay(1000)
+                    navigateToResults(uiState.targetId)
+                }
+            )
         }
-        delay(1000)
-        navigateToResults(uiState.targetId)
     }
 
     val layoutDirection = LocalLayoutDirection.current
@@ -95,10 +113,75 @@ private fun SpinScreen(
     }
 }
 
-private suspend fun LazyListState.spinToItem(index: Int, screenHeight: Float) {
-    val offset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
-    animateScrollToItem(index, offset)
+private suspend fun LazyListState.smoothScrollToCalculateItemSizes(
+    originListItemCount: Int,
+    onItemSizesCalculated: suspend (sizes: IntArray) -> Unit
+) {
+    val averageItemSize = averageItemSize()
 
-    val targetItem = layoutInfo.visibleItemsInfo.find { it.index == index }!!
-    animateScrollBy(value = targetItem.size / 2f)
+    val sizes = IntArray(originListItemCount) { 0 }
+
+    snapshotFlow { layoutInfo.visibleItemsInfo }
+        .collect { items ->
+            Log.d(
+                "TAG_1",
+                "smoothScrollToCalculateItemSizes: collected indices ${items.map { it.index }}"
+            )
+            val lastOriginIndex = originListItemCount - 1
+            items.forEach { item ->
+                if (item.index < originListItemCount) {
+                    sizes[item.index] = item.size
+                }
+                // Last item size collected
+                if (item.index == lastOriginIndex) {
+                    onItemSizesCalculated(sizes)
+                }
+            }
+        }
+
+    animateScrollBy(
+        value = averageItemSize * originListItemCount.toFloat(),
+        animationSpec = tween(
+            durationMillis = 2_000,
+            easing = FastOutSlowInEasing
+        )
+    )
+}
+
+private suspend fun LazyListState.smoothScrollToIndex(
+    targetIndex: Int,
+    screenHeight: Float,
+    originListSizes: IntArray,
+    padding: Int
+) {
+    val offset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
+
+    val currentItem = layoutInfo.visibleItemsInfo.firstOrNull()
+    var targetItemOffset = 0
+    repeat(targetIndex) { index ->
+        targetItemOffset += originListSizes[index % originListSizes.count()] + padding
+    }
+    targetItemOffset += originListSizes[targetIndex % originListSizes.count()] / 2
+    Log.d(
+        "TAG_1",
+        "targetItemOffset = $targetItemOffset, originListSizes=${originListSizes.contentToString()}"
+    )
+    val distance = targetItemOffset - (currentItem?.offset ?: 0) + offset
+
+    val durationMillis = 4_000
+
+    animateScrollBy(
+        value = distance.toFloat(),
+        animationSpec = tween(
+            durationMillis = durationMillis,
+            easing = FastOutSlowInEasing
+        )
+    )
+}
+
+private fun LazyListState.averageItemSize(): Int {
+    val visibleItems = layoutInfo.visibleItemsInfo
+    if (visibleItems.isEmpty()) return 0
+    val totalSize = visibleItems.sumOf { it.size }
+    return totalSize / visibleItems.size
 }

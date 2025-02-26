@@ -8,6 +8,7 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 data class SpinUiState(
     val isSpinning: Boolean = false,
     val targetIndex: Int = -1,
+    val originListSize: Int = 0,
     val wheelSegments: List<WheelSegmentUiState> = emptyList()
 ) : UiState {
     val targetId: Int get() = wheelSegments[targetIndex].id
