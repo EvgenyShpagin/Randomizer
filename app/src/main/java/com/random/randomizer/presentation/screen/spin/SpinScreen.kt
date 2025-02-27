@@ -20,7 +20,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
@@ -46,9 +47,6 @@ fun SpinScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lazyListState = rememberLazyListState()
-
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
 
     val indexToSizeList by remember {
         derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.map { it.index to it.size } }
@@ -63,51 +61,62 @@ fun SpinScreen(
         originListSizes.addAll(Array(uiState.originListSize) { 0 })
     }
 
-    // IT STARTS MEASURING ONLY WHEN TARGET INDEX GOT
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    var isMeasureComplete by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isMeasureComplete) {
+        if (isMeasureComplete) {
+            val screenHeight = with(density) {
+                configuration.screenHeightDp.dp.toPx()
+            }
+            lazyListState.smoothScrollToIndex(
+                targetIndex = uiState.targetIndex,
+                screenHeight = screenHeight,
+                originListSizes = originListSizes.toIntArray(),
+                padding = lazyListState.layoutInfo.mainAxisItemSpacing
+            )
+            viewModel.onEvent(SpinUiEvent.SpinFinished)
+            delay(1000)
+            navigateToResults(uiState.targetId)
+        }
+    }
+
+    LaunchedEffect(uiState.originListSize, lazyListState) {
+        if (uiState.originListSize == 0) {
+            return@LaunchedEffect
+        }
+
+        Log.d("TAG_1", "Launched size collecting")
+        val lastOriginIndex = uiState.originListSize - 1
+
+        snapshotFlow { indexToSizeList }
+            .collect { indexToSizeList ->
+                Log.d("TAG_1", "collected data: $indexToSizeList")
+                indexToSizeList.forEach { (index, size) ->
+                    if (index < uiState.originListSize) {
+                        originListSizes[index] = size
+                    }
+                    // Last item size collected
+                    if (index == lastOriginIndex) {
+                        Log.d("TAG_1", "start smooth scroll after reach $index")
+                        isMeasureComplete = true
+                        cancel()
+                    }
+                }
+            }
+    }
+
     LaunchedEffect(uiState.targetIndex, lazyListState) {
         if (uiState.targetIndex == -1) {
             return@LaunchedEffect
         }
 
-        Log.d("TAG_1", "Launched")
+        Log.d("TAG_1", "Launched measure up check")
 
-        val screenHeight = with(density) {
-            configuration.screenHeightDp.dp.toPx()
-        }
-        val lastOriginIndex = uiState.originListSize - 1
-
-        launch {
-            snapshotFlow { indexToSizeList }
-                .collect { indexToSizeList ->
-                    Log.d("TAG_1", "collected data: $indexToSizeList")
-                    indexToSizeList.forEach { (index, size) ->
-                        if (index < uiState.originListSize) {
-                            originListSizes[index] = size
-                        }
-                        // Last item size collected
-                        if (index == lastOriginIndex) {
-                            Log.d("TAG_1", "start smooth scroll after reach ${index}")
-                            lazyListState.smoothScrollToIndex(
-                                targetIndex = uiState.targetIndex,
-                                screenHeight = screenHeight,
-                                originListSizes = originListSizes.toIntArray(),
-                                padding = lazyListState.layoutInfo.mainAxisItemSpacing
-                            )
-                            viewModel.onEvent(SpinUiEvent.SpinFinished)
-                            delay(1000)
-                            navigateToResults(uiState.targetId)
-                            cancel()
-                        }
-                    }
-                }
-        }
-
-        launch {
-            delay(100)
-            if (!areAllMeasured(originListSizes.toIntArray())) {
-                Log.d("TAG_1", "Start spin to measure")
-                lazyListState.scrollToLastUnmeasured(originListSizes.toIntArray())
-            }
+        if (!areAllMeasured(originListSizes.toIntArray())) {
+            Log.d("TAG_1", "Start spin to measure")
+            lazyListState.scrollToLastUnmeasured(originListSizes.toIntArray())
         }
     }
 
