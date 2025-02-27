@@ -32,8 +32,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.takeWhile
 import kotlin.math.roundToInt
 
 
@@ -89,6 +89,7 @@ fun SpinScreen(
         Log.d("TAG_1", "Launched size collecting")
 
         snapshotFlow { segmentIndexToSizeList }
+            .takeWhile { !areSegmentsMeasured }
             .collect { indexToSizeList ->
                 Log.d("TAG_1", "collected data: $indexToSizeList")
                 indexToSizeList.forEach { (index, size) ->
@@ -99,7 +100,6 @@ fun SpinScreen(
                     if (index == uiState.originListSize - 1) {
                         Log.d("TAG_1", "start smooth scroll after reach $index")
                         areSegmentsMeasured = true
-                        cancel()
                     }
                 }
             }
