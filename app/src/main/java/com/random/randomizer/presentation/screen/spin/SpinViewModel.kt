@@ -78,8 +78,8 @@ class SpinViewModel @Inject constructor(
     ): Int {
         val originalCount = originalSegments.count()
         val extendMultiplier = extendCount / originalCount
-        val winRangeStartIndex = originalCount * extendMultiplier / 2
-        return originalSegments.indexOfFirst { it == winner } + winRangeStartIndex
+        val winRangeStartIndex = originalCount * (extendMultiplier / 2)
+        return originalSegments.indexOf(winner) + winRangeStartIndex
     }
 
     override fun onEvent(event: SpinUiEvent) {
