@@ -143,6 +143,12 @@ private suspend fun LazyListState.scrollToLastUnmeasured(
             easing = FastOutSlowInEasing
         )
     )
+    // Scroll again if the last unmeasured item is still not reached
+    val lastVisibleItem = layoutInfo.visibleItemsInfo.last()
+    if (lastVisibleItem.index < segmentSizes.count() - 1) {
+        Log.d("TAG_1", "scrollToLastUnmeasured: was scrolled again")
+        scrollToLastUnmeasured(segmentSizes, durationMillis)
+    }
 }
 
 @Composable
