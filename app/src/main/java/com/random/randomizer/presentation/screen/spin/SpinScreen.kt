@@ -112,7 +112,7 @@ fun SpinScreen(
 
         Log.d("TAG_1", "Launched measure up check")
 
-        if (!areAllMeasured(segmentSizes)) {
+        if (!areSegmentsMeasured) {
             Log.d("TAG_1", "Start spin to measure")
             lazyListState.scrollToLastUnmeasured(segmentSizes)
         }
@@ -136,10 +136,6 @@ fun SpinScreen(
             end = endPadding
         )
     )
-}
-
-private fun areAllMeasured(originListSizes: IntArray): Boolean {
-    return originListSizes.none { it == 0 }
 }
 
 private suspend fun LazyListState.scrollToLastUnmeasured(originListSizes: IntArray) {
