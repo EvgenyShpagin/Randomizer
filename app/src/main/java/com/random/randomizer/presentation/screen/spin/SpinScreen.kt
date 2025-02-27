@@ -2,6 +2,7 @@ package com.random.randomizer.presentation.screen.spin
 
 import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
@@ -140,7 +141,7 @@ private suspend fun LazyListState.scrollToLastUnmeasured(
         value = (averageSize + layoutInfo.mainAxisItemSpacing) * unmeasuredCount,
         animationSpec = tween(
             durationMillis = durationMillis,
-            easing = FastOutSlowInEasing
+            easing = LinearEasing
         )
     )
     // Scroll again if the last unmeasured item is still not reached
