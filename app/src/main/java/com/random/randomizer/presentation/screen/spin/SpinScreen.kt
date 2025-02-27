@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,10 +45,6 @@ fun SpinScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lazyListState = rememberLazyListState()
-
-    val segmentIndexToSizeList by remember {
-        derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.map { it.index to it.size } }
-    }
 
     var segmentSizes by remember { mutableStateOf(intArrayOf()) }
 
@@ -88,17 +83,17 @@ fun SpinScreen(
 
         Log.d("TAG_1", "Launched size collecting")
 
-        snapshotFlow { segmentIndexToSizeList }
+        snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
             .takeWhile { !areSegmentsMeasured }
-            .collect { indexToSizeList ->
-                Log.d("TAG_1", "collected data: $indexToSizeList")
-                indexToSizeList.forEach { (index, size) ->
-                    if (index < uiState.originListSize) {
-                        segmentSizes[index] = size
+            .collect { visibleItems ->
+                Log.d("TAG_1", "collected data: ${visibleItems.map { it.index to it.size }}")
+                visibleItems.forEach { visibleItem ->
+                    if (visibleItem.index < uiState.originListSize) {
+                        segmentSizes[visibleItem.index] = visibleItem.size
                     }
                     // Last item size collected
-                    if (index == uiState.originListSize - 1) {
-                        Log.d("TAG_1", "start smooth scroll after reach $index")
+                    if (visibleItem.index == uiState.originListSize - 1) {
+                        Log.d("TAG_1", "start smooth scroll after reach ${visibleItem.index}")
                         areSegmentsMeasured = true
                     }
                 }
