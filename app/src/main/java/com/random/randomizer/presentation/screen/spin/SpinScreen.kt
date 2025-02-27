@@ -122,21 +122,27 @@ fun SpinScreen(
     )
 }
 
-private suspend fun LazyListState.scrollToLastUnmeasured(originListSizes: IntArray) {
-    // If some are not measured then start short scroll
-    val notMeasuredCount = originListSizes.count { it == 0 }
-    if (notMeasuredCount > 0) {
-        val measuredItems = originListSizes.filter { it != 0 }
-        val averageItemSize = measuredItems.sum() / measuredItems.count()
-        animateScrollBy(
-            value = notMeasuredCount *
-                    (averageItemSize + layoutInfo.mainAxisItemSpacing).toFloat(),
-            animationSpec = tween(
-                durationMillis = 2_000,
-                easing = FastOutSlowInEasing
-            )
+/**
+ * Scrolls to the last item which is not measured to find out its size,
+ * or does nothing otherwise
+ */
+private suspend fun LazyListState.scrollToLastUnmeasured(
+    segmentSizes: IntArray,
+    durationMillis: Int = 2000
+) {
+    val unmeasuredCount = segmentSizes.count { it == 0 }
+    if (unmeasuredCount <= 0) return
+
+    val measuredItems = segmentSizes.filter { it != 0 }
+    val averageSize = measuredItems.sum() / measuredItems.count().toFloat()
+
+    animateScrollBy(
+        value = (averageSize + layoutInfo.mainAxisItemSpacing) * unmeasuredCount,
+        animationSpec = tween(
+            durationMillis = durationMillis,
+            easing = FastOutSlowInEasing
         )
-    }
+    )
 }
 
 @Composable
