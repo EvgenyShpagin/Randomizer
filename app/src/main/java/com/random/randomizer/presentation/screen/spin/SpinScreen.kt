@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -95,6 +96,7 @@ fun SpinScreen(
                             viewModel.onEvent(SpinUiEvent.SpinFinished)
                             delay(1000)
                             navigateToResults(uiState.targetId)
+                            cancel()
                         }
                     }
                 }
