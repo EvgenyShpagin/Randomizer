@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,13 +51,13 @@ fun SpinScreen(
         derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.map { it.index to it.size } }
     }
 
-    val originListSizes = remember { mutableStateListOf<Int>() }
+    var originListSizes by remember { mutableStateOf(intArrayOf()) }
 
     LaunchedEffect(uiState.originListSize) {
         if (uiState.originListSize == 0) {
             return@LaunchedEffect
         }
-        originListSizes.addAll(Array(uiState.originListSize) { 0 })
+        originListSizes = IntArray(uiState.originListSize)
     }
 
     val configuration = LocalConfiguration.current
@@ -73,7 +72,7 @@ fun SpinScreen(
             lazyListState.smoothScrollToIndex(
                 targetIndex = uiState.targetIndex,
                 screenHeight = screenHeight,
-                originListSizes = originListSizes.toIntArray(),
+                originListSizes = originListSizes,
                 padding = lazyListState.layoutInfo.mainAxisItemSpacing
             )
             viewModel.onEvent(SpinUiEvent.SpinFinished)
@@ -114,9 +113,9 @@ fun SpinScreen(
 
         Log.d("TAG_1", "Launched measure up check")
 
-        if (!areAllMeasured(originListSizes.toIntArray())) {
+        if (!areAllMeasured(originListSizes)) {
             Log.d("TAG_1", "Start spin to measure")
-            lazyListState.scrollToLastUnmeasured(originListSizes.toIntArray())
+            lazyListState.scrollToLastUnmeasured(originListSizes)
         }
     }
 
