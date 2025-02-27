@@ -47,33 +47,33 @@ fun SpinScreen(
 
     val lazyListState = rememberLazyListState()
 
-    val indexToSizeList by remember {
+    val segmentIndexToSizeList by remember {
         derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.map { it.index to it.size } }
     }
 
-    var originListSizes by remember { mutableStateOf(intArrayOf()) }
+    var segmentSizes by remember { mutableStateOf(intArrayOf()) }
 
     LaunchedEffect(uiState.originListSize) {
         if (uiState.originListSize == 0) {
             return@LaunchedEffect
         }
-        originListSizes = IntArray(uiState.originListSize)
+        segmentSizes = IntArray(uiState.originListSize)
     }
 
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
-    var isMeasureComplete by remember { mutableStateOf(false) }
+    var areSegmentsMeasured by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isMeasureComplete) {
-        if (isMeasureComplete) {
+    LaunchedEffect(areSegmentsMeasured) {
+        if (areSegmentsMeasured) {
             val screenHeight = with(density) {
                 configuration.screenHeightDp.dp.toPx()
             }
             lazyListState.smoothScrollToIndex(
                 targetIndex = uiState.targetIndex,
                 screenHeight = screenHeight,
-                originListSizes = originListSizes,
-                padding = lazyListState.layoutInfo.mainAxisItemSpacing
+                originListSizes = segmentSizes,
+                itemSpacing = lazyListState.layoutInfo.mainAxisItemSpacing
             )
             viewModel.onEvent(SpinUiEvent.SpinFinished)
             delay(1000)
@@ -87,19 +87,18 @@ fun SpinScreen(
         }
 
         Log.d("TAG_1", "Launched size collecting")
-        val lastOriginIndex = uiState.originListSize - 1
 
-        snapshotFlow { indexToSizeList }
+        snapshotFlow { segmentIndexToSizeList }
             .collect { indexToSizeList ->
                 Log.d("TAG_1", "collected data: $indexToSizeList")
                 indexToSizeList.forEach { (index, size) ->
                     if (index < uiState.originListSize) {
-                        originListSizes[index] = size
+                        segmentSizes[index] = size
                     }
                     // Last item size collected
-                    if (index == lastOriginIndex) {
+                    if (index == uiState.originListSize - 1) {
                         Log.d("TAG_1", "start smooth scroll after reach $index")
-                        isMeasureComplete = true
+                        areSegmentsMeasured = true
                         cancel()
                     }
                 }
@@ -113,9 +112,9 @@ fun SpinScreen(
 
         Log.d("TAG_1", "Launched measure up check")
 
-        if (!areAllMeasured(originListSizes)) {
+        if (!areAllMeasured(segmentSizes)) {
             Log.d("TAG_1", "Start spin to measure")
-            lazyListState.scrollToLastUnmeasured(originListSizes)
+            lazyListState.scrollToLastUnmeasured(segmentSizes)
         }
     }
 
@@ -185,7 +184,7 @@ private suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     screenHeight: Float,
     originListSizes: IntArray,
-    padding: Int
+    itemSpacing: Int
 ) {
     val centerOffset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
 
@@ -194,7 +193,7 @@ private suspend fun LazyListState.smoothScrollToIndex(
     val currentItem = layoutInfo.visibleItemsInfo.first()
     var targetItemOffset = 0
     for (index in currentItem.index until targetIndex) {
-        targetItemOffset += originListSizes[index % originListSize] + padding
+        targetItemOffset += originListSizes[index % originListSize] + itemSpacing
     }
     val targetItemHalfSize = originListSizes[targetIndex % originListSize] / 2
     targetItemOffset += targetItemHalfSize
