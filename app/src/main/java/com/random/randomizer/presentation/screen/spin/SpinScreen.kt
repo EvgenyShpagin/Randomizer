@@ -24,16 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.takeWhile
-import kotlin.math.roundToInt
 
 
 @Composable
@@ -55,20 +51,13 @@ fun SpinScreen(
         segmentSizes = IntArray(uiState.originListSize)
     }
 
-    val configuration = LocalConfiguration.current
-    val density = LocalDensity.current
     var areSegmentsMeasured by remember { mutableStateOf(false) }
 
     LaunchedEffect(areSegmentsMeasured) {
         if (areSegmentsMeasured) {
-            val screenHeight = with(density) {
-                configuration.screenHeightDp.dp.toPx()
-            }
             lazyListState.smoothScrollToIndex(
                 targetIndex = uiState.targetIndex,
-                screenHeight = screenHeight,
-                originListSizes = segmentSizes,
-                itemSpacing = lazyListState.layoutInfo.mainAxisItemSpacing
+                segmentSizes = segmentSizes
             )
             viewModel.onEvent(SpinUiEvent.SpinFinished)
             delay(1000)
@@ -173,30 +162,25 @@ private fun SpinScreen(
 
 private suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
-    screenHeight: Float,
-    originListSizes: IntArray,
-    itemSpacing: Int
+    segmentSizes: IntArray,
+    durationMillis: Int = 5000
 ) {
-    val centerOffset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
+    val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
 
-    val originListSize = originListSizes.count()
-
-    val currentItem = layoutInfo.visibleItemsInfo.first()
-    var targetItemOffset = 0
-    for (index in currentItem.index until targetIndex) {
-        targetItemOffset += originListSizes[index % originListSize] + itemSpacing
-    }
-    val targetItemHalfSize = originListSizes[targetIndex % originListSize] / 2
-    targetItemOffset += targetItemHalfSize
-    require(originListSizes.none { it == 0 })
-    val distance = targetItemOffset + currentItem.offset + centerOffset
-    val durationMillis = 4_000
+    val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
+    val targetItemOffset = (firstVisibleItem.index until targetIndex)
+        .sumOf { index -> segmentSizes.of(index) + layoutInfo.mainAxisItemSpacing }
+    val centeringOffset = -layoutInfo.viewportSize.height / 2f + segmentSizes.of(targetIndex) / 2f
 
     animateScrollBy(
-        value = distance.toFloat(),
+        value = initOffset + targetItemOffset + centeringOffset,
         animationSpec = tween(
             durationMillis = durationMillis,
             easing = FastOutSlowInEasing
         )
     )
+}
+
+private fun IntArray.of(segmentIndex: Int): Int {
+    return get(segmentIndex % count())
 }
