@@ -17,7 +17,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
@@ -45,30 +49,63 @@ fun SpinScreen(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
-    LaunchedEffect(uiState.targetIndex) {
+    val indexToSizeList by remember {
+        derivedStateOf { lazyListState.layoutInfo.visibleItemsInfo.map { it.index to it.size } }
+    }
+
+    val originListSizes = remember { mutableStateListOf<Int>() }
+
+    LaunchedEffect(uiState.originListSize) {
+        if (uiState.originListSize == 0) {
+            return@LaunchedEffect
+        }
+        originListSizes.addAll(Array(uiState.originListSize) { 0 })
+    }
+
+    // IT STARTS MEASURING ONLY WHEN TARGET INDEX GOT
+    LaunchedEffect(uiState.targetIndex, lazyListState) {
         if (uiState.targetIndex == -1) {
             return@LaunchedEffect
         }
-        val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
-        if (uiState.isSpinning) {
-            lazyListState.smoothScrollToCalculateItemSizes(
-                originListItemCount = uiState.originListSize,
-                onItemSizesCalculated = { sizes ->
-                    lazyListState.smoothScrollToIndex(
-                        targetIndex = uiState.targetIndex,
-                        screenHeight = screenHeight,
-                        originListSizes = sizes,
-                        padding = lazyListState.layoutInfo.mainAxisItemSpacing
-                    )
-                    viewModel.onEvent(SpinUiEvent.SpinFinished)
-                    Log.d(
-                        "TAG_1",
-                        "first visible index = ${lazyListState.layoutInfo.visibleItemsInfo.first().index}"
-                    )
-                    delay(1000)
-                    navigateToResults(uiState.targetId)
+
+        Log.d("TAG_1", "Launched")
+
+        val screenHeight = with(density) {
+            configuration.screenHeightDp.dp.toPx()
+        }
+        val lastOriginIndex = uiState.originListSize - 1
+
+        launch {
+            snapshotFlow { indexToSizeList }
+                .collect { indexToSizeList ->
+                    Log.d("TAG_1", "collected data: $indexToSizeList")
+                    indexToSizeList.forEach { (index, size) ->
+                        if (index < uiState.originListSize) {
+                            originListSizes[index] = size
+                        }
+                        // Last item size collected
+                        if (index == lastOriginIndex) {
+                            Log.d("TAG_1", "start smooth scroll after reach ${index}")
+                            lazyListState.smoothScrollToIndex(
+                                targetIndex = uiState.targetIndex,
+                                screenHeight = screenHeight,
+                                originListSizes = originListSizes.toIntArray(),
+                                padding = lazyListState.layoutInfo.mainAxisItemSpacing
+                            )
+                            viewModel.onEvent(SpinUiEvent.SpinFinished)
+                            delay(1000)
+                            navigateToResults(uiState.targetId)
+                        }
+                    }
                 }
-            )
+        }
+
+        launch {
+            delay(100)
+            if (!areAllMeasured(originListSizes.toIntArray())) {
+                Log.d("TAG_1", "Start spin to measure")
+                lazyListState.scrollToLastUnmeasured(originListSizes.toIntArray())
+            }
         }
     }
 
@@ -92,6 +129,27 @@ fun SpinScreen(
     )
 }
 
+private fun areAllMeasured(originListSizes: IntArray): Boolean {
+    return originListSizes.none { it == 0 }
+}
+
+private suspend fun LazyListState.scrollToLastUnmeasured(originListSizes: IntArray) {
+    // If some are not measured then start short scroll
+    val notMeasuredCount = originListSizes.count { it == 0 }
+    if (notMeasuredCount > 0) {
+        val measuredItems = originListSizes.filter { it != 0 }
+        val averageItemSize = measuredItems.sum() / measuredItems.count()
+        animateScrollBy(
+            value = notMeasuredCount *
+                    (averageItemSize + layoutInfo.mainAxisItemSpacing).toFloat(),
+            animationSpec = tween(
+                durationMillis = 2_000,
+                easing = FastOutSlowInEasing
+            )
+        )
+    }
+}
+
 @Composable
 private fun SpinScreen(
     wheelSegments: List<WheelSegmentUiState>,
@@ -113,61 +171,25 @@ private fun SpinScreen(
     }
 }
 
-private suspend fun LazyListState.smoothScrollToCalculateItemSizes(
-    originListItemCount: Int,
-    onItemSizesCalculated: suspend (sizes: IntArray) -> Unit
-) {
-    val averageItemSize = averageItemSize()
-
-    val sizes = IntArray(originListItemCount) { 0 }
-
-    snapshotFlow { layoutInfo.visibleItemsInfo }
-        .collect { items ->
-            Log.d(
-                "TAG_1",
-                "smoothScrollToCalculateItemSizes: collected indices ${items.map { it.index }}"
-            )
-            val lastOriginIndex = originListItemCount - 1
-            items.forEach { item ->
-                if (item.index < originListItemCount) {
-                    sizes[item.index] = item.size
-                }
-                // Last item size collected
-                if (item.index == lastOriginIndex) {
-                    onItemSizesCalculated(sizes)
-                }
-            }
-        }
-
-    animateScrollBy(
-        value = averageItemSize * originListItemCount.toFloat(),
-        animationSpec = tween(
-            durationMillis = 2_000,
-            easing = FastOutSlowInEasing
-        )
-    )
-}
-
 private suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     screenHeight: Float,
     originListSizes: IntArray,
     padding: Int
 ) {
-    val offset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
+    val centerOffset = (-screenHeight / 2f).roundToInt() + layoutInfo.beforeContentPadding
 
-    val currentItem = layoutInfo.visibleItemsInfo.firstOrNull()
+    val originListSize = originListSizes.count()
+
+    val currentItem = layoutInfo.visibleItemsInfo.first()
     var targetItemOffset = 0
-    repeat(targetIndex) { index ->
-        targetItemOffset += originListSizes[index % originListSizes.count()] + padding
+    for (index in currentItem.index until targetIndex) {
+        targetItemOffset += originListSizes[index % originListSize] + padding
     }
-    targetItemOffset += originListSizes[targetIndex % originListSizes.count()] / 2
-    Log.d(
-        "TAG_1",
-        "targetItemOffset = $targetItemOffset, originListSizes=${originListSizes.contentToString()}"
-    )
-    val distance = targetItemOffset - (currentItem?.offset ?: 0) + offset
-
+    val targetItemHalfSize = originListSizes[targetIndex % originListSize] / 2
+    targetItemOffset += targetItemHalfSize
+    require(originListSizes.none { it == 0 })
+    val distance = targetItemOffset + currentItem.offset + centerOffset
     val durationMillis = 4_000
 
     animateScrollBy(
@@ -177,11 +199,4 @@ private suspend fun LazyListState.smoothScrollToIndex(
             easing = FastOutSlowInEasing
         )
     )
-}
-
-private fun LazyListState.averageItemSize(): Int {
-    val visibleItems = layoutInfo.visibleItemsInfo
-    if (visibleItems.isEmpty()) return 0
-    val totalSize = visibleItems.sumOf { it.size }
-    return totalSize / visibleItems.size
 }
