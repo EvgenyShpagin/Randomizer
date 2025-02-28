@@ -146,8 +146,12 @@ private suspend fun LazyListState.scrollToLastUnmeasured(
     val measuredItems = segmentSizes.filter { it != 0 }
     val averageSize = measuredItems.sum() / measuredItems.count().toFloat()
 
+    val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
+    val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
+    val itemSpacing = layoutInfo.mainAxisItemSpacing
+
     animateScrollBy(
-        value = (averageSize + layoutInfo.mainAxisItemSpacing) * unmeasuredCount,
+        value = initOffset + (averageSize + itemSpacing) * (unmeasuredCount + 1),
         animationSpec = tween(
             durationMillis = durationMillis,
             easing = LinearEasing
