@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.screen.spin
 
-import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -80,19 +79,15 @@ fun SpinScreen(
             return@LaunchedEffect
         }
 
-        Log.d("TAG_1", "Launched size collecting")
-
         snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
             .takeWhile { !areSegmentsMeasured }
             .collect { visibleItems ->
-                Log.d("TAG_1", "collected data: ${visibleItems.map { it.index to it.size }}")
                 visibleItems.forEach { visibleItem ->
                     if (visibleItem.index < uiState.originListSize) {
                         segmentSizes[visibleItem.index] = visibleItem.size
                     }
                     // Last item size collected
                     if (visibleItem.index == uiState.originListSize - 1) {
-                        Log.d("TAG_1", "start smooth scroll after reach ${visibleItem.index}")
                         areSegmentsMeasured = true
                     }
                 }
@@ -104,10 +99,7 @@ fun SpinScreen(
             return@LaunchedEffect
         }
 
-        Log.d("TAG_1", "Launched measure up check")
-
         if (!areSegmentsMeasured) {
-            Log.d("TAG_1", "Start spin to measure")
             lazyListState.scrollToLastUnmeasured(segmentSizes)
         }
     }
@@ -160,7 +152,6 @@ private suspend fun LazyListState.scrollToLastUnmeasured(
     // Scroll again if the last unmeasured item is still not reached
     val lastVisibleItem = layoutInfo.visibleItemsInfo.last()
     if (lastVisibleItem.index < segmentSizes.count() - 1) {
-        Log.d("TAG_1", "scrollToLastUnmeasured: was scrolled again")
         scrollToLastUnmeasured(segmentSizes, durationMillis)
     }
 }
