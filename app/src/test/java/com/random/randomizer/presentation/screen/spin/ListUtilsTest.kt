@@ -4,7 +4,7 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
-class UtilsTest {
+class ListUtilsTest {
 
     @Test
     fun extendTo_doublesList_whenDoubleExtended() {
