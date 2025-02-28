@@ -25,8 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlinx.coroutines.delay
@@ -52,13 +55,16 @@ fun SpinScreen(
         segmentSizes = IntArray(uiState.originListSize)
     }
 
-    var areSegmentsMeasured by remember { mutableStateOf(false) }
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
 
     LaunchedEffect(areSegmentsMeasured) {
         if (areSegmentsMeasured) {
+            val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
             lazyListState.smoothScrollToIndex(
                 targetIndex = uiState.targetIndex,
-                segmentSizes = segmentSizes
+                segmentSizes = segmentSizes,
+                screenHeight = screenHeight
             )
             viewModel.onEvent(SpinUiEvent.SpinFinished)
             delay(1000)
@@ -176,6 +182,7 @@ private fun SpinScreen(
 private suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     segmentSizes: IntArray,
+    screenHeight: Float,
     durationMillis: Int = 5000
 ) {
     val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
@@ -183,7 +190,7 @@ private suspend fun LazyListState.smoothScrollToIndex(
     val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
     val targetItemOffset = (firstVisibleItem.index until targetIndex)
         .sumOf { index -> segmentSizes.of(index) + layoutInfo.mainAxisItemSpacing }
-    val centeringOffset = -layoutInfo.viewportSize.height / 2f + segmentSizes.of(targetIndex) / 2f
+    val centeringOffset = -screenHeight / 2f + segmentSizes.of(targetIndex) / 2f
 
     animateScrollBy(
         value = initOffset + targetItemOffset + centeringOffset,
