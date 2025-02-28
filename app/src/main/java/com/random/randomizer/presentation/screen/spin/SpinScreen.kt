@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -46,10 +46,12 @@ fun SpinScreen(
 
     val lazyListState = rememberLazyListState()
 
-    var segmentSizes by remember { mutableStateOf(intArrayOf()) }
+    var segmentSizes by rememberSaveable { mutableStateOf(intArrayOf()) }
+    var areSegmentsMeasured by rememberSaveable { mutableStateOf(false) }
+    var hasScrollToTargetStarted by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(uiState.originListSize) {
-        if (uiState.originListSize == 0) {
+        if (segmentSizes.isNotEmpty() || uiState.originListSize == 0) {
             return@LaunchedEffect
         }
         segmentSizes = IntArray(uiState.originListSize)
@@ -60,6 +62,7 @@ fun SpinScreen(
 
     LaunchedEffect(areSegmentsMeasured) {
         if (areSegmentsMeasured) {
+            hasScrollToTargetStarted = true
             val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
             lazyListState.smoothScrollToIndex(
                 targetIndex = uiState.targetIndex,
@@ -72,8 +75,8 @@ fun SpinScreen(
         }
     }
 
-    LaunchedEffect(uiState.originListSize, lazyListState) {
-        if (uiState.originListSize == 0) {
+    LaunchedEffect(uiState.originListSize) {
+        if (hasScrollToTargetStarted || uiState.originListSize == 0) {
             return@LaunchedEffect
         }
 
@@ -96,8 +99,8 @@ fun SpinScreen(
             }
     }
 
-    LaunchedEffect(uiState.targetIndex, lazyListState) {
-        if (uiState.targetIndex == -1) {
+    LaunchedEffect(uiState.targetIndex) {
+        if (hasScrollToTargetStarted || uiState.targetIndex == -1) {
             return@LaunchedEffect
         }
 
