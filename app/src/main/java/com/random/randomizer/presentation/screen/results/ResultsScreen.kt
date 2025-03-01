@@ -17,13 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.theme.AppTheme
-import com.random.randomizer.presentation.util.DayAndNightPreview
 import com.random.randomizer.presentation.util.HandleUiEffects
 
 @Composable
@@ -120,7 +120,7 @@ fun ResultsContent(
     }
 }
 
-@DayAndNightPreview
+@PreviewLightDark
 @Composable
 private fun ResultsContentPreview() {
     AppTheme {

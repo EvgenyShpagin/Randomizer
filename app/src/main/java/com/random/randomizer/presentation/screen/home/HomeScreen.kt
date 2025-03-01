@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
@@ -36,7 +37,6 @@ import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.theme.AppTheme
-import com.random.randomizer.presentation.util.DayAndNightPreview
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +125,7 @@ private fun HomeScreen(
     }
 }
 
-@DayAndNightPreview
+@PreviewLightDark
 @Composable
 private fun HomeScreenPreview(
     @PreviewParameter(WheelSegmentListParameterProvider::class)
