@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -264,21 +262,14 @@ fun DeletableWheelSegmentList(
     wheelItems: List<WheelSegmentUiState>,
     onClick: (WheelSegmentUiState) -> Unit,
     onDelete: (WheelSegmentUiState) -> Unit,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState()
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val displayCutout = WindowInsets.displayCutout.asPaddingValues()
-    val cutoutStartPadding = displayCutout.calculateStartPadding(layoutDirection)
-    val cutoutEndPadding = displayCutout.calculateEndPadding(layoutDirection)
-
     LazyColumn(
         modifier = modifier,
         state = listState,
-        contentPadding = PaddingValues(
-            start = cutoutStartPadding.coerceAtLeast(16.dp),
-            end = cutoutEndPadding.coerceAtLeast(16.dp)
-        ),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(

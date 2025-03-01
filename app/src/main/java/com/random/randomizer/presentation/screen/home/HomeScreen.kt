@@ -2,8 +2,14 @@ package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,7 +26,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -91,10 +99,25 @@ private fun HomeScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
+                val cutoutWindowInsets = WindowInsets.displayCutout.asPaddingValues()
+                val layoutDirection = LocalLayoutDirection.current
+
+                val contentPadding = PaddingValues(
+                    start = cutoutWindowInsets
+                        .calculateStartPadding(layoutDirection)
+                        .coerceAtLeast(16.dp),
+                    end = cutoutWindowInsets
+                        .calculateEndPadding(layoutDirection)
+                        .coerceAtLeast(16.dp),
+                    top = 16.dp,
+                    bottom = 16.dp
+                )
+
                 DeletableWheelSegmentList(
                     wheelItems = wheelItems,
                     onClick = onClickWheelSegment,
                     onDelete = onDeleteWheelSegment,
+                    contentPadding = contentPadding,
                     listState = listState
                 )
             }
