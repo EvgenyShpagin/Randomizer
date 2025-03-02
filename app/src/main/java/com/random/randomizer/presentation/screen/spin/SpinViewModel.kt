@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.screen.spin
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
@@ -60,11 +59,10 @@ class SpinViewModel @Inject constructor(
                 state.copy(
                     isSpinning = true,
                     targetIndex = getWinnerIndex(
-                        winner = selectRandomWheelSegmentUseCase()
-                            .also { Log.d("TAG_1", "winner = ${it.title}") },
+                        winner = selectRandomWheelSegmentUseCase(),
                         originalSegments = wheelSegments,
                         extendCount = state.wheelSegments.count()
-                    ).also { Log.d("TAG_1", "winner index = ${it}") }
+                    )
                 )
             }
         }
