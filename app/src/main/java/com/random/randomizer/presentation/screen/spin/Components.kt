@@ -3,20 +3,16 @@ package com.random.randomizer.presentation.screen.spin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.core.unionWithWindowInsets
 
 @Composable
 fun SpinWheelSegmentList(
@@ -24,18 +20,11 @@ fun SpinWheelSegmentList(
     lazyListState: LazyListState,
     modifier: Modifier = Modifier
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val displayCutout = WindowInsets.displayCutout.asPaddingValues()
-    val cutoutStartPadding = displayCutout.calculateStartPadding(layoutDirection)
-    val cutoutEndPadding = displayCutout.calculateEndPadding(layoutDirection)
+    val contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        .unionWithWindowInsets(WindowInsets.displayCutout)
 
     LazyColumn(
-        contentPadding = PaddingValues(
-            start = cutoutStartPadding.coerceAtLeast(16.dp),
-            end = cutoutEndPadding.coerceAtLeast(16.dp),
-            top = 8.dp,
-            bottom = 8.dp
-        ),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         userScrollEnabled = false,
         state = lazyListState,
