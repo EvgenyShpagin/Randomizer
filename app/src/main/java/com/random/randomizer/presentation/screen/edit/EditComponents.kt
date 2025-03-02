@@ -300,8 +300,10 @@ fun SegmentColorCircle(
                 color = color,
                 style = Stroke(ColorsRowDefaults.CheckedCircleStrokeWidth.toPx())
             )
-            inset(ColorsRowDefaults.CheckedCircleInset.toPx()) {
-                drawCircle(color = color, style = Fill)
+            if (size.minDimension != 0f) {
+                inset(ColorsRowDefaults.CheckedCircleInset.toPx()) {
+                    drawCircle(color = color, style = Fill)
+                }
             }
         } else {
             drawCircle(color = color, style = Fill)
