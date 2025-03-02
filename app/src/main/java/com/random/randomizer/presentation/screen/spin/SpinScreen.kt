@@ -49,19 +49,20 @@ fun SpinScreen(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
-    LaunchedEffect(areSegmentsMeasured) {
-        if (areSegmentsMeasured) {
-            hasScrollToTargetStarted = true
-            val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
-            lazyListState.smoothScrollToIndex(
-                targetIndex = uiState.targetIndex,
-                segmentSizes = segmentSizes,
-                screenHeight = screenHeight
-            )
-            viewModel.onEvent(SpinUiEvent.SpinFinished)
-            delay(1000)
-            navigateToResults(uiState.targetId)
+    LaunchedEffect(areSegmentsMeasured, uiState.targetIndex) {
+        if (!areSegmentsMeasured || uiState.targetIndex == -1) {
+            return@LaunchedEffect
         }
+        hasScrollToTargetStarted = true
+        val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
+        lazyListState.smoothScrollToIndex(
+            targetIndex = uiState.targetIndex,
+            segmentSizes = segmentSizes,
+            screenHeight = screenHeight
+        )
+        viewModel.onEvent(SpinUiEvent.SpinFinished)
+        delay(1000)
+        navigateToResults(uiState.targetId)
     }
 
     LaunchedEffect(uiState.originListSize) {
