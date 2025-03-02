@@ -14,11 +14,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,14 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
+import com.random.randomizer.presentation.core.combinePaddingWithInsets
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishEdit
@@ -143,21 +140,13 @@ private fun EditContent(
     modifier: Modifier = Modifier,
     backgroundColors: List<Color> = AllSegmentColors
 ) {
-    val cutoutWindowInsets = WindowInsets.displayCutout.asPaddingValues()
-    val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(
-                start = cutoutWindowInsets
-                    .calculateStartPadding(layoutDirection)
-                    .coerceAtLeast(16.dp),
-                end = cutoutWindowInsets
-                    .calculateEndPadding(layoutDirection)
-                    .coerceAtLeast(16.dp),
-                top = 16.dp,
-                bottom = 16.dp
+            .combinePaddingWithInsets(
+                PaddingValues(16.dp),
+                WindowInsets.displayCutout
             )
     ) {
         Column(
