@@ -86,7 +86,13 @@ class SpinViewModelTest {
 
     private companion object {
         val SegmentList = List(10) { i ->
-            WheelSegment(i, "Segment $i", "", null, null)
+            WheelSegment(
+                id = i + 1, // start from 1 (0 is not valid id)
+                title = "Segment $i",
+                description = "",
+                thumbnail = null,
+                customColor = null
+            )
         }
     }
 }
