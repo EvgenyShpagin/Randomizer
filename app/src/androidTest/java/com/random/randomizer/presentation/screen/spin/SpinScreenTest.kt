@@ -20,7 +20,6 @@ import com.random.randomizer.domain.repository.WheelSegmentRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +27,6 @@ import org.junit.Test
 import javax.inject.Inject
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 @HiltAndroidTest
 class SpinScreenTest {
