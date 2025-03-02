@@ -44,7 +44,7 @@ class ResultsScreenTest {
 
     private val wheelSegmentList = List(5) { i ->
         WheelSegment(
-            id = i,
+            id = i + 1, // start from 1 (0 is not valid id)
             title = "Title of $i wheel segment",
             description = "Description...",
             thumbnail = null,
