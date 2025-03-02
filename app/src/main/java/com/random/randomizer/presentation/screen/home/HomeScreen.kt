@@ -3,9 +3,11 @@ package com.random.randomizer.presentation.screen.home
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -88,7 +90,9 @@ private fun HomeScreen(
                 )
             } else {
                 val contentPadding = PaddingValues(16.dp)
-                    .unionWithWindowInsets(WindowInsets.displayCutout)
+                    .unionWithWindowInsets(
+                        WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
+                    )
 
                 DeletableWheelSegmentList(
                     wheelItems = wheelItems,
