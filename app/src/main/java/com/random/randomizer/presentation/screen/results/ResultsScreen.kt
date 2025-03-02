@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.core.combinePaddingWithInsets
+import com.random.randomizer.presentation.core.unionPaddingWithInsets
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
 
@@ -60,7 +60,7 @@ fun ResultsContent(
     onDeleteAndSpinClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val horizontalPaddingModifier = Modifier.combinePaddingWithInsets(
+    val horizontalPaddingModifier = Modifier.unionPaddingWithInsets(
         padding = PaddingValues(horizontal = 16.dp),
         insets = WindowInsets.displayCutout
     )

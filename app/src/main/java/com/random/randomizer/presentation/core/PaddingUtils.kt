@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.coerceAtLeast
 
 
-fun Modifier.combinePaddingWithInsets(
+fun Modifier.unionPaddingWithInsets(
     padding: PaddingValues,
     insets: WindowInsets
 ): Modifier {

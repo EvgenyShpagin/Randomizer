@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.core.combinePaddingWithInsets
+import com.random.randomizer.presentation.core.unionPaddingWithInsets
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishEdit
@@ -144,7 +144,7 @@ private fun EditContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .combinePaddingWithInsets(
+            .unionPaddingWithInsets(
                 PaddingValues(16.dp),
                 WindowInsets.displayCutout
             )
