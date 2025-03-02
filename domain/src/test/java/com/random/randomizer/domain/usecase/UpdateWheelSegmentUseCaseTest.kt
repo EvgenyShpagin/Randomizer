@@ -1,7 +1,6 @@
 package com.random.randomizer.domain.usecase
 
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
-import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
@@ -10,8 +9,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
@@ -40,14 +40,15 @@ class UpdateWheelSegmentUseCaseTest {
     }
 
     @Test
-    fun returnsFailure_whenSegmentDoesNotExist() = runTest {
+    fun throwsException_whenSegmentDoesNotExist() = runTest {
         // Given - empty repository
 
         // When - invoke update
-        val result = updateWheelSegmentUseCase(wheelSegment)
-
-        // Then - verify was returned Failure
-        assertTrue(result is Result.Failure)
+        assertThrows(NullPointerException::class.java) {
+            runBlocking {
+                updateWheelSegmentUseCase(wheelSegment)
+            }
+        }
     }
 
     @Test
