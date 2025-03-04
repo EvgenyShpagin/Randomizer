@@ -45,10 +45,27 @@ fun SpinScreen(
     var hasScrollToTargetStarted by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(uiState.wheelSegments) {
-        if (segmentSizes.isNotEmpty() || uiState.wheelSegments.isEmpty()) {
-            return@LaunchedEffect
+        if (uiState.wheelSegments.isEmpty()) return@LaunchedEffect
+
+        if (segmentSizes.isEmpty()) {
+            segmentSizes = IntArray(uiState.originListSize)
         }
-        segmentSizes = IntArray(uiState.originListSize)
+
+        if (!uiState.shouldBeSpinned) {
+            snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
+                .takeWhile { !areSegmentsMeasured }
+                .collect { visibleItems ->
+                    visibleItems.forEach { visibleItem ->
+                        if (visibleItem.index < uiState.originListSize) {
+                            segmentSizes[visibleItem.index] = visibleItem.size
+                        }
+                        // Last item size collected
+                        if (visibleItem.index == uiState.originListSize - 1) {
+                            areSegmentsMeasured = true
+                        }
+                    }
+                }
+        }
     }
 
     val configuration = LocalConfiguration.current
@@ -66,26 +83,6 @@ fun SpinScreen(
             screenHeight = screenHeight
         )
         viewModel.onEvent(SpinUiEvent.SpinFinished)
-    }
-
-    LaunchedEffect(uiState.wheelSegments) {
-        if (uiState.shouldBeSpinned || uiState.wheelSegments.isEmpty()) {
-            return@LaunchedEffect
-        }
-
-        snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
-            .takeWhile { !areSegmentsMeasured }
-            .collect { visibleItems ->
-                visibleItems.forEach { visibleItem ->
-                    if (visibleItem.index < uiState.originListSize) {
-                        segmentSizes[visibleItem.index] = visibleItem.size
-                    }
-                    // Last item size collected
-                    if (visibleItem.index == uiState.originListSize - 1) {
-                        areSegmentsMeasured = true
-                    }
-                }
-            }
     }
 
     LaunchedEffect(uiState.shouldBeSpinned) {
