@@ -126,9 +126,9 @@ class SpinScreenTest {
 
         // When
         // spin started
-        composeTestRule.waitUntil(2000) { viewModel.uiState.value.isSpinning }
+        composeTestRule.waitUntil(2000) { viewModel.uiState.value.shouldBeSpinned }
         // and then finished
-        composeTestRule.waitUntil(10000) { !viewModel.uiState.value.isSpinning }
+        composeTestRule.waitUntil(10000) { !viewModel.uiState.value.shouldBeSpinned }
 
         val uiState = viewModel.uiState.value
         val centerItem = uiState.wheelSegments[uiState.targetIndex]

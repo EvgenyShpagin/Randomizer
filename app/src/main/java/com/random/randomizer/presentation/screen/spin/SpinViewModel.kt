@@ -58,7 +58,7 @@ class SpinViewModel @Inject constructor(
             delay(1000)
             _uiState.update { state ->
                 state.copy(
-                    isSpinning = true,
+                    shouldBeSpinned = true,
                     targetIndex = getWinnerIndex(
                         winner = selectRandomWheelSegmentUseCase(),
                         originalSegments = wheelSegments,
@@ -89,7 +89,7 @@ class SpinViewModel @Inject constructor(
 
     private fun onSpinFinished() = viewModelScope.launch {
         _uiState.updateAndGet { state ->
-            state.copy(isSpinning = false)
+            state.copy(shouldBeSpinned = false)
         }.apply {
             val winner = wheelSegments[targetIndex]
             delay(1000)
