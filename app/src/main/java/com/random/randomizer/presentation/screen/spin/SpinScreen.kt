@@ -44,8 +44,8 @@ fun SpinScreen(
     var areSegmentsMeasured by rememberSaveable { mutableStateOf(false) }
     var hasScrollToTargetStarted by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.originListSize) {
-        if (segmentSizes.isNotEmpty() || uiState.originListSize == 0) {
+    LaunchedEffect(uiState.wheelSegments) {
+        if (segmentSizes.isNotEmpty() || uiState.wheelSegments.isEmpty()) {
             return@LaunchedEffect
         }
         segmentSizes = IntArray(uiState.originListSize)
@@ -68,8 +68,8 @@ fun SpinScreen(
         viewModel.onEvent(SpinUiEvent.SpinFinished)
     }
 
-    LaunchedEffect(uiState.originListSize) {
-        if (uiState.shouldBeSpinned || uiState.originListSize == 0) {
+    LaunchedEffect(uiState.wheelSegments) {
+        if (uiState.shouldBeSpinned || uiState.wheelSegments.isEmpty()) {
             return@LaunchedEffect
         }
 
