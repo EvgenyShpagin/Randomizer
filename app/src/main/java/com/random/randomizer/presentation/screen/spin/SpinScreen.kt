@@ -54,8 +54,8 @@ fun SpinScreen(
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
 
-    LaunchedEffect(areSegmentsMeasured, uiState.targetIndex) {
-        if (!areSegmentsMeasured || uiState.targetIndex == -1) {
+    LaunchedEffect(areSegmentsMeasured, uiState.isSpinning) {
+        if (!areSegmentsMeasured || !uiState.isSpinning) {
             return@LaunchedEffect
         }
         hasScrollToTargetStarted = true
@@ -69,7 +69,7 @@ fun SpinScreen(
     }
 
     LaunchedEffect(uiState.originListSize) {
-        if (hasScrollToTargetStarted || uiState.originListSize == 0) {
+        if (uiState.isSpinning || uiState.originListSize == 0) {
             return@LaunchedEffect
         }
 
@@ -88,14 +88,11 @@ fun SpinScreen(
             }
     }
 
-    LaunchedEffect(uiState.targetIndex) {
-        if (hasScrollToTargetStarted || uiState.targetIndex == -1) {
+    LaunchedEffect(uiState.isSpinning) {
+        if (hasScrollToTargetStarted || !uiState.isSpinning || areSegmentsMeasured) {
             return@LaunchedEffect
         }
-
-        if (!areSegmentsMeasured) {
-            lazyListState.scrollToLastUnmeasured(segmentSizes)
-        }
+        lazyListState.scrollToLastUnmeasured(segmentSizes)
     }
 
     SpinScreen(
