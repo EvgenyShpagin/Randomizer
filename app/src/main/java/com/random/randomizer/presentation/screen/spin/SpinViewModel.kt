@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class SpinViewModel @Inject constructor(
     private val getWheelSegmentsUseCase: GetWheelSegmentsUseCase,
     private val selectRandomWheelSegmentUseCase: SelectRandomWheelSegmentUseCase,
     private val mappers: SpinMappers
-) : ImmutableStateViewModel<SpinUiState, SpinUiEvent, Nothing>() {
+) : ImmutableStateViewModel<SpinUiState, SpinUiEvent, SpinUiEffect>() {
 
     private val _uiState = MutableStateFlow(SpinUiState())
     override val uiState = _uiState
@@ -86,9 +87,13 @@ class SpinViewModel @Inject constructor(
         }
     }
 
-    private fun onSpinFinished() {
-        _uiState.update { state ->
+    private fun onSpinFinished() = viewModelScope.launch {
+        _uiState.updateAndGet { state ->
             state.copy(isSpinning = false)
+        }.apply {
+            val winner = wheelSegments[targetIndex]
+            delay(1000)
+            triggerEffect(SpinUiEffect.NavigateToResults(winner.id))
         }
     }
 

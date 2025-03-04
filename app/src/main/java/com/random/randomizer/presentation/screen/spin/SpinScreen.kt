@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import kotlinx.coroutines.delay
+import com.random.randomizer.presentation.util.HandleUiEffects
 import kotlinx.coroutines.flow.takeWhile
 
 
@@ -31,6 +31,11 @@ fun SpinScreen(
     viewModel: SpinViewModel,
     modifier: Modifier = Modifier
 ) {
+    HandleUiEffects(viewModel.uiEffect) { effect ->
+        when (effect) {
+            is SpinUiEffect.NavigateToResults -> navigateToResults(effect.winnerId)
+        }
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lazyListState = rememberLazyListState()
@@ -61,8 +66,6 @@ fun SpinScreen(
             screenHeight = screenHeight
         )
         viewModel.onEvent(SpinUiEvent.SpinFinished)
-        delay(1000)
-        navigateToResults(uiState.targetId)
     }
 
     LaunchedEffect(uiState.originListSize) {
