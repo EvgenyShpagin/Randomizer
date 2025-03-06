@@ -129,7 +129,7 @@ private fun SaveButtonPreview() {
 }
 
 @Composable
-fun SegmentTitleTextField(
+fun TitleTextField(
     title: String,
     onInput: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -143,7 +143,7 @@ fun SegmentTitleTextField(
 }
 
 @Composable
-fun SegmentDescriptionTextField(
+fun DescriptionTextField(
     description: String,
     onInput: (String) -> Unit,
     modifier: Modifier = Modifier

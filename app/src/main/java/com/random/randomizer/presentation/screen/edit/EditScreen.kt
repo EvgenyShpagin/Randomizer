@@ -164,7 +164,7 @@ private fun EditContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         HeaderedContent(text = stringResource(R.string.label_details).uppercase()) {
-            SegmentTitleTextField(
+            TitleTextField(
                 title = uiState.segmentUiState.title,
                 onInput = onInputTitle,
                 modifier = Modifier
@@ -172,7 +172,7 @@ private fun EditContent(
             )
         }
 
-        SegmentDescriptionTextField(
+        DescriptionTextField(
             description = uiState.segmentUiState.description,
             onInput = onInputDescription,
             modifier = Modifier
