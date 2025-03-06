@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -97,24 +98,6 @@ private fun EditTopAppBarPreview() {
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         )
     }
-}
-
-@Composable
-fun SectionHeader(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelMedium,
-        modifier = modifier
-    )
-}
-
-@Preview
-@Composable
-private fun SectionHeaderPreview() {
-    SectionHeader(stringResource(R.string.label_preview))
 }
 
 @Composable
@@ -209,6 +192,36 @@ private fun EditTextField(
             }
     )
 }
+
+@Composable
+fun HeaderedContent(
+    text: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = modifier
+        )
+        content()
+    }
+}
+
+@Preview
+@Composable
+private fun HeaderedContentPreview() {
+    HeaderedContent(
+        text = stringResource(R.string.label_preview).uppercase(),
+    ) {
+        Text("Some text")
+    }
+}
+
 
 @Composable
 fun AddSegmentImageButton(

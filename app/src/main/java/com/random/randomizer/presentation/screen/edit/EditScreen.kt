@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 package com.random.randomizer.presentation.screen.edit
 
@@ -10,10 +10,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.annotation.VisibleForTesting
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,9 +21,9 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +31,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -91,8 +91,7 @@ fun EditScreen(
     Scaffold(
         modifier = modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .imePadding()
-            .imeNestedScroll(),
+            .imePadding(),
         topBar = {
             EditTopAppBar(
                 onNavigationClick = { viewModel.onEvent(FinishEdit(doSave = false)) },
@@ -140,62 +139,64 @@ private fun EditContent(
     modifier: Modifier = Modifier,
     backgroundColors: List<Color> = AllSegmentColors
 ) {
-    Box(
+    val scope = rememberCoroutineScope()
+    val bringIntoTitleViewRequester = remember { BringIntoViewRequester() }
+    val bringIntoDescriptionViewRequester = remember { BringIntoViewRequester() }
+    Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .unionPaddingWithInsets(
                 PaddingValues(16.dp),
                 WindowInsets.displayCutout
-            )
+            ),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Column(
-            modifier = Modifier.align(Alignment.TopCenter)
-        ) {
-            SectionHeader(stringResource(R.string.label_preview).uppercase())
-            Spacer(modifier = Modifier.height(4.dp))
+        HeaderedContent(text = stringResource(R.string.label_preview).uppercase()) {
             WheelSegment(
                 itemUiState = uiState.segmentUiState,
                 isClickable = false,
                 onClick = {}
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            SectionHeader(stringResource(R.string.label_details).uppercase())
-            Spacer(modifier = Modifier.height(4.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SegmentTitleTextField(
-                    title = uiState.segmentUiState.title,
-                    onInput = onInputTitle
-                )
-                SegmentDescriptionTextField(
-                    description = uiState.segmentUiState.description,
-                    onInput = onInputDescription
-                )
-                if (uiState.segmentUiState.image == null) {
-                    AddSegmentImageButton(onClickAdd = onClickAddImage)
-                } else {
-                    RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
-                }
-                SegmentColorsRow(
-                    colors = backgroundColors,
-                    onCheckColor = onPickBackgroundColor,
-                    onRemoveColor = { onPickBackgroundColor(null) },
-                    checkedColor = uiState.segmentUiState.customColor
-                )
-            }
-            Spacer(Modifier.height(ColorsRowDefaults.Height + 16.dp))
         }
+
+        // Extra space
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HeaderedContent(text = stringResource(R.string.label_details).uppercase()) {
+            SegmentTitleTextField(
+                title = uiState.segmentUiState.title,
+                onInput = onInputTitle,
+                modifier = Modifier
+                    .bringIntoViewRequesterOnFocus(bringIntoTitleViewRequester, scope)
+            )
+        }
+
+        SegmentDescriptionTextField(
+            description = uiState.segmentUiState.description,
+            onInput = onInputDescription,
+            modifier = Modifier
+                .bringIntoViewRequesterOnFocus(bringIntoDescriptionViewRequester, scope)
+        )
+        if (uiState.segmentUiState.image == null) {
+            AddSegmentImageButton(onClickAdd = onClickAddImage)
+        } else {
+            RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
+        }
+        SegmentColorsRow(
+            colors = backgroundColors,
+            onCheckColor = onPickBackgroundColor,
+            onRemoveColor = { onPickBackgroundColor(null) },
+            checkedColor = uiState.segmentUiState.customColor
+        )
+        Spacer(Modifier.weight(1f))
         SaveButton(
             onClick = onSaveClicked,
             isEnabled = uiState.canSave,
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
         )
     }
-
 }
 
 @Preview
