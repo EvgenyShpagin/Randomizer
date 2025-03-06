@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -40,11 +42,16 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onInterceptKeyBeforeSoftKeyboard
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -52,6 +59,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
@@ -140,17 +149,13 @@ private fun SaveButtonPreview() {
 fun SegmentTitleTextField(
     title: String,
     onInput: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    maxLines: Int = 1
+    modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
+    EditTextField(
         value = title,
-        onValueChange = onInput,
-        maxLines = maxLines,
-        label = {
-            Text(stringResource(R.string.label_segment_title))
-        },
-        modifier = modifier.fillMaxWidth()
+        label = stringResource(R.string.label_segment_title),
+        onInput = onInput,
+        modifier = modifier
     )
 }
 
@@ -158,17 +163,50 @@ fun SegmentTitleTextField(
 fun SegmentDescriptionTextField(
     description: String,
     onInput: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    maxLines: Int = 1
+    modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
+    EditTextField(
         value = description,
+        label = stringResource(R.string.label_segment_description),
+        onInput = onInput,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+private fun EditTextField(
+    value: String,
+    label: String,
+    onInput: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val focusManager = LocalFocusManager.current
+    OutlinedTextField(
+        value = value,
         onValueChange = onInput,
-        maxLines = maxLines,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = {
+            focusManager.clearFocus()
+            defaultKeyboardAction(ImeAction.Done)
+        }),
         label = {
-            Text(stringResource(R.string.label_segment_description))
+            Text(label)
         },
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .onInterceptKeyBeforeSoftKeyboard { event ->
+                if (event.key == Key.Back) {
+                    focusManager.clearFocus()
+                    true
+                } else {
+                    false
+                }
+            }
     )
 }
 
