@@ -87,8 +87,9 @@ class EditViewModel @Inject constructor(
 
     private fun getImageFromPath(path: String): Image {
         val imageFile = File(path)
+        val imageFilename = imageFile.name
         val imageData = imageFile.readBytes()
-        return Image(path, imageData)
+        return Image(imageFilename, imageData)
     }
 
     private suspend fun initUiState() {
