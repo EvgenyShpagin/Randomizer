@@ -1,4 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class,
+    ExperimentalLayoutApi::class
+)
 
 package com.random.randomizer.presentation.screen.edit
 
@@ -10,9 +14,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.annotation.VisibleForTesting
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -189,12 +198,18 @@ private fun EditContent(
             checkedColor = uiState.segmentUiState.customColor
         )
         Spacer(Modifier.weight(1f))
-        SaveButton(
-            onClick = onSaveClicked,
-            isEnabled = uiState.canSave,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+        AnimatedVisibility(
+            visible = !WindowInsets.isImeVisible,
+            enter = fadeIn(),
+            exit = ExitTransition.None
+        ) {
+            SaveButton(
+                onClick = onSaveClicked,
+                isEnabled = uiState.canSave,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
     }
 }
 
