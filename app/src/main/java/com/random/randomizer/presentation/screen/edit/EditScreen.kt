@@ -89,9 +89,7 @@ fun EditScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
-        modifier = modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .imePadding(),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             EditTopAppBar(
                 onNavigationClick = { viewModel.onEvent(FinishEdit(doSave = false)) },
@@ -145,6 +143,7 @@ private fun EditContent(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding()
             .verticalScroll(rememberScrollState())
             .unionPaddingWithInsets(
                 PaddingValues(16.dp),
