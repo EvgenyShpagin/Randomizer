@@ -78,7 +78,7 @@ class EditViewModel @Inject constructor(
             canSave = validateResult is Result.Success
         )
     }.onStart {
-        initUiState()
+        setupUiState()
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -92,13 +92,19 @@ class EditViewModel @Inject constructor(
         return Image(imageFilename, imageData)
     }
 
-    private suspend fun initUiState() {
+    private suspend fun setupUiState() {
         if (!isWheelSegmentCreated) return
+        // If it was already initialized by persistent data
+        if (savedStateHandle.contains(KEY_INITIALIZED)) return
+
+        // Setup UI state data by persistent data
         val savedWheelSegment = getWheelSegmentUseCase(wheelSegmentId!!)!!
         savedStateHandle[KEY_TITLE] = savedWheelSegment.title
         savedStateHandle[KEY_DESCRIPTION] = savedWheelSegment.description
         savedStateHandle[KEY_COLOR] = savedWheelSegment.customColor
         savedWheelSegment.thumbnail?.let { cacheImage(it) }
+
+        savedStateHandle[KEY_INITIALIZED] = true
     }
 
     override fun onEvent(event: EditUiEvent) {
@@ -200,5 +206,6 @@ class EditViewModel @Inject constructor(
         const val KEY_DESCRIPTION = "description"
         const val KEY_COLOR = "color"
         const val KEY_IMAGE_PATH = "image"
+        const val KEY_INITIALIZED = "is-initialized"
     }
 }
