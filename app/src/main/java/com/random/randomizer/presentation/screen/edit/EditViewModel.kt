@@ -3,6 +3,10 @@ package com.random.randomizer.presentation.screen.edit
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot.Companion.withMutableSnapshot
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -46,8 +50,17 @@ class EditViewModel @Inject constructor(
     private val mappers: EditMappers
 ) : ImmutableStateViewModel<EditUiState, EditUiEvent, EditUiEffect>() {
 
-    private val title = savedStateHandle.getStateFlow(KEY_TITLE, "")
-    private val description = savedStateHandle.getStateFlow(KEY_DESCRIPTION, "")
+    // MutableState is used to resolve
+    // problem with async TextField update
+    var title by mutableStateOf("")
+        private set
+    var description by mutableStateOf("")
+        private set
+
+    // "Reactive texts" are used to keep state on process death
+    private val _title = savedStateHandle.getStateFlow(KEY_TITLE, "")
+    private val _description = savedStateHandle.getStateFlow(KEY_DESCRIPTION, "")
+
     private val color = savedStateHandle.getStateFlow<Long?>(KEY_COLOR, null)
     private val imagePath = savedStateHandle.getStateFlow<String?>(KEY_IMAGE_PATH, null)
     private var latestImage: Image? = null
@@ -58,7 +71,7 @@ class EditViewModel @Inject constructor(
     private val isWheelSegmentCreated get() = wheelSegmentId != null
 
     override val uiState: StateFlow<EditUiState> = combine(
-        title, description, color, imagePath
+        _title, _description, color, imagePath
     ) { title, description, color, imagePath ->
         if (latestImage?.id != imagePath) {
             latestImage = imagePath?.let { getImageFromPath(it) }
@@ -95,7 +108,12 @@ class EditViewModel @Inject constructor(
     private suspend fun setupUiState() {
         if (!isWheelSegmentCreated) return
         // If it was already initialized by persistent data
-        if (savedStateHandle.contains(KEY_INITIALIZED)) return
+        // then just update MutableState properties
+        if (savedStateHandle.contains(KEY_INITIALIZED)) {
+            title = savedStateHandle[KEY_TITLE] ?: ""
+            description = savedStateHandle[KEY_DESCRIPTION] ?: ""
+            return
+        }
 
         // Setup UI state data by persistent data
         val savedWheelSegment = getWheelSegmentUseCase(wheelSegmentId!!)!!
@@ -103,6 +121,8 @@ class EditViewModel @Inject constructor(
         savedStateHandle[KEY_DESCRIPTION] = savedWheelSegment.description
         savedStateHandle[KEY_COLOR] = savedWheelSegment.customColor
         savedWheelSegment.thumbnail?.let { cacheImage(it) }
+        title = savedWheelSegment.title
+        description = savedWheelSegment.description
 
         savedStateHandle[KEY_INITIALIZED] = true
     }
@@ -120,10 +140,12 @@ class EditViewModel @Inject constructor(
 
     private fun onInputTitle(title: String) {
         savedStateHandle[KEY_TITLE] = title
+        withMutableSnapshot { this.title = title }
     }
 
     private fun onInputDescription(description: String) {
         savedStateHandle[KEY_DESCRIPTION] = description
+        withMutableSnapshot { this.description = description }
     }
 
     private fun onPickImage(context: Context, imageUri: Uri?) = viewModelScope.launch {

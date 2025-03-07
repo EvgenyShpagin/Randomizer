@@ -29,8 +29,7 @@ fun WheelSegment(
     WheelSegment(
         title = itemUiState.title,
         description = itemUiState.description,
-        containerColor = itemUiState.customColor
-            ?: MaterialTheme.colorScheme.surface,
+        containerColor = itemUiState.customColor,
         image = itemUiState.image,
         onClick = onClick,
         isClickable = isClickable,
@@ -39,11 +38,11 @@ fun WheelSegment(
 }
 
 @Composable
-private fun WheelSegment(
+fun WheelSegment(
     title: String,
     description: String,
     image: ImageBitmap?,
-    containerColor: Color,
+    containerColor: Color?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isClickable: Boolean = true
@@ -78,7 +77,9 @@ private fun WheelSegment(
                     )
                 }
             },
-            colors = ListItemDefaults.colors(containerColor = containerColor),
+            colors = ListItemDefaults.colors(
+                containerColor = containerColor ?: MaterialTheme.colorScheme.surface
+            ),
             modifier = if (isClickable) {
                 Modifier
             } else {

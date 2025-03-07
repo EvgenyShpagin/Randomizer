@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -107,7 +108,11 @@ fun EditScreen(
         },
         content = { innerPadding ->
             EditContent(
-                uiState = uiState,
+                title = viewModel.title, // Use Compose State instead of StateFlow
+                description = viewModel.description, // to synchronously update TextFields
+                customColor = uiState.segmentUiState.customColor,
+                image = uiState.segmentUiState.image,
+                canSave = uiState.canSave,
                 onInputTitle = { title ->
                     viewModel.onEvent(InputTitle(title))
                 },
@@ -136,7 +141,11 @@ fun EditScreen(
 
 @Composable
 private fun EditContent(
-    uiState: EditUiState,
+    title: String,
+    description: String,
+    image: ImageBitmap?,
+    customColor: Color?,
+    canSave: Boolean,
     onSaveClicked: () -> Unit,
     onInputTitle: (String) -> Unit,
     onInputDescription: (String) -> Unit,
@@ -162,7 +171,10 @@ private fun EditContent(
     ) {
         HeaderedContent(text = stringResource(R.string.label_preview).uppercase()) {
             WheelSegment(
-                itemUiState = uiState.segmentUiState,
+                title = title,
+                description = description,
+                image = image,
+                containerColor = customColor,
                 isClickable = false,
                 onClick = {}
             )
@@ -173,7 +185,7 @@ private fun EditContent(
 
         HeaderedContent(text = stringResource(R.string.label_details).uppercase()) {
             TitleTextField(
-                title = uiState.segmentUiState.title,
+                title = title,
                 onInput = onInputTitle,
                 modifier = Modifier
                     .bringIntoViewRequesterOnFocus(bringIntoTitleViewRequester, scope)
@@ -181,12 +193,12 @@ private fun EditContent(
         }
 
         DescriptionTextField(
-            description = uiState.segmentUiState.description,
+            description = description,
             onInput = onInputDescription,
             modifier = Modifier
                 .bringIntoViewRequesterOnFocus(bringIntoDescriptionViewRequester, scope)
         )
-        if (uiState.segmentUiState.image == null) {
+        if (image == null) {
             AddSegmentImageButton(onClickAdd = onClickAddImage)
         } else {
             RemoveSegmentImageButton(onClickRemove = onClickRemoveImage)
@@ -195,7 +207,7 @@ private fun EditContent(
             colors = backgroundColors,
             onCheckColor = onPickBackgroundColor,
             onRemoveColor = { onPickBackgroundColor(null) },
-            checkedColor = uiState.segmentUiState.customColor
+            checkedColor = customColor
         )
         Spacer(Modifier.weight(1f))
         AnimatedVisibility(
@@ -205,7 +217,7 @@ private fun EditContent(
         ) {
             SaveButton(
                 onClick = onSaveClicked,
-                isEnabled = uiState.canSave,
+                isEnabled = canSave,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -217,11 +229,13 @@ private fun EditContent(
 @Composable
 private fun EditWheelSegmentContentPreview() {
     AppTheme {
+        val wheelSegment = PreviewWheelSegmentList.first()
         EditContent(
-            uiState = EditUiState(
-                PreviewWheelSegmentList.first(),
-                canSave = true
-            ),
+            title = wheelSegment.title,
+            description = wheelSegment.description,
+            image = wheelSegment.image,
+            customColor = wheelSegment.customColor,
+            canSave = true,
             onInputTitle = {},
             onInputDescription = {},
             onClickAddImage = {},
