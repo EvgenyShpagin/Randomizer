@@ -10,7 +10,15 @@ import com.random.randomizer.presentation.core.UiEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun <T> rememberFlowWithLifecycle(
+fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
+    val uiEffect = rememberFlowWithLifecycle(flow)
+    LaunchedEffect(uiEffect) {
+        flow.collect { onReceive(it) }
+    }
+}
+
+@Composable
+private fun <T> rememberFlowWithLifecycle(
     flow: Flow<T>,
     lifecycle: Lifecycle = LocalLifecycleOwner.current.lifecycle
 ): Flow<T> {
@@ -19,13 +27,5 @@ fun <T> rememberFlowWithLifecycle(
             lifecycle,
             Lifecycle.State.STARTED
         )
-    }
-}
-
-@Composable
-fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
-    val uiEffect = rememberFlowWithLifecycle(flow)
-    LaunchedEffect(uiEffect) {
-        flow.collect { onReceive(it) }
     }
 }
