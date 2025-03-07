@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
-import com.random.randomizer.presentation.core.BaseViewModel
+import com.random.randomizer.presentation.core.UiEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -23,7 +23,7 @@ fun <T> rememberFlowWithLifecycle(
 }
 
 @Composable
-fun <E : BaseViewModel.UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
+fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
     val uiEffect = rememberFlowWithLifecycle(flow)
     LaunchedEffect(uiEffect) {
         flow.collect { onReceive(it) }
