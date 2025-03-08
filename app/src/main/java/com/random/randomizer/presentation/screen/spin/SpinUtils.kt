@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListState
+import com.random.randomizer.presentation.core.WheelSegmentUiState
 
 /**
  * Scrolls to the last item which is not measured to find out its size,
@@ -62,4 +63,14 @@ suspend fun LazyListState.smoothScrollToIndex(
 
 private fun IntArray.of(segmentIndex: Int): Int {
     return get(segmentIndex % count())
+}
+
+fun List<WheelSegmentUiState>.extendTo(minCount: Int): List<WheelSegmentUiState> {
+    require(minCount > 1) { "Minimum count should be greater than 1" }
+    val repeatCount = (minCount + size - 1) / size
+    return this * repeatCount
+}
+
+private operator fun <T> List<T>.times(count: Int): List<T> {
+    return List(count) { this }.flatten()
 }
