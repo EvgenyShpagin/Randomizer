@@ -139,11 +139,13 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onInputTitle(title: String) {
+        if (title.length >= MAX_TITLE_LENGTH) return
         savedStateHandle[KEY_TITLE] = title
         withMutableSnapshot { this.title = title }
     }
 
     private fun onInputDescription(description: String) {
+        if (description.length >= MAX_DESCRIPTION_LENGTH) return
         savedStateHandle[KEY_DESCRIPTION] = description
         withMutableSnapshot { this.description = description }
     }
@@ -229,5 +231,8 @@ class EditViewModel @Inject constructor(
         const val KEY_COLOR = "color"
         const val KEY_IMAGE_PATH = "image"
         const val KEY_INITIALIZED = "is-initialized"
+
+        const val MAX_TITLE_LENGTH = 64
+        const val MAX_DESCRIPTION_LENGTH = 128
     }
 }
