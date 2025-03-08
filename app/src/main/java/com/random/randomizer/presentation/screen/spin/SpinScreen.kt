@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -95,7 +96,7 @@ fun SpinScreen(
     SpinScreen(
         wheelSegments = uiState.wheelSegments,
         lazyListState = lazyListState,
-        modifier = modifier.systemBarsPadding()
+        modifier = modifier
     )
 }
 
@@ -105,17 +106,19 @@ private fun SpinScreen(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState()
 ) {
-    Box(modifier = modifier) {
-        SpinWheelSegmentList(
-            wheelSegments = wheelSegments,
-            lazyListState = lazyListState,
-            modifier = Modifier
-                .testTag("Spin Segment List")
-        )
-        HorizontalDivider(
-            Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center)
-        )
+    Surface(modifier = modifier) {
+        Box(modifier = Modifier.systemBarsPadding()) {
+            SpinWheelSegmentList(
+                wheelSegments = wheelSegments,
+                lazyListState = lazyListState,
+                modifier = Modifier
+                    .testTag("Spin Segment List")
+            )
+            HorizontalDivider(
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center)
+            )
+        }
     }
 }
