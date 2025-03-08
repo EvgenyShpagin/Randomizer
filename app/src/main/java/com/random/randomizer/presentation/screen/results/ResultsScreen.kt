@@ -47,7 +47,7 @@ fun ResultsScreen(
         navigateBack = navigateToHome,
         onSpinClicked = { viewModel.onEvent(ResultsUiEvent.Spin) },
         onDeleteAndSpinClicked = { viewModel.onEvent(ResultsUiEvent.SpinAndDelete) },
-        modifier = modifier.systemBarsPadding()
+        modifier = modifier
     )
 }
 
@@ -65,30 +65,36 @@ fun ResultsContent(
         insets = WindowInsets.displayCutout
     )
 
-    Box(modifier = modifier.fillMaxSize()) {
-        GradientBackground(modifier = Modifier.fillMaxSize())
+    Surface(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .systemBarsPadding()
+                .fillMaxSize()
+        ) {
+            GradientBackground(modifier = Modifier.fillMaxSize())
 
-        ResultsTopAppBar(
-            onNavigationClick = navigateBack,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
-        WheelSegment(
-            itemUiState = winnerWheelSegment,
-            isClickable = false,
-            onClick = {},
-            modifier = Modifier
-                .align(Alignment.Center)
-                .then(horizontalPaddingModifier)
-        )
-        SpinButtons(
-            onSpinClicked = onSpinClicked,
-            onDeleteAndSpinClicked = onDeleteAndSpinClicked,
-            showDeleteButton = canDeleteWinner,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .then(horizontalPaddingModifier)
-                .padding(bottom = 16.dp)
-        )
+            ResultsTopAppBar(
+                onNavigationClick = navigateBack,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+            WheelSegment(
+                itemUiState = winnerWheelSegment,
+                isClickable = false,
+                onClick = {},
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .then(horizontalPaddingModifier)
+            )
+            SpinButtons(
+                onSpinClicked = onSpinClicked,
+                onDeleteAndSpinClicked = onDeleteAndSpinClicked,
+                showDeleteButton = canDeleteWinner,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .then(horizontalPaddingModifier)
+                    .padding(bottom = 16.dp)
+            )
+        }
     }
 }
 
