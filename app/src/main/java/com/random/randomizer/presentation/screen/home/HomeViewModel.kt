@@ -15,8 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
-    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
-    private val mappers: HomeMappers
+    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase
 ) : MutableStateViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(
     initialUiState = HomeUiState()
 ) {
@@ -24,7 +23,7 @@ class HomeViewModel @Inject constructor(
     init {
         getWheelSegmentsStreamUseCase()
             .onEach { segments ->
-                val uiSegments = segments.map { mappers.toPresentation(it) }
+                val uiSegments = segments.map { toPresentation(it) }
                 updateState { it.copy(wheelSegments = uiSegments) }
             }
             .launchIn(viewModelScope)

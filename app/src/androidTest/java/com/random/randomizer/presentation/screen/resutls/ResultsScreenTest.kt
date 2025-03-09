@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.screen.resutls
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -15,16 +14,11 @@ import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
-import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.results.ResultsScreen
 import com.random.randomizer.presentation.screen.results.ResultsViewModel
-import com.random.randomizer.presentation.screen.results.toPresentation
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.slot
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -63,18 +57,6 @@ class ResultsScreenTest {
 
     @Before
     fun setup() {
-        val slot = slot<WheelSegment>()
-        mockkStatic("com.random.randomizer.presentation.screen.results.ResultsMappersKt")
-        every { toPresentation(capture(slot)) } answers {
-            WheelSegmentUiState(
-                id = slot.captured.id,
-                title = slot.captured.title,
-                description = slot.captured.description,
-                image = null,
-                customColor = slot.captured.customColor?.let { Color(it) }
-            )
-        }
-
         hiltRule.inject()
     }
 
