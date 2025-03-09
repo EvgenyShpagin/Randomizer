@@ -114,7 +114,7 @@ fun SaveButton(
     ) {
         Icon(
             Icons.Default.Check,
-            contentDescription = stringResource(R.string.button_save),
+            contentDescription = null,
             modifier = Modifier.size(ButtonDefaults.IconSize)
         )
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
