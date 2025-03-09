@@ -13,6 +13,7 @@ interface CoreMappers {
     fun toPresentation(thumbnail: Image): ImageBitmap?
     fun toDomain(wheelSegmentUiState: WheelSegmentUiState, thumbnail: Image?): WheelSegment
     fun toDomain(color: Color): Long
+    fun toPresentation(color: Long): Color
 }
 
 class CoreMappersImpl @Inject constructor() : CoreMappers {
@@ -23,7 +24,7 @@ class CoreMappersImpl @Inject constructor() : CoreMappers {
             title = wheelSegment.title,
             description = wheelSegment.description,
             image = wheelSegment.thumbnail?.let { toPresentation(thumbnail = it) },
-            customColor = wheelSegment.customColor?.let { Color(it) }
+            customColor = wheelSegment.customColor?.let { toPresentation(it) }
         )
     }
 
@@ -47,5 +48,9 @@ class CoreMappersImpl @Inject constructor() : CoreMappers {
 
     override fun toDomain(color: Color): Long {
         return color.value.shr(32).toLong()
+    }
+
+    override fun toPresentation(color: Long): Color {
+        return Color(color)
     }
 }

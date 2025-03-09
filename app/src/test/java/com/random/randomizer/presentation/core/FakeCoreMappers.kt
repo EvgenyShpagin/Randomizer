@@ -12,12 +12,16 @@ object FakeCoreMappers : CoreMappers {
             title = wheelSegment.title,
             description = wheelSegment.description,
             image = wheelSegment.thumbnail?.let { toPresentation(thumbnail = it) },
-            customColor = wheelSegment.customColor?.let { Color(it) }
+            customColor = wheelSegment.customColor?.let { toPresentation(it) }
         )
     }
 
     override fun toPresentation(thumbnail: Image): ImageBitmap? {
         return null
+    }
+
+    override fun toPresentation(color: Long): Color {
+        return Color(color)
     }
 
     override fun toDomain(

@@ -46,8 +46,7 @@ class EditViewModel @Inject constructor(
     private val fixWheelSegmentUseCase: FixWheelSegmentUseCase,
     private val createWheelSegmentUseCase: CreateWheelSegmentUseCase,
     private val validateWheelSegmentUseCase: ValidateWheelSegmentUseCase,
-    private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase,
-    private val mappers: EditMappers
+    private val updateWheelSegmentUseCase: UpdateWheelSegmentUseCase
 ) : ImmutableStateViewModel<EditUiState, EditUiEvent, EditUiEffect>() {
 
     // MutableState is used to resolve
@@ -80,11 +79,11 @@ class EditViewModel @Inject constructor(
             id = wheelSegmentId ?: 0,
             title = title,
             description = description,
-            image = latestImage?.let { mappers.toPresentation(it) },
-            customColor = color?.let { mappers.toPresentation(it) }
+            image = latestImage?.let { toPresentation(it) },
+            customColor = color?.let { toPresentation(it) }
         )
         val validateResult = validateWheelSegmentUseCase(
-            mappers.toDomain(wheelSegmentUiState, latestImage)
+            toDomain(wheelSegmentUiState, latestImage)
         )
         EditUiState(
             segmentUiState = wheelSegmentUiState,
@@ -170,7 +169,7 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onPickBackgroundColor(color: Color?) {
-        val domainColor = color?.let { mappers.toDomain(color) }
+        val domainColor = color?.let { toDomain(color) }
         savedStateHandle[KEY_COLOR] = domainColor
     }
 
@@ -185,7 +184,7 @@ class EditViewModel @Inject constructor(
     }
 
     private suspend fun save() {
-        val wheelSegment = mappers.toDomain(
+        val wheelSegment = toDomain(
             wheelSegmentUiState = uiState.value.segmentUiState,
             thumbnail = latestImage
         )

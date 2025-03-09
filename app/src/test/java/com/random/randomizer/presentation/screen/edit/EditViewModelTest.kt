@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
 import com.random.randomizer.data.util.ImageScalerImpl
+import com.random.randomizer.domain.model.Image
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.usecase.CreateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.FixThumbnailUseCase
@@ -53,8 +54,6 @@ class EditViewModelTest {
     // Subject under test
     private lateinit var viewModel: EditViewModel
 
-    private val mappers = FakeEditMappers
-
     @Before
     fun setup() {
         wheelSegmentRepository = FakeWheelSegmentRepository()
@@ -63,6 +62,10 @@ class EditViewModelTest {
         }
         val context = mockk<Context>()
         every { context.cacheDir } returns File("")
+
+        mockkStatic("com.random.randomizer.presentation.screen.edit.EditMappersKt")
+        every { toPresentation(any(Image::class)) } returns null
+
         viewModel = EditViewModel(
             context,
             savedStateHandle,
@@ -74,8 +77,7 @@ class EditViewModelTest {
                 FixThumbnailUseCase(),
                 wheelSegmentRepository,
                 ImageScalerImpl()
-            ),
-            mappers
+            )
         )
     }
 

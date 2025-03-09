@@ -261,8 +261,7 @@ class EditScreenTest {
                     FixThumbnailUseCase(),
                     repository,
                     ImageScalerImpl()
-                ),
-                EditMappersImpl(CoreMappersImpl())
+                )
             )
             EditScreen(
                 viewModel = viewModel,
