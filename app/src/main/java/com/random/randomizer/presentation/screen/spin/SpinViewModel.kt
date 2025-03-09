@@ -6,6 +6,7 @@ import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
 import com.random.randomizer.domain.usecase.SelectRandomWheelSegmentUseCase
 import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.core.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

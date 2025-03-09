@@ -7,12 +7,10 @@ import org.junit.Test
 
 class MappersTest {
 
-    val coreMappers = CoreMappersImpl()
-
     @Test
     fun toDomain_convertsColorCorrectly() {
         val expectedDomainColor = 0xFFFF0000
-        val actualPresentationColorLong = coreMappers.toDomain(Color.Red)
+        val actualPresentationColorLong = toDomain(Color.Red)
         assertEquals(expectedDomainColor, actualPresentationColorLong)
     }
 
@@ -33,7 +31,7 @@ class MappersTest {
             customColor = 0x80FAFAFA
         )
 
-        val presentationUiState = coreMappers.toPresentation(domain)
+        val presentationUiState = toPresentation(domain)
 
         assertEquals(domain.id, presentationUiState.id)
         assertEquals(domain.title, presentationUiState.title)
@@ -55,14 +53,14 @@ class MappersTest {
             customColor = Color.Red
         )
 
-        val domain = coreMappers.toDomain(presentationUiState, null)
+        val domain = toDomain(presentationUiState, null)
 
         assertEquals(presentationUiState.id, domain.id)
         assertEquals(presentationUiState.title, domain.title)
         assertEquals(presentationUiState.description, domain.description)
         assertEquals(presentationUiState.image, null)
         assertEquals(
-            presentationUiState.customColor?.let { coreMappers.toDomain(it) },
+            presentationUiState.customColor?.let { toDomain(it) },
             domain.customColor
         )
     }

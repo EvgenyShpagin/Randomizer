@@ -5,6 +5,7 @@ import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
 import com.random.randomizer.presentation.core.MutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.core.toPresentation
 import com.random.randomizer.presentation.screen.home.HomeUiEffect.NavigateToSegmentEdit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

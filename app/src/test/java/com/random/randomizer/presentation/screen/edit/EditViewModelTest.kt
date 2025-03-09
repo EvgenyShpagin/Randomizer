@@ -17,7 +17,7 @@ import com.random.randomizer.domain.usecase.FixWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
-import com.random.randomizer.presentation.core.FakeCoreMappers
+import com.random.randomizer.presentation.core.toPresentation
 import com.random.randomizer.presentation.navigation.Destination
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishEdit
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.InputDescription
@@ -63,7 +63,7 @@ class EditViewModelTest {
         val context = mockk<Context>()
         every { context.cacheDir } returns File("")
 
-        mockkStatic("com.random.randomizer.presentation.screen.edit.EditMappersKt")
+        mockkStatic("com.random.randomizer.presentation.core.MappersKt")
         every { toPresentation(any(Image::class)) } returns null
 
         viewModel = EditViewModel(
@@ -89,7 +89,7 @@ class EditViewModelTest {
         // When - on startup
 
         val expected = EditUiState(
-            segmentUiState = FakeCoreMappers.toPresentation(EmptyWheelSegment),
+            segmentUiState = toPresentation(EmptyWheelSegment),
             canSave = false
         )
         val actual = viewModel.uiState.first()

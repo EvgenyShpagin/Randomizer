@@ -23,6 +23,8 @@ import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
 import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.core.toDomain
+import com.random.randomizer.presentation.core.toPresentation
 import com.random.randomizer.presentation.navigation.Destination
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
 import com.random.randomizer.util.getUniqueFilename
