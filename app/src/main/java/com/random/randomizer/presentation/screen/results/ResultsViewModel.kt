@@ -21,8 +21,7 @@ class ResultsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getWheelSegmentStreamUseCase: GetWheelSegmentStreamUseCase,
     getWheelSegmentsUseCase: GetWheelSegmentsUseCase,
-    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase,
-    private val mappers: ResultsMappers
+    private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase
 ) : ImmutableStateViewModel<ResultsUiState, ResultsUiEvent, ResultsUiEffect>() {
 
     private val route = savedStateHandle.toRoute<Destination.Results>()
@@ -31,7 +30,7 @@ class ResultsViewModel @Inject constructor(
     override val uiState = getWheelSegmentStreamUseCase(winnerWheelSegmentId)
         .map { wheelSegment ->
             val wheelSegmentCount = getWheelSegmentsUseCase().count()
-            val wheelSegmentUiState = mappers.toPresentation(wheelSegment)
+            val wheelSegmentUiState = toPresentation(wheelSegment)
             ResultsUiState(
                 winnerUiState = wheelSegmentUiState,
                 canDeleteWinner = wheelSegmentCount >= 3 // Cannot delete if only one item remains

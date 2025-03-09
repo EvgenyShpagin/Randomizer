@@ -4,8 +4,6 @@ import com.random.randomizer.presentation.core.CoreMappers
 import com.random.randomizer.presentation.core.CoreMappersImpl
 import com.random.randomizer.presentation.screen.home.HomeMappers
 import com.random.randomizer.presentation.screen.home.HomeMappersImpl
-import com.random.randomizer.presentation.screen.results.ResultsMappers
-import com.random.randomizer.presentation.screen.results.ResultsMappersImpl
 import com.random.randomizer.presentation.screen.spin.SpinMappers
 import com.random.randomizer.presentation.screen.spin.SpinMappersImpl
 import dagger.Binds
@@ -24,7 +22,4 @@ abstract class MappersModule {
 
     @Binds
     abstract fun bindSpinMappers(impl: SpinMappersImpl): SpinMappers
-
-    @Binds
-    abstract fun bindResultsMappers(impl: ResultsMappersImpl): ResultsMappers
 }
