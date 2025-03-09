@@ -20,8 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SpinViewModel @Inject constructor(
     private val getWheelSegmentsUseCase: GetWheelSegmentsUseCase,
-    private val selectRandomWheelSegmentUseCase: SelectRandomWheelSegmentUseCase,
-    private val mappers: SpinMappers
+    private val selectRandomWheelSegmentUseCase: SelectRandomWheelSegmentUseCase
 ) : ImmutableStateViewModel<SpinUiState, SpinUiEvent, SpinUiEffect>() {
 
     private val _uiState = MutableStateFlow(SpinUiState())
@@ -41,7 +40,7 @@ class SpinViewModel @Inject constructor(
         _uiState.update { state ->
             state.copy(
                 wheelSegments = wheelSegments
-                    .map(mappers::toPresentation)
+                    .map(::toPresentation)
                     .extend(),
                 originListSize = wheelSegments.count()
             )

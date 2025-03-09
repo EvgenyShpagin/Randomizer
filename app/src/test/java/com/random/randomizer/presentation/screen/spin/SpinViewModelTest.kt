@@ -7,7 +7,6 @@ import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
 import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
 import com.random.randomizer.domain.usecase.SelectRandomWheelSegmentUseCase
-import com.random.randomizer.presentation.core.CoreMappersImpl
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -34,8 +33,7 @@ class SpinViewModelTest {
         repository = FakeWheelSegmentRepository()
         viewModel = SpinViewModel(
             getWheelSegmentsUseCase = GetWheelSegmentsUseCase(repository),
-            selectRandomWheelSegmentUseCase = SelectRandomWheelSegmentUseCase(repository),
-            mappers = SpinMappersImpl(CoreMappersImpl())
+            selectRandomWheelSegmentUseCase = SelectRandomWheelSegmentUseCase(repository)
         )
     }
 
