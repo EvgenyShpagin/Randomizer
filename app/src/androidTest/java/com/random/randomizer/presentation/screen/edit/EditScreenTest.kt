@@ -27,7 +27,6 @@ import com.random.randomizer.domain.usecase.FixWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
-import com.random.randomizer.presentation.core.CoreMappersImpl
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -265,6 +264,7 @@ class EditScreenTest {
             )
             EditScreen(
                 viewModel = viewModel,
+                enableAnimations = false,
                 navigateBack = {}
             )
         }

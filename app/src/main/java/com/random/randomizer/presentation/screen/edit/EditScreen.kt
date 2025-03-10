@@ -71,7 +71,8 @@ import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 fun EditScreen(
     viewModel: EditViewModel,
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enableAnimations: Boolean = true
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -131,6 +132,7 @@ fun EditScreen(
                 onSaveClicked = {
                     viewModel.onEvent(FinishEdit(doSave = true))
                 },
+                enableAnimations = enableAnimations,
                 modifier = Modifier
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
@@ -153,7 +155,8 @@ private fun EditContent(
     onClickRemoveImage: () -> Unit,
     onPickBackgroundColor: (Color?) -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColors: List<Color> = AllSegmentColors
+    backgroundColors: List<Color> = AllSegmentColors,
+    enableAnimations: Boolean = true
 ) {
     val scope = rememberCoroutineScope()
     val bringIntoTitleViewRequester = remember { BringIntoViewRequester() }
@@ -210,11 +213,20 @@ private fun EditContent(
             checkedColor = customColor
         )
         Spacer(Modifier.weight(1f))
-        AnimatedVisibility(
-            visible = !WindowInsets.isImeVisible,
-            enter = fadeIn(),
-            exit = ExitTransition.None
-        ) {
+        if (enableAnimations) {
+            AnimatedVisibility(
+                visible = !WindowInsets.isImeVisible,
+                enter = fadeIn(),
+                exit = ExitTransition.None
+            ) {
+                SaveButton(
+                    onClick = onSaveClicked,
+                    isEnabled = canSave,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+            }
+        } else {
             SaveButton(
                 onClick = onSaveClicked,
                 isEnabled = canSave,
