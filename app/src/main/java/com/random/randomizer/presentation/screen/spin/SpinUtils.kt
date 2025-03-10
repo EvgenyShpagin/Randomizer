@@ -5,7 +5,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.ui.util.fastRoundToInt
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import kotlin.random.Random
 
 /**
  * Scrolls to the last item which is not measured to find out its size,
@@ -43,7 +45,7 @@ suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     segmentSizes: IntArray,
     screenHeight: Float,
-    durationMillis: Int = 5000
+    durationMillis: Int = getSpinDurationMillis(targetIndex)
 ) {
     val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
 
@@ -73,4 +75,17 @@ fun List<WheelSegmentUiState>.extendTo(minCount: Int): List<WheelSegmentUiState>
 
 private operator fun <T> List<T>.times(count: Int): List<T> {
     return List(count) { this }.flatten()
+}
+
+fun getSpinDurationMillis(
+    targetIndex: Int,
+    avgSegmentSpinTime: Int = 110,
+    scatter: Double = 0.2,
+    maxValue: Int = 12_000
+): Int {
+    require(targetIndex >= 0 && avgSegmentSpinTime > 0 && scatter > 0 && maxValue > 0)
+
+    val randomMultiplier = Random.nextDouble(from = 1 - scatter, until = 1 + scatter)
+    val randomSpinTimeForOneSegment = (avgSegmentSpinTime * randomMultiplier).fastRoundToInt()
+    return (targetIndex * randomSpinTimeForOneSegment).coerceAtMost(maxValue)
 }
