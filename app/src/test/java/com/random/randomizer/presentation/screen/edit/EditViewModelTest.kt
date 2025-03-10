@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import com.random.randomizer.MainCoroutineRule
 import com.random.randomizer.data.repository.FakeWheelSegmentRepository
 import com.random.randomizer.data.util.ImageScalerImpl
@@ -25,6 +24,7 @@ import com.random.randomizer.presentation.screen.edit.EditUiEvent.InputTitle
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickColor
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickImage
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.RemoveImage
+import com.random.randomizer.presentation.test_util.mockkToRoute
 import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
 import io.mockk.every
@@ -217,10 +217,5 @@ class EditViewModelTest {
 
         // Then - verify saved wheel segment changed
         assertEquals(expected, actual)
-    }
-
-    private inline fun <reified T : Destination> SavedStateHandle.mockkToRoute(route: T) {
-        mockkStatic("androidx.navigation.SavedStateHandleKt")
-        every { toRoute<T>() } returns route
     }
 }
