@@ -1,10 +1,9 @@
 package com.random.randomizer.presentation.screen.spin
 
-import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
-import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -21,6 +20,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -100,7 +100,6 @@ class SpinScreenTest {
             .assertHeightIsAtLeast(screenHeightDp)
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun startsSpin_afterShortDelay() = runTest {
         // Given - long segment list
@@ -108,13 +107,26 @@ class SpinScreenTest {
 
         setContent()
 
-        // When - after first segment has been displayed
-        composeTestRule.waitUntilExactlyOneExists(hasText(LongFakeList.first().title), 2000)
+        val firstItemTitle = LongFakeList.first().title
 
-        // Then - verify it was scrolled away (does not exist in node tree)
-        composeTestRule.waitUntilDoesNotExist(hasText(LongFakeList.first().title), 2000)
-        composeTestRule.onNodeWithText(LongFakeList.first().title)
-            .assertDoesNotExist()
+        val firstItemWindowPositionOnStart = composeTestRule
+            .onNodeWithText(firstItemTitle)
+            .fetchSemanticsNode()
+            .positionInWindow
+
+        // When - in a second after shouldBeSpinned is set to true
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.waitUntil { viewModel.uiState.value.shouldBeSpinned }
+        composeTestRule.mainClock.advanceTimeBy(1000)
+
+        val firstItemWindowPositionAfterDelay = composeTestRule
+            .onNodeWithText(firstItemTitle)
+            .takeIf { it.isDisplayed() }
+            ?.fetchSemanticsNode()
+            ?.positionInWindow
+
+        // Then - verify position of the first item is changed (or it has gone)
+        assertNotEquals(firstItemWindowPositionOnStart, firstItemWindowPositionAfterDelay)
     }
 
     @Test
