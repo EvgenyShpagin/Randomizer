@@ -48,6 +48,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="OPPO PJC110" value="120" />
                   <entry key="Pixel_5_API_34" value="120" />
                   <entry key="Pixel_9" value="120" />
                   <entry key="Tests" value="360" />
@@ -397,6 +398,19 @@
           </value>
         </entry>
         <entry key="-702194545">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_5_API_34" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-697253882">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
@@ -865,6 +879,19 @@
           </value>
         </entry>
         <entry key="1269107862">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_5_API_34" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1296958692">
           <value>
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
