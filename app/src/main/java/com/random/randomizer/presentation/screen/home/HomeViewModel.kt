@@ -3,13 +3,14 @@ package com.random.randomizer.presentation.screen.home
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.domain.usecase.DeleteWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsStreamUseCase
-import com.random.randomizer.presentation.core.MutableStateViewModel
+import com.random.randomizer.presentation.core.ImmutableStateViewModel
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.core.toPresentation
 import com.random.randomizer.presentation.screen.home.HomeUiEffect.NavigateToSegmentEdit
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,18 +18,18 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     getWheelSegmentsStreamUseCase: GetWheelSegmentsStreamUseCase,
     private val deleteWheelSegmentUseCase: DeleteWheelSegmentUseCase
-) : MutableStateViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>(
-    initialUiState = HomeUiState()
-) {
+) : ImmutableStateViewModel<HomeUiState, HomeUiEvent, HomeUiEffect>() {
 
-    init {
-        getWheelSegmentsStreamUseCase()
-            .onEach { segments ->
-                val uiSegments = segments.map { toPresentation(it) }
-                updateState { it.copy(wheelSegments = uiSegments) }
-            }
-            .launchIn(viewModelScope)
-    }
+    override val uiState = getWheelSegmentsStreamUseCase()
+        .map { wheelSegments ->
+            HomeUiState(
+                wheelSegments = wheelSegments.map { toPresentation(it) }
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = HomeUiState()
+        )
 
     override fun onEvent(event: HomeUiEvent) {
         when (event) {
