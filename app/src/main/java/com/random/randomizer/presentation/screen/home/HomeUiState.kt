@@ -6,5 +6,6 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 
 @Immutable
 data class HomeUiState(
-    val wheelSegments: List<WheelSegmentUiState> = emptyList()
+    val wheelSegments: List<WheelSegmentUiState> = emptyList(),
+    val isLoading: Boolean = true
 ) : UiState

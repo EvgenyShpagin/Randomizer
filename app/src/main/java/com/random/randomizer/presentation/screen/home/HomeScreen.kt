@@ -1,5 +1,8 @@
 package com.random.randomizer.presentation.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
+import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.core.unionWithWindowInsets
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
@@ -48,7 +52,8 @@ fun HomeScreen(
         onClickAdd = { navigateToEdit(null) },
         onClickWheelSegment = { navigateToEdit(it.id) },
         onDeleteWheelSegment = { viewModel.onEvent(DeleteSegment(it)) },
-        wheelItems = uiState.wheelSegments,
+        wheelSegments = uiState.wheelSegments,
+        isLoading = uiState.isLoading,
         modifier = modifier
     )
 }
@@ -60,9 +65,9 @@ private fun HomeScreen(
     onClickAdd: () -> Unit,
     onClickWheelSegment: (WheelSegmentUiState) -> Unit,
     onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
-    wheelItems: List<WheelSegmentUiState>,
+    wheelSegments: List<WheelSegmentUiState>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState(),
     topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
@@ -71,38 +76,60 @@ private fun HomeScreen(
             HomeTopBar(scrollBehavior = scrollBehavior)
         },
         floatingActionButton = {
-            FabsColumn(
-                showSpinButton = wheelItems.count() > 1,
-                onClickSpin = onClickSpin,
-                onClickAdd = onClickAdd
-            )
+            AnimatedVisibility(
+                visible = !isLoading,
+                enter = scaleIn(),
+                exit = scaleOut()
+            ) {
+                FabsColumn(
+                    showSpinButton = wheelSegments.count() > 1,
+                    onClickSpin = onClickSpin,
+                    onClickAdd = onClickAdd
+                )
+            }
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
-        Box(
+        StatefulContent(
+            isLoading = isLoading,
+            isEmpty = wheelSegments.isEmpty(),
+            emptyStateContent = {
+                NoWheelSegmentsPlaceholder(Modifier.fillMaxSize())
+            },
             modifier = Modifier
+                .fillMaxSize()
                 .consumeWindowInsets(innerPadding)
                 .padding(innerPadding)
         ) {
-            if (wheelItems.isEmpty()) {
-                NoWheelSegmentsPlaceholder(
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                val contentPadding = PaddingValues(16.dp)
-                    .unionWithWindowInsets(
-                        WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
-                    )
-
-                DeletableWheelSegmentList(
-                    wheelItems = wheelItems,
-                    onClick = onClickWheelSegment,
-                    onDelete = onDeleteWheelSegment,
-                    contentPadding = contentPadding,
-                    listState = listState
-                )
-            }
+            HomeContent(
+                wheelSegments = wheelSegments,
+                onClickWheelSegment = onClickWheelSegment,
+                onDeleteWheelSegment = onDeleteWheelSegment,
+            )
         }
+    }
+}
+
+@Composable
+private fun HomeContent(
+    wheelSegments: List<WheelSegmentUiState>,
+    onClickWheelSegment: (WheelSegmentUiState) -> Unit,
+    onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState()
+) {
+    Box(modifier = modifier) {
+        val contentPadding = PaddingValues(16.dp)
+            .unionWithWindowInsets(
+                WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
+            )
+        DeletableWheelSegmentList(
+            wheelItems = wheelSegments,
+            onClick = onClickWheelSegment,
+            onDelete = onDeleteWheelSegment,
+            contentPadding = contentPadding,
+            listState = listState
+        )
     }
 }
 
@@ -120,7 +147,8 @@ private fun HomeScreenPreview(
                 onClickAdd = {},
                 onClickWheelSegment = {},
                 onDeleteWheelSegment = {},
-                wheelItems = wheelSegments,
+                wheelSegments = wheelSegments,
+                isLoading = false
             )
         }
     }

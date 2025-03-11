@@ -23,7 +23,8 @@ class HomeViewModel @Inject constructor(
     override val uiState = getWheelSegmentsStreamUseCase()
         .map { wheelSegments ->
             HomeUiState(
-                wheelSegments = wheelSegments.map { toPresentation(it) }
+                wheelSegments = wheelSegments.map { toPresentation(it) },
+                isLoading = false
             )
         }.stateIn(
             scope = viewModelScope,
