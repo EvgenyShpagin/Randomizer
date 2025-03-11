@@ -142,11 +142,11 @@ fun StatefulContent(
     },
     content: @Composable () -> Unit
 ) {
-    Box(modifier = modifier) {
-        val crossfadeState by remember(isLoading, isEmpty) {
-            mutableStateOf(isLoading to isEmpty)
-        }
-        Crossfade(targetState = crossfadeState) { (isLoading, isEmpty) ->
+    val crossfadeState by remember(isLoading, isEmpty) {
+        mutableStateOf(isLoading to isEmpty)
+    }
+    Crossfade(targetState = crossfadeState) { (isLoading, isEmpty) ->
+        Box(modifier = modifier) {
             when {
                 isLoading -> loadingStateContent()
                 isEmpty -> emptyStateContent()
