@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -126,7 +127,7 @@ fun NoWheelSegmentsPlaceholder(modifier: Modifier = Modifier) {
 }
 
 object WheelSegmentDefaults {
-    val CornerSize = 8.dp
+    val Shape @Composable get() = CardDefaults.outlinedShape
 }
 
 @Composable

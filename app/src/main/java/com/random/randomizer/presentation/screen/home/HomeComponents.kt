@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -277,7 +276,7 @@ private fun DeleteWheelSegmentBackground(state: SwipeToDismissBoxState) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color, RoundedCornerShape(WheelSegmentDefaults.CornerSize))
+            .background(color, WheelSegmentDefaults.Shape)
             .padding(16.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
