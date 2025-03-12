@@ -97,7 +97,6 @@ private fun HomeScreen(
                 NoWheelSegmentsPlaceholder(Modifier.fillMaxSize())
             },
             modifier = Modifier
-                .fillMaxSize()
                 .consumeWindowInsets(innerPadding)
                 .padding(innerPadding)
         ) {
