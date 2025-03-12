@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -146,8 +147,8 @@ fun StatefulContent(
     val crossfadeState by remember(isLoading, isEmpty) {
         mutableStateOf(isLoading to isEmpty)
     }
-    Crossfade(targetState = crossfadeState) { (isLoading, isEmpty) ->
-        Box(modifier = modifier) {
+    Crossfade(targetState = crossfadeState, modifier = modifier) { (isLoading, isEmpty) ->
+        Box(modifier = Modifier.fillMaxSize()) {
             when {
                 isLoading -> loadingStateContent()
                 isEmpty -> emptyStateContent()
