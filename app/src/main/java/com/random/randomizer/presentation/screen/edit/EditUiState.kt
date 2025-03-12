@@ -7,5 +7,6 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 @Immutable
 data class EditUiState(
     val segmentUiState: WheelSegmentUiState = WheelSegmentUiState(),
-    val canSave: Boolean = false
+    val canSave: Boolean = false,
+    val isLoading: Boolean = true
 ) : UiState

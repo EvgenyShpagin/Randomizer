@@ -89,7 +89,8 @@ class EditViewModel @Inject constructor(
         )
         EditUiState(
             segmentUiState = wheelSegmentUiState,
-            canSave = validateResult is Result.Success
+            canSave = validateResult is Result.Success,
+            isLoading = false
         )
     }.onStart {
         setupUiState()

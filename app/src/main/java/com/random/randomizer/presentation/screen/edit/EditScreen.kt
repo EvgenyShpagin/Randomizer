@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
+import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.unionPaddingWithInsets
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
@@ -108,35 +109,40 @@ fun EditScreen(
             )
         },
         content = { innerPadding ->
-            EditContent(
-                title = viewModel.title, // Use Compose State instead of StateFlow
-                description = viewModel.description, // to synchronously update TextFields
-                customColor = uiState.segmentUiState.customColor,
-                image = uiState.segmentUiState.image,
-                canSave = uiState.canSave,
-                onInputTitle = { title ->
-                    viewModel.onEvent(InputTitle(title))
-                },
-                onInputDescription = { description ->
-                    viewModel.onEvent(InputDescription(description))
-                },
-                onClickAddImage = {
-                    pickMedia.launchImagePicker()
-                },
-                onClickRemoveImage = {
-                    viewModel.onEvent(RemoveImage)
-                },
-                onPickBackgroundColor = { color ->
-                    viewModel.onEvent(PickColor(color))
-                },
-                onSaveClicked = {
-                    viewModel.onEvent(FinishEdit(doSave = true))
-                },
-                enableAnimations = enableAnimations,
+            StatefulContent(
+                isLoading = uiState.isLoading,
                 modifier = Modifier
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
-            )
+                    .fillMaxSize()
+            ) {
+                EditContent(
+                    title = viewModel.title, // Use Compose State instead of StateFlow
+                    description = viewModel.description, // to synchronously update TextFields
+                    customColor = uiState.segmentUiState.customColor,
+                    image = uiState.segmentUiState.image,
+                    canSave = uiState.canSave,
+                    onInputTitle = { title ->
+                        viewModel.onEvent(InputTitle(title))
+                    },
+                    onInputDescription = { description ->
+                        viewModel.onEvent(InputDescription(description))
+                    },
+                    onClickAddImage = {
+                        pickMedia.launchImagePicker()
+                    },
+                    onClickRemoveImage = {
+                        viewModel.onEvent(RemoveImage)
+                    },
+                    onPickBackgroundColor = { color ->
+                        viewModel.onEvent(PickColor(color))
+                    },
+                    onSaveClicked = {
+                        viewModel.onEvent(FinishEdit(doSave = true))
+                    },
+                    enableAnimations = enableAnimations
+                )
+            }
         }
     )
 }
