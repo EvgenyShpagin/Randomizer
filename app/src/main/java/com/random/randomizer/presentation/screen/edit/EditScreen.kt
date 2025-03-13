@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -66,6 +68,7 @@ import com.random.randomizer.presentation.screen.edit.EditUiEvent.RemoveImage
 import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -197,7 +200,14 @@ private fun EditContent(
                 title = title,
                 onInput = onInputTitle,
                 modifier = Modifier
-                    .bringIntoViewRequesterOnFocus(bringIntoTitleViewRequester, scope)
+                    .bringIntoViewRequester(bringIntoTitleViewRequester)
+                    .onFocusChanged { state ->
+                        if (state.isFocused) {
+                            scope.launch {
+                                bringIntoTitleViewRequester.bringIntoView()
+                            }
+                        }
+                    }
             )
         }
 
@@ -205,7 +215,14 @@ private fun EditContent(
             description = description,
             onInput = onInputDescription,
             modifier = Modifier
-                .bringIntoViewRequesterOnFocus(bringIntoDescriptionViewRequester, scope)
+                .bringIntoViewRequester(bringIntoDescriptionViewRequester)
+                .onFocusChanged { state ->
+                    if (state.isFocused) {
+                        scope.launch {
+                            bringIntoDescriptionViewRequester.bringIntoView()
+                        }
+                    }
+                }
         )
         if (image == null) {
             AddSegmentImageButton(onClickAdd = onClickAddImage)
