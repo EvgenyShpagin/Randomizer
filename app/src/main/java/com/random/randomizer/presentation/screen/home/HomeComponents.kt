@@ -1,7 +1,10 @@
 package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -33,6 +36,8 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
@@ -67,7 +72,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun SpinButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation()
 ) {
     ExtendedFloatingActionButton(
         icon = {
@@ -79,6 +85,7 @@ fun SpinButton(
         text = {
             Text(stringResource(R.string.button_spin))
         },
+        elevation = elevation,
         onClick = onClick,
         modifier = modifier
     )
@@ -114,12 +121,14 @@ private fun HomeTopBarPreview() {
 @Composable
 private fun AddSegmentSmallButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation()
 ) {
     SmallFloatingActionButton(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.secondary,
+        elevation = elevation,
         modifier = modifier.size(40.dp) // To align perfectly to the end
     ) {
         AddSegmentIcon()
@@ -129,12 +138,14 @@ private fun AddSegmentSmallButton(
 @Composable
 private fun AddSegmentButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation()
 ) {
     FloatingActionButton(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.secondary,
+        elevation = elevation,
         modifier = modifier
     ) {
         AddSegmentIcon()
@@ -149,7 +160,6 @@ private fun AddSegmentIcon() {
     )
 }
 
-
 @Composable
 fun FabsColumn(
     showSpinButton: Boolean,
@@ -161,16 +171,69 @@ fun FabsColumn(
         .union(WindowInsets.displayCutout)
         .only(WindowInsetsSides.Horizontal)
 
-    Column(
-        horizontalAlignment = Alignment.End,
-        modifier = modifier.windowInsetsPadding(windowInsets)
+    val transition = updateTransition(showSpinButton, label = "show all buttons")
+
+    val animationStepMillis = 200
+
+    val defaultElevation = 6.dp
+
+    val singleButtonElevation by transition.animateDp(
+        transitionSpec = {
+            when (targetState) {
+                true -> tween(animationStepMillis)
+                false -> tween(animationStepMillis, delayMillis = animationStepMillis * 3)
+            }
+        }
+    ) { showBoth -> if (showBoth) 0.dp else defaultElevation }
+
+    val bothButtonsElevation by transition.animateDp(
+        transitionSpec = {
+            when (targetState) {
+                true -> tween(animationStepMillis, delayMillis = animationStepMillis * 3)
+                false -> tween(animationStepMillis)
+            }
+        }
+    ) { showBoth -> if (showBoth) defaultElevation else 0.dp }
+
+    Box(
+        modifier = modifier.windowInsetsPadding(windowInsets),
+        contentAlignment = Alignment.BottomEnd
     ) {
-        if (showSpinButton) {
-            AddSegmentSmallButton(onClick = onClickAdd)
-            Spacer(Modifier.height(16.dp))
-            SpinButton(onClick = onClickSpin)
-        } else {
-            AddSegmentButton(onClick = onClickAdd)
+        transition.AnimatedVisibility(
+            visible = { showBoth -> showBoth },
+            enter = fadeIn(
+                animationSpec = tween(
+                    durationMillis = animationStepMillis,
+                    delayMillis = animationStepMillis * 2
+                )
+            ),
+            exit = fadeOut(
+                animationSpec = tween(
+                    durationMillis = animationStepMillis,
+                    delayMillis = animationStepMillis
+                )
+            )
+        ) {
+            val elevation = FloatingActionButtonDefaults
+                .elevation(defaultElevation = bothButtonsElevation)
+
+            Column(horizontalAlignment = Alignment.End) {
+                AddSegmentSmallButton(onClick = onClickAdd, elevation = elevation)
+                Spacer(Modifier.height(16.dp))
+                SpinButton(onClick = onClickSpin, elevation = elevation)
+            }
+        }
+
+        transition.AnimatedVisibility(
+            visible = { showBoth -> !showBoth },
+            enter = fadeIn(tween(animationStepMillis, delayMillis = animationStepMillis * 2)),
+            exit = fadeOut(tween(animationStepMillis, delayMillis = animationStepMillis))
+        ) {
+            AddSegmentButton(
+                onClick = onClickAdd,
+                elevation = FloatingActionButtonDefaults
+                    .elevation(defaultElevation = singleButtonElevation)
+            )
         }
     }
 }
