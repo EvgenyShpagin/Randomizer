@@ -82,7 +82,11 @@ private fun HomeScreen(
                 exit = scaleOut()
             ) {
                 FabsColumn(
-                    showSpinButton = wheelSegments.count() > 1,
+                    state = if (wheelSegments.count() > 1) {
+                        FabsColumnState.AddAndSpinButton
+                    } else {
+                        FabsColumnState.OnlyAddButton
+                    },
                     onClickSpin = onClickSpin,
                     onClickAdd = onClickAdd
                 )

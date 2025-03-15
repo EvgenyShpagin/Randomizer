@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
@@ -162,60 +163,60 @@ private fun AddSegmentIcon() {
 
 @Composable
 fun FabsColumn(
-    showSpinButton: Boolean,
+    state: FabsColumnState,
     onClickSpin: () -> Unit,
     onClickAdd: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    animationStepMillis: Int = FabsColumnDefaults.ANIMATION_STEP_MS,
+    containerElevation: Dp = FabsColumnDefaults.ContainerElevation
 ) {
     val windowInsets = WindowInsets.navigationBars
         .union(WindowInsets.displayCutout)
         .only(WindowInsetsSides.Horizontal)
 
-    val transition = updateTransition(showSpinButton, label = "show all buttons")
+    val transition = updateTransition(state, label = "Home fabs")
 
-    val animationStepMillis = 200
+    val fadeInAnimation = fadeIn(
+        animationSpec = tween(
+            durationMillis = animationStepMillis,
+            delayMillis = animationStepMillis * 2
+        )
+    )
 
-    val defaultElevation = 6.dp
+    val fadeOutAnimation = fadeOut(
+        animationSpec = tween(
+            durationMillis = animationStepMillis,
+            delayMillis = animationStepMillis
+        )
+    )
 
-    val singleButtonElevation by transition.animateDp(
+    @Composable
+    fun animateElevation(forState: FabsColumnState) = transition.animateDp(
         transitionSpec = {
-            when (targetState) {
-                true -> tween(animationStepMillis)
-                false -> tween(animationStepMillis, delayMillis = animationStepMillis * 3)
+            if (forState == targetState) {
+                tween(durationMillis = animationStepMillis, delayMillis = animationStepMillis * 3)
+            } else {
+                tween(durationMillis = animationStepMillis)
             }
         }
-    ) { showBoth -> if (showBoth) 0.dp else defaultElevation }
+    ) { state ->
+        if (forState == state) containerElevation else 0.dp
+    }
 
-    val bothButtonsElevation by transition.animateDp(
-        transitionSpec = {
-            when (targetState) {
-                true -> tween(animationStepMillis, delayMillis = animationStepMillis * 3)
-                false -> tween(animationStepMillis)
-            }
-        }
-    ) { showBoth -> if (showBoth) defaultElevation else 0.dp }
+    val addButtonElevation by animateElevation(FabsColumnState.OnlyAddButton)
+    val addAndSpinButtonsElevation by animateElevation(FabsColumnState.AddAndSpinButton)
 
     Box(
         modifier = modifier.windowInsetsPadding(windowInsets),
         contentAlignment = Alignment.BottomEnd
     ) {
         transition.AnimatedVisibility(
-            visible = { showBoth -> showBoth },
-            enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = animationStepMillis,
-                    delayMillis = animationStepMillis * 2
-                )
-            ),
-            exit = fadeOut(
-                animationSpec = tween(
-                    durationMillis = animationStepMillis,
-                    delayMillis = animationStepMillis
-                )
-            )
+            visible = { state -> state == FabsColumnState.AddAndSpinButton },
+            enter = fadeInAnimation,
+            exit = fadeOutAnimation
         ) {
             val elevation = FloatingActionButtonDefaults
-                .elevation(defaultElevation = bothButtonsElevation)
+                .elevation(defaultElevation = addAndSpinButtonsElevation)
 
             Column(horizontalAlignment = Alignment.End) {
                 AddSegmentSmallButton(onClick = onClickAdd, elevation = elevation)
@@ -225,26 +226,36 @@ fun FabsColumn(
         }
 
         transition.AnimatedVisibility(
-            visible = { showBoth -> !showBoth },
-            enter = fadeIn(tween(animationStepMillis, delayMillis = animationStepMillis * 2)),
-            exit = fadeOut(tween(animationStepMillis, delayMillis = animationStepMillis))
+            visible = { state -> state == FabsColumnState.OnlyAddButton },
+            enter = fadeInAnimation,
+            exit = fadeOutAnimation
         ) {
             AddSegmentButton(
                 onClick = onClickAdd,
                 elevation = FloatingActionButtonDefaults
-                    .elevation(defaultElevation = singleButtonElevation)
+                    .elevation(defaultElevation = addButtonElevation)
             )
         }
     }
 }
 
+enum class FabsColumnState {
+    OnlyAddButton,
+    AddAndSpinButton
+}
+
+object FabsColumnDefaults {
+    val ContainerElevation = 6.dp
+    const val ANIMATION_STEP_MS = 150
+}
+
 @PreviewLightDark
 @Composable
-private fun FabColumnShowSpinFalsePreview() {
+private fun FabColumnOnlyAddButtonPreview() {
     AppTheme {
         Surface {
             FabsColumn(
-                showSpinButton = false,
+                state = FabsColumnState.OnlyAddButton,
                 onClickAdd = {},
                 onClickSpin = {}
             )
@@ -254,11 +265,11 @@ private fun FabColumnShowSpinFalsePreview() {
 
 @Preview
 @Composable
-private fun FabColumnShowSpinTruePreview() {
+private fun FabColumnBothButtonsPreview() {
     AppTheme {
         Surface {
             FabsColumn(
-                showSpinButton = true,
+                state = FabsColumnState.AddAndSpinButton,
                 onClickAdd = {},
                 onClickSpin = {}
             )
