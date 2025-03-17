@@ -50,7 +50,9 @@ fun RandomizerNavHost(
                 },
                 navigateToSpin = {
                     navController.navigate(Destination.SpinWheel) {
-                        popUpTo<Destination.SpinWheel>()
+                        popUpTo<Destination.SpinWheel> {
+                            inclusive = true
+                        }
                     }
                 },
                 viewModel = hiltViewModel()
