@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.resutls
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -16,6 +17,7 @@ import com.random.randomizer.domain.usecase.GetWheelSegmentStreamUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentsUseCase
 import com.random.randomizer.presentation.screen.results.ResultsScreen
 import com.random.randomizer.presentation.screen.results.ResultsViewModel
+import com.random.randomizer.test_util.setContentWithSharedTransition
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -25,6 +27,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @MediumTest
 @HiltAndroidTest
 class ResultsScreenTest {
@@ -103,7 +106,7 @@ class ResultsScreenTest {
     }
 
     private fun setContent() {
-        composeTestRule.setContent {
+        composeTestRule.setContentWithSharedTransition { animatedVisibilityScope ->
             viewModel = ResultsViewModel(
                 savedStateHandle = SavedStateHandle(mapOf("winnerWheelSegmentId" to winner.id)),
                 getWheelSegmentStreamUseCase = GetWheelSegmentStreamUseCase(repository),
@@ -111,6 +114,7 @@ class ResultsScreenTest {
                 deleteWheelSegmentUseCase = DeleteWheelSegmentUseCase(repository)
             )
             ResultsScreen(
+                animatedVisibilityScope = animatedVisibilityScope,
                 viewModel = viewModel,
                 navigateToSpin = {},
                 navigateToHome = {}

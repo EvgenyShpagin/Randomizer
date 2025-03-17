@@ -1,7 +1,8 @@
 @file:OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalFoundationApi::class,
-    ExperimentalLayoutApi::class
+    ExperimentalLayoutApi::class,
+    ExperimentalSharedTransitionApi::class
 )
 
 package com.random.randomizer.presentation.screen.edit
@@ -15,7 +16,10 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +61,7 @@ import com.random.randomizer.R
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.unionPaddingWithInsets
+import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.FinishEdit
@@ -65,14 +70,15 @@ import com.random.randomizer.presentation.screen.edit.EditUiEvent.InputTitle
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickColor
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.PickImage
 import com.random.randomizer.presentation.screen.edit.EditUiEvent.RemoveImage
-import com.random.randomizer.presentation.theme.AppTheme
 import com.random.randomizer.presentation.util.HandleUiEffects
+import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun EditScreen(
+fun SharedTransitionScope.EditScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: EditViewModel,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -120,6 +126,8 @@ fun EditScreen(
                     .fillMaxSize()
             ) {
                 EditContent(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    id = uiState.segmentUiState.id,
                     title = viewModel.title, // Use Compose State instead of StateFlow
                     description = viewModel.description, // to synchronously update TextFields
                     customColor = uiState.segmentUiState.customColor,
@@ -151,7 +159,9 @@ fun EditScreen(
 }
 
 @Composable
-private fun EditContent(
+private fun SharedTransitionScope.EditContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    id: Int,
     title: String,
     description: String,
     image: ImageBitmap?,
@@ -188,7 +198,13 @@ private fun EditContent(
                 image = image,
                 containerColor = customColor,
                 isClickable = false,
-                onClick = {}
+                onClick = {},
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState(
+                        key = SharedContentKeys.ofSegment(id)
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
             )
         }
 
@@ -263,9 +279,11 @@ private fun EditContent(
 @Preview
 @Composable
 private fun EditWheelSegmentContentPreview() {
-    AppTheme {
+    PreviewContainer { animatedVisibilityScope ->
         val wheelSegment = PreviewWheelSegmentList.first()
         EditContent(
+            animatedVisibilityScope = animatedVisibilityScope,
+            id = wheelSegment.id,
             title = wheelSegment.title,
             description = wheelSegment.description,
             image = wheelSegment.image,

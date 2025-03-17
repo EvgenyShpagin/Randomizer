@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.random.randomizer.presentation.screen.results
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -26,11 +31,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.core.unionPaddingWithInsets
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.util.HandleUiEffects
+import com.random.randomizer.presentation.util.PreviewContainer
 
 @Composable
-fun ResultsScreen(
+fun SharedTransitionScope.ResultsScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToHome: () -> Unit,
     navigateToSpin: () -> Unit,
     viewModel: ResultsViewModel,
@@ -49,6 +56,7 @@ fun ResultsScreen(
     }
 
     ResultsContent(
+        animatedVisibilityScope = animatedVisibilityScope,
         winnerWheelSegment = uiState.winnerUiState,
         canDeleteWinner = uiState.canDeleteWinner,
         navigateBack = navigateToHome,
@@ -59,7 +67,8 @@ fun ResultsScreen(
 }
 
 @Composable
-fun ResultsContent(
+fun SharedTransitionScope.ResultsContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     winnerWheelSegment: WheelSegmentUiState,
     canDeleteWinner: Boolean,
     navigateBack: () -> Unit,
@@ -110,6 +119,12 @@ fun ResultsContent(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .then(horizontalPaddingModifier)
+                    .sharedElement(
+                        state = rememberSharedContentState(
+                            key = SharedContentKeys.ofSegment(winnerWheelSegment.id)
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
             )
             SpinButtons(
                 onSpinClicked = onSpinClicked,
@@ -127,15 +142,14 @@ fun ResultsContent(
 @PreviewLightDark
 @Composable
 private fun ResultsContentPreview() {
-    AppTheme {
-        Surface {
-            ResultsContent(
-                winnerWheelSegment = WheelSegmentUiState(0, "Title", "Description", null, null),
-                canDeleteWinner = true,
-                navigateBack = {},
-                onSpinClicked = {},
-                onDeleteAndSpinClicked = {},
-            )
-        }
+    PreviewContainer { animatedVisibilityScope ->
+        ResultsContent(
+            animatedVisibilityScope = animatedVisibilityScope,
+            winnerWheelSegment = WheelSegmentUiState(0, "Title", "Description", null, null),
+            canDeleteWinner = true,
+            navigateBack = {},
+            onSpinClicked = {},
+            onDeleteAndSpinClicked = {},
+        )
     }
 }

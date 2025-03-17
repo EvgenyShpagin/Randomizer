@@ -1,6 +1,11 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+
 package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
@@ -16,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.material3.rememberTopAppBarState
@@ -34,12 +38,12 @@ import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.core.unionWithWindowInsets
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun SharedTransitionScope.HomeScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToSpin: () -> Unit,
     navigateToEdit: (Int?) -> Unit,
     modifier: Modifier = Modifier,
@@ -48,6 +52,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreen(
+        animatedVisibilityScope = animatedVisibilityScope,
         onClickSpin = { navigateToSpin() },
         onClickAdd = { navigateToEdit(null) },
         onClickWheelSegment = { navigateToEdit(it.id) },
@@ -58,9 +63,9 @@ fun HomeScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
+private fun SharedTransitionScope.HomeScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClickSpin: () -> Unit,
     onClickAdd: () -> Unit,
     onClickWheelSegment: (WheelSegmentUiState) -> Unit,
@@ -105,6 +110,7 @@ private fun HomeScreen(
                 .padding(innerPadding)
         ) {
             HomeContent(
+                animatedVisibilityScope = animatedVisibilityScope,
                 wheelSegments = wheelSegments,
                 onClickWheelSegment = onClickWheelSegment,
                 onDeleteWheelSegment = onDeleteWheelSegment,
@@ -114,7 +120,8 @@ private fun HomeScreen(
 }
 
 @Composable
-private fun HomeContent(
+private fun SharedTransitionScope.HomeContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wheelSegments: List<WheelSegmentUiState>,
     onClickWheelSegment: (WheelSegmentUiState) -> Unit,
     onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
@@ -127,6 +134,7 @@ private fun HomeContent(
                 WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
             )
         DeletableWheelSegmentList(
+            animatedVisibilityScope = animatedVisibilityScope,
             wheelItems = wheelSegments,
             onClick = onClickWheelSegment,
             onDelete = onDeleteWheelSegment,
@@ -142,17 +150,15 @@ private fun HomeScreenPreview(
     @PreviewParameter(WheelSegmentListParameterProvider::class)
     wheelSegments: List<WheelSegmentUiState>
 ) {
-    @OptIn(ExperimentalMaterial3Api::class)
-    AppTheme {
-        Surface {
-            HomeScreen(
-                onClickSpin = {},
-                onClickAdd = {},
-                onClickWheelSegment = {},
-                onDeleteWheelSegment = {},
-                wheelSegments = wheelSegments,
-                isLoading = false
-            )
-        }
+    PreviewContainer { animatedVisibilityScope ->
+        HomeScreen(
+            animatedVisibilityScope = animatedVisibilityScope,
+            onClickSpin = {},
+            onClickAdd = {},
+            onClickWheelSegment = {},
+            onDeleteWheelSegment = {},
+            wheelSegments = wheelSegments,
+            isLoading = false
+        )
     }
 }

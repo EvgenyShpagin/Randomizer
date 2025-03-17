@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.edit
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertIsDisplayed
@@ -27,6 +28,7 @@ import com.random.randomizer.domain.usecase.FixWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.GetWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.UpdateWheelSegmentUseCase
 import com.random.randomizer.domain.usecase.ValidateWheelSegmentUseCase
+import com.random.randomizer.test_util.setContentWithSharedTransition
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -38,6 +40,7 @@ import org.junit.Test
 import javax.inject.Inject
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @MediumTest
 @HiltAndroidTest
 class EditScreenTest {
@@ -248,7 +251,7 @@ class EditScreenTest {
     }
 
     private fun setContent(wheelSegmentId: Int? = savedWheelSegment.id) {
-        composeTestRule.setContent {
+        composeTestRule.setContentWithSharedTransition { animatedVisibilityScope ->
             viewModel = EditViewModel(
                 LocalContext.current,
                 SavedStateHandle(mapOf("wheelSegmentId" to wheelSegmentId)),
@@ -263,6 +266,7 @@ class EditScreenTest {
                 )
             )
             EditScreen(
+                animatedVisibilityScope = animatedVisibilityScope,
                 viewModel = viewModel,
                 enableAnimations = false,
                 navigateBack = {}

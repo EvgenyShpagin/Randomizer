@@ -1,6 +1,11 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package com.random.randomizer.presentation.screen.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -67,7 +72,9 @@ import com.random.randomizer.R
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentDefaults
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.util.PreviewContainer
 import kotlinx.coroutines.delay
 
 @Composable
@@ -252,28 +259,24 @@ object FabsColumnDefaults {
 @PreviewLightDark
 @Composable
 private fun FabColumnOnlyAddButtonPreview() {
-    AppTheme {
-        Surface {
-            FabsColumn(
-                state = FabsColumnState.OnlyAddButton,
-                onClickAdd = {},
-                onClickSpin = {}
-            )
-        }
+    PreviewContainer {
+        FabsColumn(
+            state = FabsColumnState.OnlyAddButton,
+            onClickSpin = {},
+            onClickAdd = {}
+        )
     }
 }
 
 @Preview
 @Composable
 private fun FabColumnBothButtonsPreview() {
-    AppTheme {
-        Surface {
-            FabsColumn(
-                state = FabsColumnState.AddAndSpinButton,
-                onClickAdd = {},
-                onClickSpin = {}
-            )
-        }
+    PreviewContainer {
+        FabsColumn(
+            state = FabsColumnState.AddAndSpinButton,
+            onClickSpin = {},
+            onClickAdd = {},
+        )
     }
 }
 
@@ -363,7 +366,8 @@ private fun DeleteWheelSegmentBackground(state: SwipeToDismissBoxState) {
 }
 
 @Composable
-fun DeletableWheelSegmentList(
+fun SharedTransitionScope.DeletableWheelSegmentList(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wheelItems: List<WheelSegmentUiState>,
     onClick: (WheelSegmentUiState) -> Unit,
     onDelete: (WheelSegmentUiState) -> Unit,
@@ -384,7 +388,13 @@ fun DeletableWheelSegmentList(
             DeletableWheelSegment(
                 itemUiState = item,
                 onDelete = { onDelete(item) },
-                onClick = { onClick(item) }
+                onClick = { onClick(item) },
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState(
+                        key = SharedContentKeys.ofSegment(item.id)
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
             )
         }
     }

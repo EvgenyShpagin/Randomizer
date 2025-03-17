@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.home
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -13,6 +14,7 @@ import com.random.randomizer.R
 import com.random.randomizer.data.repository.addMultiple
 import com.random.randomizer.domain.model.WheelSegment
 import com.random.randomizer.domain.repository.WheelSegmentRepository
+import com.random.randomizer.test_util.setContentWithSharedTransition
 import com.random.randomizer.test_util.stringResource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -23,6 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @MediumTest
 @HiltAndroidTest
 class HomeScreenTest {
@@ -142,9 +145,10 @@ class HomeScreenTest {
     }
 
     private fun setContent() {
-        composeTestRule.setContent {
+        composeTestRule.setContentWithSharedTransition { animatedVisibilityScope ->
             viewModel = hiltViewModel()
             HomeScreen(
+                animatedVisibilityScope = animatedVisibilityScope,
                 navigateToSpin = {},
                 navigateToEdit = {},
                 viewModel = viewModel
