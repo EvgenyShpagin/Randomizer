@@ -21,6 +21,10 @@ suspend fun LazyListState.scrollToLastUnmeasured(
     val unmeasuredCount = segmentSizes.count { it == 0 }
     if (unmeasuredCount <= 0) return
 
+    if (isScrolledToTheEnd()) {
+        scrollToItem(0)
+    }
+
     val measuredItems = segmentSizes.filter { it != 0 }
     val averageSize = measuredItems.sum() / measuredItems.count().toFloat()
 
@@ -41,11 +45,12 @@ suspend fun LazyListState.scrollToLastUnmeasured(
             easing = LinearEasing
         )
     )
-    // Scroll again if the last unmeasured item is still not reached
-    val lastVisibleItem = layoutInfo.visibleItemsInfo.last()
-    if (lastVisibleItem.index < segmentSizes.count() - 1) {
-        scrollToLastUnmeasured(segmentSizes, density)
-    }
+
+    scrollToLastUnmeasured(segmentSizes, density)
+}
+
+fun LazyListState.isScrolledToTheEnd(): Boolean {
+    return layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 }
 
 private fun getMeasureSpinDurationMillis(scrollDistance: Float, density: Density): Int {

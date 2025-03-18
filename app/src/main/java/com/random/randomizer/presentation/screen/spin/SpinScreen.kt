@@ -60,8 +60,7 @@ fun SpinScreen(
                         if (visibleItem.index < uiState.originListSize) {
                             segmentSizes[visibleItem.index] = visibleItem.size
                         }
-                        // Last item size collected
-                        if (visibleItem.index == uiState.originListSize - 1) {
+                        if (!segmentSizes.contains(0)) {
                             areSegmentsMeasured = true
                         }
                     }
