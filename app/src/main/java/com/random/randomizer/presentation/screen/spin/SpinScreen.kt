@@ -90,7 +90,7 @@ fun SpinScreen(
         if (hasScrollToTargetStarted || !uiState.shouldBeSpinned || areSegmentsMeasured) {
             return@LaunchedEffect
         }
-        lazyListState.scrollToLastUnmeasured(segmentSizes)
+        lazyListState.scrollToLastUnmeasured(segmentSizes, density)
     }
 
     SpinScreen(

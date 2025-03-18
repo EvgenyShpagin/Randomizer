@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.util.fastRoundToInt
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlin.random.Random
@@ -15,7 +16,7 @@ import kotlin.random.Random
  */
 suspend fun LazyListState.scrollToLastUnmeasured(
     segmentSizes: IntArray,
-    durationMillis: Int = 2000
+    density: Density
 ) {
     val unmeasuredCount = segmentSizes.count { it == 0 }
     if (unmeasuredCount <= 0) return
@@ -27,8 +28,14 @@ suspend fun LazyListState.scrollToLastUnmeasured(
     val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
     val itemSpacing = layoutInfo.mainAxisItemSpacing
 
+    val scrollDistance = initOffset + (averageSize + itemSpacing) * (unmeasuredCount + 1)
+    val durationMillis = getMeasureSpinDurationMillis(
+        scrollDistance = scrollDistance,
+        density = density
+    )
+
     animateScrollBy(
-        value = initOffset + (averageSize + itemSpacing) * (unmeasuredCount + 1),
+        value = scrollDistance,
         animationSpec = tween(
             durationMillis = durationMillis,
             easing = LinearEasing
@@ -37,15 +44,20 @@ suspend fun LazyListState.scrollToLastUnmeasured(
     // Scroll again if the last unmeasured item is still not reached
     val lastVisibleItem = layoutInfo.visibleItemsInfo.last()
     if (lastVisibleItem.index < segmentSizes.count() - 1) {
-        scrollToLastUnmeasured(segmentSizes, durationMillis)
+        scrollToLastUnmeasured(segmentSizes, density)
     }
+}
+
+private fun getMeasureSpinDurationMillis(scrollDistance: Float, density: Density): Int {
+    val scrollDistanceDp = with(density) { scrollDistance.toDp() }
+    return (scrollDistanceDp.value / 3).toInt()
 }
 
 suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     segmentSizes: IntArray,
     screenHeight: Float,
-    durationMillis: Int = getSpinDurationMillis(targetIndex)
+    durationMillis: Int = getSpinDurationMillis(firstVisibleItemIndex, targetIndex)
 ) {
     val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
 
