@@ -78,14 +78,18 @@ private operator fun <T> List<T>.times(count: Int): List<T> {
 }
 
 fun getSpinDurationMillis(
+    firstVisibleIndex: Int,
     targetIndex: Int,
     avgSegmentSpinTime: Int = 110,
     scatter: Double = 0.2,
     maxValue: Int = 12_000
 ): Int {
-    require(targetIndex >= 0 && avgSegmentSpinTime > 0 && scatter > 0 && maxValue > 0)
-
+    require(
+        firstVisibleIndex >= 0 && targetIndex >= 0
+                && avgSegmentSpinTime > 0 && scatter > 0 && maxValue > 0
+    )
+    val spinItemCount = targetIndex - firstVisibleIndex
     val randomMultiplier = Random.nextDouble(from = 1 - scatter, until = 1 + scatter)
     val randomSpinTimeForOneSegment = (avgSegmentSpinTime * randomMultiplier).fastRoundToInt()
-    return (targetIndex * randomSpinTimeForOneSegment).coerceAtMost(maxValue)
+    return (spinItemCount * randomSpinTimeForOneSegment).coerceAtMost(maxValue)
 }

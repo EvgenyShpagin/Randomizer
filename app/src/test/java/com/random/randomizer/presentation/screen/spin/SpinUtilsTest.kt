@@ -57,7 +57,13 @@ class SpinUtilsTest {
         val scatter = 0.2
         val maxValue = 12_000
 
-        val result = getSpinDurationMillis(targetIndex, avgSegmentSpinTime, scatter, maxValue)
+        val result = getSpinDurationMillis(
+            firstVisibleIndex = 0,
+            targetIndex = targetIndex,
+            avgSegmentSpinTime = avgSegmentSpinTime,
+            scatter = scatter,
+            maxValue = maxValue
+        )
 
         assertTrue(
             "Expected maxValue $maxValue but got $result",
@@ -73,7 +79,13 @@ class SpinUtilsTest {
         val maxValue = 12_000
 
         val results = List(100) {
-            getSpinDurationMillis(targetIndex, avgSegmentSpinTime, scatter, maxValue)
+            getSpinDurationMillis(
+                firstVisibleIndex = 0,
+                targetIndex = targetIndex,
+                avgSegmentSpinTime = avgSegmentSpinTime,
+                scatter = scatter,
+                maxValue = maxValue
+            )
         }
 
         val minExpected = (targetIndex * avgSegmentSpinTime * (1 - scatter)).roundToInt()
