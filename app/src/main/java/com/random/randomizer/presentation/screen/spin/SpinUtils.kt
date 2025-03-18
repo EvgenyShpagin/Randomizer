@@ -50,7 +50,7 @@ suspend fun LazyListState.scrollToLastUnmeasured(
 
 private fun getMeasureSpinDurationMillis(scrollDistance: Float, density: Density): Int {
     val scrollDistanceDp = with(density) { scrollDistance.toDp() }
-    return (scrollDistanceDp.value / 3).toInt()
+    return (scrollDistanceDp.value / 5).toInt()
 }
 
 suspend fun LazyListState.smoothScrollToIndex(
