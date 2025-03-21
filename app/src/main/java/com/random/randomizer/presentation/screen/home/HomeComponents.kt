@@ -62,7 +62,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -344,16 +343,12 @@ private fun SwipeWheelSegmentContainer(
 
 @Composable
 private fun DeleteWheelSegmentBackground(state: SwipeToDismissBoxState) {
-    val color = if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
-        MaterialTheme.colorScheme.errorContainer
-    } else {
-        Color.Transparent
-    }
+    if (state.dismissDirection != SwipeToDismissBoxValue.EndToStart) return
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color, WheelSegmentDefaults.Shape)
+            .background(MaterialTheme.colorScheme.errorContainer, WheelSegmentDefaults.Shape)
             .padding(16.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
