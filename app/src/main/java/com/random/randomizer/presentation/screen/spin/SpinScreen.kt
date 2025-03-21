@@ -1,11 +1,9 @@
 package com.random.randomizer.presentation.screen.spin
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,13 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.util.HandleUiEffects
-import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 
 
 @Composable
 fun SpinScreen(
     navigateToResults: (winnerId: Int) -> Unit,
     viewModel: SpinViewModel,
+    transitionDurationMs: Long,
     modifier: Modifier = Modifier
 ) {
     HandleUiEffects(viewModel.uiEffect) { effect ->
@@ -43,29 +43,27 @@ fun SpinScreen(
 
     var segmentSizes by rememberSaveable { mutableStateOf(intArrayOf()) }
     var areSegmentsMeasured by rememberSaveable { mutableStateOf(false) }
+    var isReadyToMeasure by rememberSaveable { mutableStateOf(false) }
     var hasScrollToTargetStarted by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.wheelSegments) {
-        if (uiState.wheelSegments.isEmpty()) return@LaunchedEffect
+    LaunchedEffect(Unit) {
+        if (isReadyToMeasure) return@LaunchedEffect
 
-        if (segmentSizes.isEmpty()) {
-            segmentSizes = IntArray(uiState.originListSize)
-        }
+        delay(transitionDurationMs)
 
-        if (!uiState.shouldBeSpinned) {
-            snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
-                .takeWhile { !areSegmentsMeasured }
-                .collect { visibleItems ->
-                    visibleItems.forEach { visibleItem ->
-                        if (visibleItem.index < uiState.originListSize) {
-                            segmentSizes[visibleItem.index] = visibleItem.size
-                        }
-                        if (!segmentSizes.contains(0)) {
-                            areSegmentsMeasured = true
-                        }
-                    }
-                }
+        snapshotFlow { lazyListState.layoutInfo.visibleItemsInfo }
+            .first { it.isNotEmpty() }
+
+        isReadyToMeasure = true
+    }
+
+    LaunchedEffect(uiState.wheelSegments, isReadyToMeasure) {
+        if (uiState.wheelSegments.isEmpty() || areSegmentsMeasured || !isReadyToMeasure) {
+            return@LaunchedEffect
         }
+        segmentSizes = IntArray(uiState.originListSize)
+        lazyListState.measureWheelSegmentSizes(segmentSizes)
+        areSegmentsMeasured = true
     }
 
     val configuration = LocalConfiguration.current
@@ -75,6 +73,7 @@ fun SpinScreen(
         if (!areSegmentsMeasured || !uiState.shouldBeSpinned) {
             return@LaunchedEffect
         }
+        lazyListState.scrollToItem(0)
         hasScrollToTargetStarted = true
         val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
         lazyListState.smoothScrollToIndex(
@@ -85,15 +84,9 @@ fun SpinScreen(
         viewModel.onEvent(SpinUiEvent.SpinFinished)
     }
 
-    LaunchedEffect(uiState.shouldBeSpinned) {
-        if (hasScrollToTargetStarted || !uiState.shouldBeSpinned || areSegmentsMeasured) {
-            return@LaunchedEffect
-        }
-        lazyListState.scrollToLastUnmeasured(segmentSizes, density)
-    }
-
     SpinScreen(
         wheelSegments = uiState.wheelSegments,
+        hasScrollStarted = hasScrollToTargetStarted,
         lazyListState = lazyListState,
         modifier = modifier
     )
@@ -102,6 +95,7 @@ fun SpinScreen(
 @Composable
 private fun SpinScreen(
     wheelSegments: List<WheelSegmentUiState>,
+    hasScrollStarted: Boolean,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState()
 ) {
@@ -113,10 +107,9 @@ private fun SpinScreen(
                 modifier = Modifier
                     .testTag("Spin Segment List")
             )
-            HorizontalDivider(
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center)
+            TransformableIndicator(
+                isLoading = !hasScrollStarted,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }

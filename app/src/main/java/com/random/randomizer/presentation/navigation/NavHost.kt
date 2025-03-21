@@ -61,6 +61,7 @@ fun RandomizerNavHost(
                     navigateToResults = { winnerId ->
                         navController.navigate(Destination.Results(winnerId))
                     },
+                    transitionDurationMs = 300,
                     viewModel = hiltViewModel()
                 )
             }

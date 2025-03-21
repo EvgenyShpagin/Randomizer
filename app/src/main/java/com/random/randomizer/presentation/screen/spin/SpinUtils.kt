@@ -1,61 +1,32 @@
 package com.random.randomizer.presentation.screen.spin
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastRoundToInt
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import kotlin.random.Random
 
-/**
- * Scrolls to the last item which is not measured to find out its size,
- * or does nothing otherwise
- */
-suspend fun LazyListState.scrollToLastUnmeasured(
-    segmentSizes: IntArray,
-    density: Density
-) {
-    val unmeasuredCount = segmentSizes.count { it == 0 }
-    if (unmeasuredCount <= 0) return
 
-    if (isScrolledToTheEnd()) {
+suspend fun LazyListState.measureWheelSegmentSizes(segmentSizes: IntArray) {
+    if (firstVisibleItemIndex != 0) {
         scrollToItem(0)
     }
 
-    val measuredItems = segmentSizes.filter { it != 0 }
-    val averageSize = measuredItems.sum() / measuredItems.count().toFloat()
-
-    val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
-    val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
-    val itemSpacing = layoutInfo.mainAxisItemSpacing
-
-    val scrollDistance = initOffset + (averageSize + itemSpacing) * (unmeasuredCount + 1)
-    val durationMillis = getMeasureSpinDurationMillis(
-        scrollDistance = scrollDistance,
-        density = density
-    )
-
-    animateScrollBy(
-        value = scrollDistance,
-        animationSpec = tween(
-            durationMillis = durationMillis,
-            easing = LinearEasing
-        )
-    )
-
-    scrollToLastUnmeasured(segmentSizes, density)
-}
-
-fun LazyListState.isScrolledToTheEnd(): Boolean {
-    return layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
-}
-
-private fun getMeasureSpinDurationMillis(scrollDistance: Float, density: Density): Int {
-    val scrollDistanceDp = with(density) { scrollDistance.toDp() }
-    return (scrollDistanceDp.value / 5).toInt()
+    while (true) {
+        layoutInfo.visibleItemsInfo.fastForEach { itemInfo ->
+            if (itemInfo.index <= segmentSizes.lastIndex) {
+                segmentSizes[itemInfo.index] = itemInfo.size
+            } else {
+                return
+            }
+        }
+        // Move first invisible item at the top
+        val lastVisibleIndex = layoutInfo.visibleItemsInfo.last().index
+        scrollToItem(index = lastVisibleIndex + 1)
+    }
 }
 
 suspend fun LazyListState.smoothScrollToIndex(
