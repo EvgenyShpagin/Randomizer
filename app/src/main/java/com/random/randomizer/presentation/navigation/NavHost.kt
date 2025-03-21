@@ -3,6 +3,7 @@ package com.random.randomizer.presentation.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
@@ -25,6 +26,7 @@ fun RandomizerNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val transitionDuration = AnimationConstants.DefaultDurationMillis
     SharedTransitionLayout {
         NavHost(
             navController = navController,
@@ -46,22 +48,22 @@ fun RandomizerNavHost(
             composable<Destination.SpinWheel>(
                 enterTransition = {
                     slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseOut),
+                        animationSpec = tween(transitionDuration, easing = EaseOut),
                         towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    ) + fadeIn(animationSpec = tween(300))
+                    ) + fadeIn(animationSpec = tween(transitionDuration))
                 },
                 popExitTransition = {
                     slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseIn),
+                        animationSpec = tween(transitionDuration, easing = EaseIn),
                         towards = AnimatedContentTransitionScope.SlideDirection.End
-                    ) + fadeOut(animationSpec = tween(300))
+                    ) + fadeOut(animationSpec = tween(transitionDuration))
                 }
             ) {
                 SpinScreen(
                     navigateToResults = { winnerId ->
                         navController.navigate(Destination.Results(winnerId))
                     },
-                    transitionDurationMs = 300,
+                    transitionDurationMs = transitionDuration.toLong(),
                     viewModel = hiltViewModel()
                 )
             }
