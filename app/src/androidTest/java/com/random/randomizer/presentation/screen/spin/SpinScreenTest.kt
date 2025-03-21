@@ -1,9 +1,9 @@
 package com.random.randomizer.presentation.screen.spin
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -103,30 +103,32 @@ class SpinScreenTest {
     @Test
     fun startsSpin_afterShortDelay() = runTest {
         // Given - long segment list
-        repository.addMultiple(LongFakeList)
+        repository.addMultiple(ShortFakeList)
+
+        composeTestRule.mainClock.autoAdvance = false
 
         setContent()
 
-        val firstItemTitle = LongFakeList.first().title
-
-        val firstItemWindowPositionOnStart = composeTestRule
-            .onNodeWithText(firstItemTitle)
-            .fetchSemanticsNode()
-            .positionInWindow
-
         // When - in a second after shouldBeSpinned is set to true
-        composeTestRule.mainClock.autoAdvance = false
         composeTestRule.waitUntil { viewModel.uiState.value.shouldBeSpinned }
+        // and list will be shown
         composeTestRule.mainClock.advanceTimeBy(1000)
 
-        val firstItemWindowPositionAfterDelay = composeTestRule
-            .onNodeWithText(firstItemTitle)
-            .takeIf { it.isDisplayed() }
-            ?.fetchSemanticsNode()
-            ?.positionInWindow
+        // Take offset of first item with "fake0" title
+        val firstFake0ItemWindowPosition = getFirstFake0ItemWindowPosition()
+        composeTestRule.mainClock.advanceTimeBy(200)
+        val firstItemWindowPositionAfterDelay = getFirstFake0ItemWindowPosition()
 
         // Then - verify position of the first item is changed (or it has gone)
-        assertNotEquals(firstItemWindowPositionOnStart, firstItemWindowPositionAfterDelay)
+        assertNotEquals(firstFake0ItemWindowPosition, firstItemWindowPositionAfterDelay)
+    }
+
+    private fun getFirstFake0ItemWindowPosition(): Offset {
+        return composeTestRule
+            .onAllNodesWithText(ShortFakeList.first().title)
+            .onFirst()
+            .fetchSemanticsNode()
+            .positionInWindow
     }
 
     @Test
@@ -134,13 +136,13 @@ class SpinScreenTest {
         // Given - long segment list
         repository.addMultiple(LongFakeList)
 
+        composeTestRule.mainClock.autoAdvance = false
+
         setContent()
 
-        // When
-        // spin started
+        // When - after scrolling
         composeTestRule.waitUntil(2000) { viewModel.uiState.value.shouldBeSpinned }
-        // and then finished
-        composeTestRule.waitUntil(10000) { !viewModel.uiState.value.shouldBeSpinned }
+        composeTestRule.mainClock.advanceTimeBy(20000) // Max scroll time
 
         val uiState = viewModel.uiState.value
         val centerItem = uiState.wheelSegments[uiState.targetIndex]
@@ -170,6 +172,7 @@ class SpinScreenTest {
             viewModel = hiltViewModel()
             SpinScreen(
                 viewModel = viewModel,
+                transitionDurationMs = 0,
                 navigateToResults = {}
             )
         }
