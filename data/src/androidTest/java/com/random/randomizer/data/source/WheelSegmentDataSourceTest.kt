@@ -23,7 +23,7 @@ import java.nio.file.attribute.FileTime
 class WheelSegmentDataSourceTest {
 
     // Subject under test
-    lateinit var dataSource: WheelSegmentDataSourceImpl
+    private lateinit var dataSource: WheelSegmentDataSourceImpl
 
     // using an in-memory database to store data while process is running
     private lateinit var database: WheelSegmentDatabase
