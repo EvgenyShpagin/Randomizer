@@ -44,7 +44,7 @@ fun SpinScreen(
     var segmentSizes by rememberSaveable { mutableStateOf(intArrayOf()) }
     var areSegmentsMeasured by rememberSaveable { mutableStateOf(false) }
     var isReadyToMeasure by rememberSaveable { mutableStateOf(false) }
-    var hasScrollToTargetStarted by rememberSaveable { mutableStateOf(false) }
+    var hasScrollStarted by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (isReadyToMeasure) return@LaunchedEffect
@@ -73,20 +73,24 @@ fun SpinScreen(
         if (!areSegmentsMeasured || !uiState.shouldBeSpinned) {
             return@LaunchedEffect
         }
-        lazyListState.scrollToItem(0)
-        hasScrollToTargetStarted = true
+        val isScrollStartedBefore = hasScrollStarted
+        if (!isScrollStartedBefore) {
+            lazyListState.scrollToItem(0)
+            hasScrollStarted = true
+        }
         val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
         lazyListState.smoothScrollToIndex(
             targetIndex = uiState.targetIndex,
             segmentSizes = segmentSizes,
-            screenHeight = screenHeight
+            screenHeight = screenHeight,
+            continueScroll = isScrollStartedBefore
         )
         viewModel.onEvent(SpinUiEvent.SpinFinished)
     }
 
     SpinScreen(
         wheelSegments = uiState.wheelSegments,
-        hasScrollStarted = hasScrollToTargetStarted,
+        hasScrollStarted = hasScrollStarted,
         lazyListState = lazyListState,
         modifier = modifier
     )

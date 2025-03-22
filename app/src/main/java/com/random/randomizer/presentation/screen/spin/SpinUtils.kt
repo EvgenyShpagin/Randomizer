@@ -1,5 +1,6 @@
 package com.random.randomizer.presentation.screen.spin
 
+import androidx.compose.animation.core.EaseOutQuad
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -33,6 +34,7 @@ suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     segmentSizes: IntArray,
     screenHeight: Float,
+    continueScroll: Boolean,
     durationMillis: Int = getSpinDurationMillis(firstVisibleItemIndex, targetIndex)
 ) {
     val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
@@ -46,7 +48,11 @@ suspend fun LazyListState.smoothScrollToIndex(
         value = initOffset + targetItemOffset + centeringOffset,
         animationSpec = tween(
             durationMillis = durationMillis,
-            easing = FastOutSlowInEasing
+            easing = if (continueScroll) {
+                EaseOutQuad
+            } else {
+                FastOutSlowInEasing
+            }
         )
     )
 }
