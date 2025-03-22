@@ -12,6 +12,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.random.randomizer.R
+import com.random.randomizer.domain.common.Error
 import com.random.randomizer.domain.common.Result
 import com.random.randomizer.domain.error.CreateWheelSegmentError
 import com.random.randomizer.domain.error.UpdateWheelSegmentError

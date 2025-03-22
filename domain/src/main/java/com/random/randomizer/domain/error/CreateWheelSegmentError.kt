@@ -1,5 +1,7 @@
 package com.random.randomizer.domain.error
 
-sealed class CreateWheelSegmentError : Error() {
+import com.random.randomizer.domain.common.Error
+
+sealed class CreateWheelSegmentError : Error {
     data object FailedToSaveThumbnail : CreateWheelSegmentError()
 }
