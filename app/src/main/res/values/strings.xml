@@ -2,7 +2,6 @@
     <string name="app_name">Randomizer</string>
     <string name="button_spin">Spin</string>
     <string name="home_screen_title">Wheel of Fortune</string>
-    <string name="edit_screen_title">Edit wheel segments</string>
     <string name="cd_add_new_wheel_segment">Add new wheel segment</string>
     <string name="label_no_wheel_segments">No wheel segments</string>
     <string name="cd_checked_color_circle">Checked color (%s)</string>
