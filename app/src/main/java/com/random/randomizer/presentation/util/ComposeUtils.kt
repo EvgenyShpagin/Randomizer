@@ -10,7 +10,7 @@ import com.random.randomizer.presentation.core.UiEffect
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
+fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: suspend (E) -> Unit) {
     val uiEffect = rememberFlowWithLifecycle(flow)
     LaunchedEffect(uiEffect) {
         uiEffect.collect { onReceive(it) }
