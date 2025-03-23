@@ -88,13 +88,6 @@ fun SharedTransitionScope.EditScreen(
 
     val context = LocalContext.current
 
-    val pickMedia = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
-        viewModel.onEvent(PickImage(context, uri))
-    }
-    BackHandler {
-        viewModel.onEvent(FinishEdit(doSave = false))
-    }
-
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
             NavigateBack -> {
@@ -107,19 +100,66 @@ fun SharedTransitionScope.EditScreen(
         }
     }
 
+    EditScreen(
+        modifier = modifier,
+        animatedVisibilityScope = animatedVisibilityScope,
+        isLoading = uiState.isLoading,
+        id = uiState.segmentUiState.id,
+        title = viewModel.title, // Use Compose State instead of StateFlow
+        description = viewModel.description, // to synchronously update TextFields
+        customColor = uiState.segmentUiState.customColor,
+        image = uiState.segmentUiState.image,
+        canSave = uiState.canSave,
+        onInputTitle = { title -> viewModel.onEvent(InputTitle(title)) },
+        onInputDescription = { description -> viewModel.onEvent(InputDescription(description)) },
+        onPickImage = { uri -> viewModel.onEvent(PickImage(context, uri)) },
+        onPickBackgroundColor = { color -> viewModel.onEvent(PickColor(color)) },
+        onRemoveImage = { viewModel.onEvent(RemoveImage) },
+        onDismiss = { viewModel.onEvent(FinishEdit(doSave = false)) },
+        onSave = { viewModel.onEvent(FinishEdit(doSave = true)) },
+        enableAnimations = enableAnimations
+    )
+}
+
+@Composable
+private fun SharedTransitionScope.EditScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    isLoading: Boolean,
+    id: Int,
+    title: String,
+    description: String,
+    customColor: Color?,
+    image: ImageBitmap?,
+    canSave: Boolean,
+    onInputTitle: (String) -> Unit,
+    onInputDescription: (String) -> Unit,
+    onPickImage: (Uri?) -> Unit,
+    onRemoveImage: () -> Unit,
+    onPickBackgroundColor: (Color?) -> Unit,
+    onSave: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    enableAnimations: Boolean = true
+) {
+    BackHandler {
+        onDismiss()
+    }
+
+    val pickMedia = rememberLauncherForActivityResult(PickVisualMedia(), onPickImage)
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             EditTopAppBar(
-                onNavigationClick = { viewModel.onEvent(FinishEdit(doSave = false)) },
+                onNavigationClick = { onDismiss() },
                 scrollBehavior = scrollBehavior
             )
         },
         content = { innerPadding ->
             StatefulContent(
-                isLoading = uiState.isLoading,
+                isLoading = isLoading,
                 modifier = Modifier
                     .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
@@ -127,30 +167,18 @@ fun SharedTransitionScope.EditScreen(
             ) {
                 EditContent(
                     animatedVisibilityScope = animatedVisibilityScope,
-                    id = uiState.segmentUiState.id,
-                    title = viewModel.title, // Use Compose State instead of StateFlow
-                    description = viewModel.description, // to synchronously update TextFields
-                    customColor = uiState.segmentUiState.customColor,
-                    image = uiState.segmentUiState.image,
-                    canSave = uiState.canSave,
-                    onInputTitle = { title ->
-                        viewModel.onEvent(InputTitle(title))
-                    },
-                    onInputDescription = { description ->
-                        viewModel.onEvent(InputDescription(description))
-                    },
-                    onClickAddImage = {
-                        pickMedia.launchImagePicker()
-                    },
-                    onClickRemoveImage = {
-                        viewModel.onEvent(RemoveImage)
-                    },
-                    onPickBackgroundColor = { color ->
-                        viewModel.onEvent(PickColor(color))
-                    },
-                    onSaveClicked = {
-                        viewModel.onEvent(FinishEdit(doSave = true))
-                    },
+                    id = id,
+                    title = title,
+                    description = description,
+                    customColor = customColor,
+                    image = image,
+                    canSave = canSave,
+                    onInputTitle = onInputTitle,
+                    onInputDescription = onInputDescription,
+                    onClickAddImage = { pickMedia.launchImagePicker() },
+                    onClickRemoveImage = onRemoveImage,
+                    onPickBackgroundColor = onPickBackgroundColor,
+                    onSaveClicked = onSave,
                     enableAnimations = enableAnimations
                 )
             }
@@ -278,11 +306,12 @@ private fun SharedTransitionScope.EditContent(
 
 @Preview
 @Composable
-private fun EditWheelSegmentContentPreview() {
+private fun EditScreenPreview() {
     PreviewContainer { animatedVisibilityScope ->
         val wheelSegment = PreviewWheelSegmentList.first()
-        EditContent(
+        EditScreen(
             animatedVisibilityScope = animatedVisibilityScope,
+            isLoading = false,
             id = wheelSegment.id,
             title = wheelSegment.title,
             description = wheelSegment.description,
@@ -291,10 +320,11 @@ private fun EditWheelSegmentContentPreview() {
             canSave = true,
             onInputTitle = {},
             onInputDescription = {},
-            onClickAddImage = {},
-            onClickRemoveImage = {},
+            onPickImage = {},
+            onRemoveImage = {},
             onPickBackgroundColor = {},
-            onSaveClicked = {}
+            onSave = {},
+            onDismiss = {}
         )
     }
 }
