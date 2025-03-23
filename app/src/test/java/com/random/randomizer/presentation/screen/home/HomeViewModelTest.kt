@@ -44,7 +44,10 @@ class HomeViewModelTest {
 
         // When - on startup
 
-        val expected = HomeUiState(SegmentList.map { toPresentation(it) })
+        val expected = HomeUiState(
+            wheelSegments = SegmentList.map { toPresentation(it) },
+            isLoading = false
+        )
         val actual = viewModel.uiState.first()
 
         // Then - verify state is "blank"

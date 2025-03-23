@@ -90,7 +90,8 @@ class EditViewModelTest {
 
         val expected = EditUiState(
             segmentUiState = toPresentation(EmptyWheelSegment),
-            canSave = false
+            canSave = false,
+            isLoading = false
         )
         val actual = viewModel.uiState.first()
 
