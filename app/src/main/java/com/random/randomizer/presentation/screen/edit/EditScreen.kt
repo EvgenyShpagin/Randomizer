@@ -8,7 +8,6 @@
 package com.random.randomizer.presentation.screen.edit
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,6 +41,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -88,6 +89,8 @@ fun SharedTransitionScope.EditScreen(
 
     val context = LocalContext.current
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     HandleUiEffects(viewModel.uiEffect) { effect ->
         when (effect) {
             NavigateBack -> {
@@ -95,7 +98,8 @@ fun SharedTransitionScope.EditScreen(
             }
 
             is ShowErrorMessage -> {
-                Toast.makeText(context, effect.textId, Toast.LENGTH_SHORT).show()
+                val message = context.getString(effect.textId)
+                snackbarHostState.showSnackbar(message, withDismissAction = true)
             }
         }
     }
@@ -117,6 +121,7 @@ fun SharedTransitionScope.EditScreen(
         onRemoveImage = { viewModel.onEvent(RemoveImage) },
         onDismiss = { viewModel.onEvent(FinishEdit(doSave = false)) },
         onSave = { viewModel.onEvent(FinishEdit(doSave = true)) },
+        snackbarHostState = snackbarHostState,
         enableAnimations = enableAnimations
     )
 }
@@ -138,6 +143,7 @@ private fun SharedTransitionScope.EditScreen(
     onPickBackgroundColor: (Color?) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     enableAnimations: Boolean = true
 ) {
@@ -151,6 +157,9 @@ private fun SharedTransitionScope.EditScreen(
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
         topBar = {
             EditTopAppBar(
                 onNavigationClick = { onDismiss() },
@@ -323,6 +332,7 @@ private fun EditScreenPreview() {
             onPickImage = {},
             onRemoveImage = {},
             onPickBackgroundColor = {},
+            snackbarHostState = SnackbarHostState(),
             onSave = {},
             onDismiss = {}
         )
