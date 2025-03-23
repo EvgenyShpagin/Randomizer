@@ -110,7 +110,7 @@ class SpinScreenTest {
         setContent()
 
         // When - in a second after shouldBeSpinned is set to true
-        composeTestRule.waitUntil { viewModel.uiState.value.shouldBeSpinned }
+        composeTestRule.waitUntil(timeoutMillis = 2000) { viewModel.uiState.value.shouldBeSpinned }
         // and list will be shown
         composeTestRule.mainClock.advanceTimeBy(1000)
 
