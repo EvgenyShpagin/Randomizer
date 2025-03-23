@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 fun <E : UiEffect> HandleUiEffects(flow: Flow<E>, onReceive: (E) -> Unit) {
     val uiEffect = rememberFlowWithLifecycle(flow)
     LaunchedEffect(uiEffect) {
-        flow.collect { onReceive(it) }
+        uiEffect.collect { onReceive(it) }
     }
 }
 
