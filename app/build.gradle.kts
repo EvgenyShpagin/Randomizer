@@ -58,6 +58,7 @@ dependencies {
     implementation(project(path = ":data"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.ui.text.google.fonts)
 
 
     // Architecture Components
