@@ -65,7 +65,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.theme.RandomizerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +92,7 @@ fun EditTopAppBar(
 @Preview
 @Composable
 private fun EditTopAppBarPreview() {
-    AppTheme {
+    RandomizerTheme {
         EditTopAppBar(
             onNavigationClick = {},
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()

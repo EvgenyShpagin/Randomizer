@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.theme.RandomizerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +46,7 @@ fun ResultsTopAppBar(
 @Preview
 @Composable
 private fun NavigationButtonPreview() {
-    AppTheme {
+    RandomizerTheme {
         Surface {
             ResultsTopAppBar(onNavigationClick = {})
         }
@@ -85,7 +85,7 @@ fun SpinButtons(
 @Preview("Both Spin Buttons")
 @Composable
 private fun SpinButtonsPreview() {
-    AppTheme {
+    RandomizerTheme {
         Surface {
             SpinButtons(
                 onSpinClicked = {},
@@ -99,7 +99,7 @@ private fun SpinButtonsPreview() {
 @Preview("Without Delete Button")
 @Composable
 private fun SpinButtonWithoutDeletePreview() {
-    AppTheme {
+    RandomizerTheme {
         Surface {
             SpinButtons(
                 onSpinClicked = {},
@@ -125,7 +125,7 @@ fun GradientBackground(modifier: Modifier = Modifier) {
 @PreviewLightDark
 @Composable
 fun GradientBackgroundPreview() {
-    AppTheme {
+    RandomizerTheme {
         Surface {
             GradientBackground(modifier = Modifier.size(200.dp, 400.dp))
         }

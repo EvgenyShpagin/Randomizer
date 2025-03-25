@@ -72,7 +72,7 @@ import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentDefaults
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.navigation.SharedContentKeys
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.theme.RandomizerTheme
 import com.random.randomizer.presentation.util.PreviewContainer
 import kotlinx.coroutines.delay
 
@@ -118,7 +118,7 @@ fun HomeTopBar(
 @Composable
 private fun HomeTopBarPreview() {
     @OptIn(ExperimentalMaterial3Api::class)
-    AppTheme {
+    RandomizerTheme {
         Surface {
             HomeTopBar(scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior())
         }

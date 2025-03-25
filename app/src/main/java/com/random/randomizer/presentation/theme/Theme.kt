@@ -239,7 +239,7 @@ private val highContrastDarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun AppTheme(
+fun RandomizerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit

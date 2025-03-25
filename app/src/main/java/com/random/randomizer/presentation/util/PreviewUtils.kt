@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.theme.AppTheme
+import com.random.randomizer.presentation.theme.RandomizerTheme
 
 val PreviewWheelSegmentList: List<WheelSegmentUiState>
     get() = List(5) { i ->
@@ -43,7 +43,7 @@ class WheelSegmentListParameterProvider : PreviewParameterProvider<List<WheelSeg
 fun PreviewContainer(content: @Composable SharedTransitionScope.(AnimatedVisibilityScope) -> Unit) {
     SharedTransitionLayout {
         AnimatedVisibility(true) {
-            AppTheme {
+            RandomizerTheme {
                 Surface {
                     content(this)
                 }
