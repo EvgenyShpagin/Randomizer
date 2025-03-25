@@ -36,7 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.core.unionWithWindowInsets
+import com.random.randomizer.presentation.util.unionWithWindowInsets
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.core.unionPaddingWithInsets
+import com.random.randomizer.presentation.util.unionPaddingWithInsets
 import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewContainer

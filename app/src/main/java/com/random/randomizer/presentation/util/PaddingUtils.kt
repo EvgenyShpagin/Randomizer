@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.core
+package com.random.randomizer.presentation.util
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets

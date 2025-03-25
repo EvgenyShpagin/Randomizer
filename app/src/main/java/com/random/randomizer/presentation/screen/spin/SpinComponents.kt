@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.core.unionWithWindowInsets
+import com.random.randomizer.presentation.util.unionWithWindowInsets
 
 @Composable
 fun SpinWheelSegmentList(

@@ -61,7 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.core.unionPaddingWithInsets
+import com.random.randomizer.presentation.util.unionPaddingWithInsets
 import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
