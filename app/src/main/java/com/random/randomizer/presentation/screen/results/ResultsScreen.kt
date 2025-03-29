@@ -67,7 +67,7 @@ fun SharedTransitionScope.ResultsScreen(
 }
 
 @Composable
-fun SharedTransitionScope.ResultsContent(
+private fun SharedTransitionScope.ResultsContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
     winnerWheelSegment: WheelSegmentUiState,
     canDeleteWinner: Boolean,
