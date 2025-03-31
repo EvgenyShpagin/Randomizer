@@ -72,9 +72,15 @@ import com.random.randomizer.presentation.theme.RandomizerTheme
 fun EditTopAppBar(
     onNavigationClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color.Transparent,
+    scrolledContainerColor: Color = Color.Unspecified
 ) {
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = containerColor,
+            scrolledContainerColor = scrolledContainerColor
+        ),
         title = {
             Text(stringResource(R.string.edit_segment_screen))
         },

@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.random.randomizer.presentation.core.ScreenBackground
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.util.HandleUiEffects
 import kotlinx.coroutines.delay
@@ -108,18 +109,23 @@ private fun SpinScreen(
         onSpinFinish()
     }
 
-    Surface(modifier = modifier) {
-        Box(modifier = Modifier.systemBarsPadding()) {
-            SpinWheelSegmentList(
-                wheelSegments = wheelSegments,
-                lazyListState = lazyListState,
-                modifier = Modifier
-                    .testTag("Spin Segment List")
-            )
-            TransformableIndicator(
-                isLoading = !hasScrollStarted,
-                modifier = Modifier.align(Alignment.Center)
-            )
+    ScreenBackground(modifier = modifier) { color, contentColor ->
+        Surface(
+            color = color,
+            contentColor = contentColor
+        ) {
+            Box(modifier = Modifier.systemBarsPadding()) {
+                SpinWheelSegmentList(
+                    wheelSegments = wheelSegments,
+                    lazyListState = lazyListState,
+                    modifier = Modifier
+                        .testTag("Spin Segment List")
+                )
+                TransformableIndicator(
+                    isLoading = !hasScrollStarted,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 }

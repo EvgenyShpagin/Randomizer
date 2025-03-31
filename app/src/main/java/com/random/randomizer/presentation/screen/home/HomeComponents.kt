@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -62,6 +63,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -103,9 +105,15 @@ fun SpinButton(
 @Composable
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color.Transparent,
+    scrolledContainerColor: Color = Color.Unspecified
 ) {
     CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = containerColor,
+            scrolledContainerColor = scrolledContainerColor
+        ),
         title = {
             Text(text = stringResource(R.string.home_screen_title))
         },
@@ -213,7 +221,9 @@ fun FabsColumn(
     val addAndSpinButtonsElevation by animateElevation(FabsColumnState.AddAndSpinButton)
 
     Box(
-        modifier = modifier.windowInsetsPadding(windowInsets),
+        modifier = modifier
+            .consumeWindowInsets(PaddingValues(16.dp)) // Consume default FabSpacing
+            .windowInsetsPadding(windowInsets),
         contentAlignment = Alignment.BottomEnd
     ) {
         transition.AnimatedVisibility(

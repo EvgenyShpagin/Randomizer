@@ -2,28 +2,52 @@ package com.random.randomizer.presentation.core
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
+import com.random.randomizer.presentation.theme.Background
+import com.random.randomizer.presentation.theme.GradientBackground
+import com.random.randomizer.presentation.theme.LocalBackground
+import com.random.randomizer.presentation.util.add
+import com.random.randomizer.presentation.util.supportsTransparentNavigationBar
+import com.random.randomizer.presentation.util.unionWithWindowInsets
 
 @Composable
 fun WheelSegment(
@@ -163,4 +187,86 @@ private fun DefaultEmptyStateContent(modifier: Modifier = Modifier) {
         text = stringResource(R.string.label_default_empty_state),
         modifier = modifier
     )
+}
+
+/**
+ * Root Randomizer container
+ */
+@Composable
+fun RandomizerBackground(
+    modifier: Modifier = Modifier,
+    gradientBackground: GradientBackground = RandomizerBackground,
+    content: @Composable () -> Unit
+) {
+    val brush = Brush.verticalGradient(
+        colors = listOf(gradientBackground.topColor, gradientBackground.bottomColor)
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(brush)
+            .padding(gradientBackground.container.padding)
+            .consumeWindowInsets(gradientBackground.container.padding)
+    ) {
+        CompositionLocalProvider(LocalBackground provides gradientBackground.container) {
+            content()
+        }
+    }
+}
+
+/**
+ * Default root background of Randomizer
+ */
+val RandomizerBackground: GradientBackground
+    @Composable get() {
+        val colorScheme = MaterialTheme.colorScheme
+        val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+        val padding = PaddingValues(8.dp).unionWithWindowInsets(insets)
+        val container = Background(
+            color = colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
+            contentColor = colorScheme.onSurface,
+            shape = ShapeDefaults.Large,
+            padding = padding.run {
+                if (!supportsTransparentNavigationBar()) {
+                    // Add 8.dp padding from navigation bar side
+                    add(mapNavigationBarPadding { if (it != 0.dp) 8.dp else it })
+                } else {
+                    this
+                }
+            }
+        )
+        return GradientBackground(
+            topColor = colorScheme.primaryContainer,
+            bottomColor = colorScheme.secondaryContainer,
+            container = container
+        )
+    }
+
+@Composable
+private fun mapNavigationBarPadding(transform: (Dp) -> Dp): PaddingValues {
+    val layoutDirection = LocalLayoutDirection.current
+    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
+    return PaddingValues(
+        start = transform(navigationBarPadding.calculateStartPadding(layoutDirection)),
+        top = transform(navigationBarPadding.calculateTopPadding()),
+        end = transform(navigationBarPadding.calculateEndPadding(layoutDirection)),
+        bottom = transform(navigationBarPadding.calculateBottomPadding())
+    )
+}
+
+@Composable
+fun ScreenBackground(
+    modifier: Modifier = Modifier,
+    background: Background = LocalBackground.current,
+    content: @Composable (backgroundColor: Color, contentColor: Color) -> Unit
+) {
+    Surface(
+        color = Color.Unspecified,
+        contentColor = Color.Unspecified,
+        shape = background.shape,
+        modifier = modifier
+    ) {
+        content(background.color, background.contentColor)
+    }
 }

@@ -34,12 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
+import com.random.randomizer.presentation.core.ScreenBackground
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.util.unionWithWindowInsets
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
+import com.random.randomizer.presentation.util.unionWithWindowInsets
 
 @Composable
 fun SharedTransitionScope.HomeScreen(
@@ -76,45 +77,49 @@ private fun SharedTransitionScope.HomeScreen(
     topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
-    Scaffold(
-        topBar = {
-            HomeTopBar(scrollBehavior = scrollBehavior)
-        },
-        floatingActionButton = {
-            AnimatedVisibility(
-                visible = !isLoading,
-                enter = scaleIn(),
-                exit = scaleOut()
+    ScreenBackground(modifier = modifier) { color, contentColor ->
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            containerColor = color,
+            contentColor = contentColor,
+            topBar = {
+                HomeTopBar(scrollBehavior = scrollBehavior)
+            },
+            floatingActionButton = {
+                AnimatedVisibility(
+                    visible = !isLoading,
+                    enter = scaleIn(),
+                    exit = scaleOut()
+                ) {
+                    FabsColumn(
+                        state = if (wheelSegments.count() > 1) {
+                            FabsColumnState.AddAndSpinButton
+                        } else {
+                            FabsColumnState.OnlyAddButton
+                        },
+                        onClickSpin = onClickSpin,
+                        onClickAdd = onClickAdd
+                    )
+                }
+            }
+        ) { innerPadding ->
+            StatefulContent(
+                isLoading = isLoading,
+                isEmpty = wheelSegments.isEmpty(),
+                emptyStateContent = {
+                    NoWheelSegmentsPlaceholder(Modifier.fillMaxSize())
+                },
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
             ) {
-                FabsColumn(
-                    state = if (wheelSegments.count() > 1) {
-                        FabsColumnState.AddAndSpinButton
-                    } else {
-                        FabsColumnState.OnlyAddButton
-                    },
-                    onClickSpin = onClickSpin,
-                    onClickAdd = onClickAdd
+                HomeContent(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    wheelSegments = wheelSegments,
+                    onClickWheelSegment = onClickWheelSegment,
+                    onDeleteWheelSegment = onDeleteWheelSegment,
                 )
             }
-        },
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
-        StatefulContent(
-            isLoading = isLoading,
-            isEmpty = wheelSegments.isEmpty(),
-            emptyStateContent = {
-                NoWheelSegmentsPlaceholder(Modifier.fillMaxSize())
-            },
-            modifier = Modifier
-                .consumeWindowInsets(innerPadding)
-                .padding(innerPadding)
-        ) {
-            HomeContent(
-                animatedVisibilityScope = animatedVisibilityScope,
-                wheelSegments = wheelSegments,
-                onClickWheelSegment = onClickWheelSegment,
-                onDeleteWheelSegment = onDeleteWheelSegment,
-            )
         }
     }
 }

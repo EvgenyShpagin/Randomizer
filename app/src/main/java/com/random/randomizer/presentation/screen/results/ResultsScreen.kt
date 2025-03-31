@@ -28,12 +28,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.random.randomizer.presentation.core.ScreenBackground
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
-import com.random.randomizer.presentation.util.unionPaddingWithInsets
 import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewContainer
+import com.random.randomizer.presentation.util.unionPaddingWithInsets
 
 @Composable
 fun SharedTransitionScope.ResultsScreen(
@@ -87,54 +88,59 @@ private fun SharedTransitionScope.ResultsContent(
             .apply { targetState = true }
     }
 
-    Surface(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .systemBarsPadding()
-                .fillMaxSize()
+    ScreenBackground(modifier = modifier) { color, contentColor ->
+        Surface(
+            color = color,
+            contentColor = contentColor
         ) {
-            AnimatedVisibility(
-                visibleState = gradientAnimationState,
-                enter = fadeIn(animationSpec = tween(500)) +
-                        expandVertically(
-                            animationSpec = tween(1000),
-                            expandFrom = Alignment.CenterVertically
-                        ),
-                exit = ExitTransition.None,
-                modifier = Modifier.align(Alignment.Center)
+            Box(
+                modifier = Modifier
+                    .systemBarsPadding()
+                    .fillMaxSize()
             ) {
-                GradientBackground(
+                AnimatedVisibility(
+                    visibleState = gradientAnimationState,
+                    enter = fadeIn(animationSpec = tween(500)) +
+                            expandVertically(
+                                animationSpec = tween(1000),
+                                expandFrom = Alignment.CenterVertically
+                            ),
+                    exit = ExitTransition.None,
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    GradientBackground(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+                ResultsTopAppBar(
+                    onNavigationClick = navigateBack,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+                WheelSegment(
+                    itemUiState = winnerWheelSegment,
+                    isClickable = false,
+                    onClick = {},
                     modifier = Modifier
-                        .fillMaxSize()
+                        .align(Alignment.Center)
+                        .then(horizontalPaddingModifier)
+                        .sharedElement(
+                            state = rememberSharedContentState(
+                                key = SharedContentKeys.ofSegment(winnerWheelSegment.id)
+                            ),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                )
+                SpinButtons(
+                    onSpinClicked = onSpinClicked,
+                    onDeleteAndSpinClicked = onDeleteAndSpinClicked,
+                    showDeleteButton = canDeleteWinner,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .then(horizontalPaddingModifier)
+                        .padding(bottom = 16.dp)
                 )
             }
-            ResultsTopAppBar(
-                onNavigationClick = navigateBack,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-            WheelSegment(
-                itemUiState = winnerWheelSegment,
-                isClickable = false,
-                onClick = {},
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .then(horizontalPaddingModifier)
-                    .sharedElement(
-                        state = rememberSharedContentState(
-                            key = SharedContentKeys.ofSegment(winnerWheelSegment.id)
-                        ),
-                        animatedVisibilityScope = animatedVisibilityScope
-                    )
-            )
-            SpinButtons(
-                onSpinClicked = onSpinClicked,
-                onDeleteAndSpinClicked = onDeleteAndSpinClicked,
-                showDeleteButton = canDeleteWinner,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .then(horizontalPaddingModifier)
-                    .padding(bottom = 16.dp)
-            )
         }
     }
 }

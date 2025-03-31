@@ -10,10 +10,12 @@ import com.random.randomizer.presentation.theme.RandomizerTheme
 @Composable
 fun RandomizerApp() {
     RandomizerTheme {
-        val navController = rememberNavController()
-        RandomizerNavHost(
-            navController = navController,
-            modifier = Modifier.fillMaxSize()
-        )
+        RandomizerBackground {
+            val navController = rememberNavController()
+            RandomizerNavHost(
+                navController = navController,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }

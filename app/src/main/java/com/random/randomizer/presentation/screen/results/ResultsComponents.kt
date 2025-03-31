@@ -16,9 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -30,9 +32,11 @@ import com.random.randomizer.presentation.theme.RandomizerTheme
 @Composable
 fun ResultsTopAppBar(
     onNavigationClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color.Transparent
 ) {
     CenterAlignedTopAppBar(
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = containerColor),
         title = { Text(stringResource(R.string.results_screen_title)) },
         navigationIcon = {
             IconButton(onClick = onNavigationClick) {
@@ -111,11 +115,15 @@ private fun SpinButtonWithoutDeletePreview() {
 }
 
 @Composable
-fun GradientBackground(modifier: Modifier = Modifier) {
+fun GradientBackground(
+    surfaceColor: Color = Color.Transparent,
+    centerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    modifier: Modifier = Modifier
+) {
     val gradientBrush = Brush.verticalGradient(
-        0.25f to MaterialTheme.colorScheme.background,
-        0.5f to MaterialTheme.colorScheme.primaryContainer,
-        0.75f to MaterialTheme.colorScheme.background
+        0.25f to surfaceColor,
+        0.5f to centerColor,
+        0.75f to surfaceColor
     )
     Canvas(modifier = modifier.fillMaxWidth()) {
         drawRect(brush = gradientBrush)

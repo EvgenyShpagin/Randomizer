@@ -59,9 +59,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
+import com.random.randomizer.presentation.core.ScreenBackground
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegment
-import com.random.randomizer.presentation.util.unionPaddingWithInsets
 import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.NavigateBack
 import com.random.randomizer.presentation.screen.edit.EditUiEffect.ShowErrorMessage
@@ -74,6 +74,7 @@ import com.random.randomizer.presentation.screen.edit.EditUiEvent.RemoveImage
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.PreviewWheelSegmentList
+import com.random.randomizer.presentation.util.unionPaddingWithInsets
 import kotlinx.coroutines.launch
 
 
@@ -155,44 +156,49 @@ private fun SharedTransitionScope.EditScreen(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-        topBar = {
-            EditTopAppBar(
-                onNavigationClick = { onDismiss() },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        content = { innerPadding ->
-            StatefulContent(
-                isLoading = isLoading,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .consumeWindowInsets(innerPadding)
-                    .fillMaxSize()
-            ) {
-                EditContent(
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    id = id,
-                    title = title,
-                    description = description,
-                    customColor = customColor,
-                    image = image,
-                    canSave = canSave,
-                    onInputTitle = onInputTitle,
-                    onInputDescription = onInputDescription,
-                    onClickAddImage = { pickMedia.launchImagePicker() },
-                    onClickRemoveImage = onRemoveImage,
-                    onPickBackgroundColor = onPickBackgroundColor,
-                    onSaveClicked = onSave,
-                    enableAnimations = enableAnimations
+    ScreenBackground(modifier = modifier) { color, contentColor ->
+        Scaffold(
+            containerColor = color,
+            contentColor = contentColor,
+            modifier = Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
+            topBar = {
+                EditTopAppBar(
+                    onNavigationClick = { onDismiss() },
+                    scrollBehavior = scrollBehavior
                 )
+            },
+            content = { innerPadding ->
+                StatefulContent(
+                    isLoading = isLoading,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    EditContent(
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        id = id,
+                        title = title,
+                        description = description,
+                        customColor = customColor,
+                        image = image,
+                        canSave = canSave,
+                        onInputTitle = onInputTitle,
+                        onInputDescription = onInputDescription,
+                        onClickAddImage = { pickMedia.launchImagePicker() },
+                        onClickRemoveImage = onRemoveImage,
+                        onPickBackgroundColor = onPickBackgroundColor,
+                        onSaveClicked = onSave,
+                        enableAnimations = enableAnimations
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
