@@ -21,6 +21,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -231,7 +232,8 @@ private fun SharedTransitionScope.EditContent(
             .unionPaddingWithInsets(
                 PaddingValues(16.dp),
                 WindowInsets.displayCutout
-            ),
+            )
+            .focusable(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         HeaderedContent(text = stringResource(R.string.label_preview).uppercase()) {
