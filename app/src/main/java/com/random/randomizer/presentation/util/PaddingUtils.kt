@@ -30,7 +30,7 @@ fun Modifier.unionPaddingWithInsets(
 @Composable
 fun PaddingValues.unionWithWindowInsets(
     windowInsets: WindowInsets,
-    excludePadding: PaddingValues = LocalBackground.current.padding
+    excludePadding: PaddingValues = LocalBackground.current.margin
 ): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
     val excludeWindowInsets = excludePadding.asWindowInsets(layoutDirection)

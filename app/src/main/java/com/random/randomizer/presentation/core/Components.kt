@@ -206,8 +206,8 @@ fun RandomizerBackground(
         modifier = modifier
             .fillMaxSize()
             .background(brush)
-            .padding(gradientBackground.container.padding)
-            .consumeWindowInsets(gradientBackground.container.padding)
+            .padding(gradientBackground.container.margin)
+            .consumeWindowInsets(gradientBackground.container.margin)
     ) {
         CompositionLocalProvider(LocalBackground provides gradientBackground.container) {
             content()
@@ -227,7 +227,7 @@ val RandomizerBackground: GradientBackground
             color = colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
             contentColor = colorScheme.onSurface,
             shape = ShapeDefaults.Large,
-            padding = padding.run {
+            margin = padding.run {
                 if (!supportsTransparentNavigationBar()) {
                     // Add 8.dp padding from navigation bar side
                     add(mapNavigationBarPadding { if (it != 0.dp) 8.dp else it })

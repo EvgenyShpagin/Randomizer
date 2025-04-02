@@ -27,14 +27,14 @@ data class GradientBackground(
  * @param color The container color.
  * @param contentColor The preferred content color provided by this Background to its children.
  * @param shape Defines the background's shape.
- * @param padding Defines container's padding
+ * @param margin Defines container's padding
  */
 @Immutable
 data class Background(
     val color: Color = Color.Unspecified,
     val contentColor: Color = Color.Unspecified,
     val shape: Shape = RectangleShape,
-    val padding: PaddingValues = PaddingValues()
+    val margin: PaddingValues = PaddingValues()
 )
 
 /**
