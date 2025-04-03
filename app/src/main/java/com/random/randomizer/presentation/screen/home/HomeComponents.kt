@@ -32,6 +32,11 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -378,13 +383,50 @@ fun SharedTransitionScope.DeletableWheelSegmentList(
     onDelete: (WheelSegmentUiState) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState()
+    state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
         modifier = modifier,
-        state = listState,
+        state = state,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            items = wheelItems,
+            key = { it.id }
+        ) { item ->
+            DeletableWheelSegment(
+                itemUiState = item,
+                onDelete = { onDelete(item) },
+                onClick = { onClick(item) },
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState(
+                        key = SharedContentKeys.ofSegment(item.id)
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun SharedTransitionScope.DeletableWheelSegmentGrid(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    wheelItems: List<WheelSegmentUiState>,
+    onClick: (WheelSegmentUiState) -> Unit,
+    onDelete: (WheelSegmentUiState) -> Unit,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    state: LazyGridState = rememberLazyGridState()
+) {
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Adaptive(minSize = 256.dp),
+        state = state,
+        contentPadding = contentPadding,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(
             items = wheelItems,

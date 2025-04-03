@@ -17,17 +17,20 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarState
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,7 @@ import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
+import com.random.randomizer.presentation.util.areSidesAtLeastMedium
 import com.random.randomizer.presentation.util.unionWithWindowInsets
 
 @Composable
@@ -48,7 +52,8 @@ fun SharedTransitionScope.HomeScreen(
     navigateToSpin: () -> Unit,
     navigateToEdit: (Int?) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    showGrid: Boolean = currentWindowAdaptiveInfo().windowSizeClass.areSidesAtLeastMedium()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -60,6 +65,7 @@ fun SharedTransitionScope.HomeScreen(
         onDeleteWheelSegment = { viewModel.onEvent(DeleteSegment(it)) },
         wheelSegments = uiState.wheelSegments,
         isLoading = uiState.isLoading,
+        showGrid = showGrid,
         modifier = modifier
     )
 }
@@ -73,6 +79,7 @@ private fun SharedTransitionScope.HomeScreen(
     onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
     wheelSegments: List<WheelSegmentUiState>,
     isLoading: Boolean,
+    showGrid: Boolean,
     modifier: Modifier = Modifier,
     topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
@@ -118,6 +125,7 @@ private fun SharedTransitionScope.HomeScreen(
                     wheelSegments = wheelSegments,
                     onClickWheelSegment = onClickWheelSegment,
                     onDeleteWheelSegment = onDeleteWheelSegment,
+                    showGrid = showGrid
                 )
             }
         }
@@ -130,28 +138,39 @@ private fun SharedTransitionScope.HomeContent(
     wheelSegments: List<WheelSegmentUiState>,
     onClickWheelSegment: (WheelSegmentUiState) -> Unit,
     onDeleteWheelSegment: (WheelSegmentUiState) -> Unit,
-    modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState()
+    showGrid: Boolean,
+    modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
         val contentPadding = PaddingValues(16.dp)
             .unionWithWindowInsets(
                 WindowInsets.displayCutout.only(WindowInsetsSides.Horizontal)
             )
-        DeletableWheelSegmentList(
-            animatedVisibilityScope = animatedVisibilityScope,
-            wheelItems = wheelSegments,
-            onClick = onClickWheelSegment,
-            onDelete = onDeleteWheelSegment,
-            contentPadding = contentPadding,
-            listState = listState
-        )
+        if (showGrid) {
+            DeletableWheelSegmentGrid(
+                animatedVisibilityScope = animatedVisibilityScope,
+                wheelItems = wheelSegments,
+                onClick = onClickWheelSegment,
+                onDelete = onDeleteWheelSegment,
+                contentPadding = contentPadding,
+                state = rememberLazyGridState()
+            )
+        } else {
+            DeletableWheelSegmentList(
+                animatedVisibilityScope = animatedVisibilityScope,
+                wheelItems = wheelSegments,
+                onClick = onClickWheelSegment,
+                onDelete = onDeleteWheelSegment,
+                contentPadding = contentPadding,
+                state = rememberLazyListState()
+            )
+        }
     }
 }
 
 @PreviewLightDark
 @Composable
-private fun HomeScreenPreview(
+private fun HomeScreenLinearPreview(
     @PreviewParameter(WheelSegmentListParameterProvider::class)
     wheelSegments: List<WheelSegmentUiState>
 ) {
@@ -163,7 +182,29 @@ private fun HomeScreenPreview(
             onClickWheelSegment = {},
             onDeleteWheelSegment = {},
             wheelSegments = wheelSegments,
-            isLoading = false
+            isLoading = false,
+            showGrid = false
+        )
+    }
+}
+
+@PreviewLightDark
+@Preview(device = Devices.PIXEL_TABLET)
+@Composable
+private fun HomeScreenGridPreview(
+    @PreviewParameter(WheelSegmentListParameterProvider::class)
+    wheelSegments: List<WheelSegmentUiState>
+) {
+    PreviewContainer { animatedVisibilityScope ->
+        HomeScreen(
+            animatedVisibilityScope = animatedVisibilityScope,
+            onClickSpin = {},
+            onClickAdd = {},
+            onClickWheelSegment = {},
+            onDeleteWheelSegment = {},
+            wheelSegments = wheelSegments,
+            isLoading = false,
+            showGrid = true
         )
     }
 }

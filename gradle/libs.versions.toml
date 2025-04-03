@@ -26,8 +26,6 @@ googleFonts = "1.7.8"
 
 [libraries]
 adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
-androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation" }
-androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
