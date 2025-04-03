@@ -238,56 +238,40 @@ val RandomizerBackground: GradientBackground
     }
 
 @Composable
-private fun calculateWindowPaddings(): PaddingValues {
-    val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+private fun calculateWindowPaddings(
+    insets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+): PaddingValues {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
     val windowIsAtLeastMedium = windowSizeClass.areSidesAtLeastMedium()
 
-    val windowMarginDp = when {
-        windowIsAtLeastMedium -> 24.dp
-        else -> 8.dp
-    }
+    val marginDp = if (windowIsAtLeastMedium) 24.dp else 8.dp
 
-    return PaddingValues(horizontal = windowMarginDp)
+    val basePadding = PaddingValues(horizontal = marginDp)
         .unionWithWindowInsets(insets)
-        // Setting up additional paddings
-        .run {
-            val navigationBarSide = getNavigationBarSide()
-            // Padding to establish vertical symmetry
-            val topPaddingDp = calculateTopPadding()
 
-            if (supportsTransparentNavigationBar()) {
-                if (navigationBarSide == WindowInsetsSides.Bottom) {
-                    this // Keep only navigationBar inset padding at the bottom
-                } else {
-                    // Add topPaddingDp to the bottom to establish vertical
-                    // symmetry when navigation bar is placed horizontally
-                    this.add(PaddingValues(bottom = topPaddingDp))
-                }
-            } else {
-                this.add(
-                    when (navigationBarSide) {
-                        WindowInsetsSides.Start -> PaddingValues(
-                            start = windowMarginDp, bottom = topPaddingDp
-                        )
+    val topPaddingDp = basePadding.calculateTopPadding()
+    val navigationBarSide = getNavigationBarSide()
 
-                        WindowInsetsSides.End -> PaddingValues(
-                            end = windowMarginDp, bottom = topPaddingDp
-                        )
-
-                        // WindowInsetsSides.Bottom
-                        else -> PaddingValues(
-                            bottom = if (windowIsAtLeastMedium) {
-                                topPaddingDp // For vertical symmetry on large screens
-                            } else {
-                                windowMarginDp // Default margin on compact screens
-                            }
-                        )
-                    }
-                )
-            }
+    return if (supportsTransparentNavigationBar()) {
+        if (navigationBarSide == WindowInsetsSides.Bottom) {
+            basePadding // Keep only navigationBar inset padding at the bottom
+        } else {
+            // Add topPaddingDp to the bottom to establish vertical
+            // symmetry when navigation bar is placed horizontally
+            basePadding.add(PaddingValues(bottom = topPaddingDp))
         }
+    } else {
+        basePadding.add(
+            when (navigationBarSide) {
+                // Make symmetry on horizontally placed navigation bar
+                WindowInsetsSides.Start -> PaddingValues(start = marginDp, bottom = topPaddingDp)
+                WindowInsetsSides.End -> PaddingValues(end = marginDp, bottom = topPaddingDp)
+                // Only do vertical symmetry on large screens, as the topPaddingDp
+                // above the navigation bar takes up a lot of space on compact screens.
+                else -> PaddingValues(bottom = if (windowIsAtLeastMedium) topPaddingDp else marginDp)
+            }
+        )
+    }
 }
 
 @Composable
