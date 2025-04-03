@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -39,13 +41,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
 import com.random.randomizer.presentation.theme.Background
 import com.random.randomizer.presentation.theme.GradientBackground
 import com.random.randomizer.presentation.theme.LocalBackground
 import com.random.randomizer.presentation.util.add
+import com.random.randomizer.presentation.util.areSidesAtLeastMedium
 import com.random.randomizer.presentation.util.supportsTransparentNavigationBar
 import com.random.randomizer.presentation.util.unionWithWindowInsets
 
@@ -222,19 +224,62 @@ val RandomizerBackground: GradientBackground
     @Composable get() {
         val colorScheme = MaterialTheme.colorScheme
         val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
-        val padding = PaddingValues(8.dp).unionWithWindowInsets(insets)
+        val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+
+        val windowIsAtLeastMedium = windowSizeClass.areSidesAtLeastMedium()
+
+        val windowMarginDp = when {
+            windowIsAtLeastMedium -> 24.dp
+            else -> 8.dp
+        }
+
+        val margins = PaddingValues(horizontal = windowMarginDp)
+            .unionWithWindowInsets(insets)
+            // Setting up additional paddings
+            .run {
+                val navigationBarSide = getNavigationBarSide()
+                // Padding to establish vertical symmetry
+                val topPaddingDp = calculateTopPadding()
+
+                if (supportsTransparentNavigationBar()) {
+                    if (navigationBarSide == WindowInsetsSides.Bottom) {
+                        this // Keep only navigationBar inset padding at the bottom
+                    } else {
+                        // Add topPaddingDp to the bottom to establish vertical
+                        // symmetry when navigation bar is placed horizontally
+                        this.add(PaddingValues(bottom = topPaddingDp))
+                    }
+                } else {
+                    this.add(
+                        when (navigationBarSide) {
+                            WindowInsetsSides.Start -> PaddingValues(
+                                start = windowMarginDp,
+                                bottom = topPaddingDp
+                            )
+
+                            WindowInsetsSides.End -> PaddingValues(
+                                end = windowMarginDp,
+                                bottom = topPaddingDp
+                            )
+
+                            // WindowInsetsSides.Bottom
+                            else -> PaddingValues(
+                                bottom = if (windowIsAtLeastMedium) {
+                                    topPaddingDp // For vertical symmetry on large screens
+                                } else {
+                                    windowMarginDp // Default margin on compact screens
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+
         val container = Background(
             color = colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
             contentColor = colorScheme.onSurface,
             shape = ShapeDefaults.Large,
-            margin = padding.run {
-                if (!supportsTransparentNavigationBar()) {
-                    // Add 8.dp padding from navigation bar side
-                    add(mapNavigationBarPadding { if (it != 0.dp) 8.dp else it })
-                } else {
-                    this
-                }
-            }
+            margin = margins
         )
         return GradientBackground(
             topColor = colorScheme.primaryContainer,
@@ -244,15 +289,16 @@ val RandomizerBackground: GradientBackground
     }
 
 @Composable
-private fun mapNavigationBarPadding(transform: (Dp) -> Dp): PaddingValues {
+private fun getNavigationBarSide(): WindowInsetsSides {
     val layoutDirection = LocalLayoutDirection.current
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    return PaddingValues(
-        start = transform(navigationBarPadding.calculateStartPadding(layoutDirection)),
-        top = transform(navigationBarPadding.calculateTopPadding()),
-        end = transform(navigationBarPadding.calculateEndPadding(layoutDirection)),
-        bottom = transform(navigationBarPadding.calculateBottomPadding())
-    )
+    if (navigationBarPadding.calculateStartPadding(layoutDirection) != 0.dp) {
+        return WindowInsetsSides.Start
+    }
+    if (navigationBarPadding.calculateEndPadding(layoutDirection) != 0.dp) {
+        return WindowInsetsSides.End
+    }
+    return WindowInsetsSides.Bottom
 }
 
 @Composable
