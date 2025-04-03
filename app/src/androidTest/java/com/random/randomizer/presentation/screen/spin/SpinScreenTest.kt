@@ -1,7 +1,7 @@
 package com.random.randomizer.presentation.screen.spin
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.test.assertHeightIsAtLeast
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -97,7 +97,7 @@ class SpinScreenTest {
         // Then - verify the list height fills all available space
         composeTestRule
             .onNodeWithTag("Spin Segment List")
-            .assertHeightIsAtLeast(screenHeightDp)
+            .assertHeightIsEqualTo(screenHeightDp)
     }
 
     @Test
