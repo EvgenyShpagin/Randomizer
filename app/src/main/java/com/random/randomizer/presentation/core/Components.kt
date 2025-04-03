@@ -223,63 +223,12 @@ fun RandomizerBackground(
 val RandomizerBackground: GradientBackground
     @Composable get() {
         val colorScheme = MaterialTheme.colorScheme
-        val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
-        val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
-        val windowIsAtLeastMedium = windowSizeClass.areSidesAtLeastMedium()
-
-        val windowMarginDp = when {
-            windowIsAtLeastMedium -> 24.dp
-            else -> 8.dp
-        }
-
-        val margins = PaddingValues(horizontal = windowMarginDp)
-            .unionWithWindowInsets(insets)
-            // Setting up additional paddings
-            .run {
-                val navigationBarSide = getNavigationBarSide()
-                // Padding to establish vertical symmetry
-                val topPaddingDp = calculateTopPadding()
-
-                if (supportsTransparentNavigationBar()) {
-                    if (navigationBarSide == WindowInsetsSides.Bottom) {
-                        this // Keep only navigationBar inset padding at the bottom
-                    } else {
-                        // Add topPaddingDp to the bottom to establish vertical
-                        // symmetry when navigation bar is placed horizontally
-                        this.add(PaddingValues(bottom = topPaddingDp))
-                    }
-                } else {
-                    this.add(
-                        when (navigationBarSide) {
-                            WindowInsetsSides.Start -> PaddingValues(
-                                start = windowMarginDp,
-                                bottom = topPaddingDp
-                            )
-
-                            WindowInsetsSides.End -> PaddingValues(
-                                end = windowMarginDp,
-                                bottom = topPaddingDp
-                            )
-
-                            // WindowInsetsSides.Bottom
-                            else -> PaddingValues(
-                                bottom = if (windowIsAtLeastMedium) {
-                                    topPaddingDp // For vertical symmetry on large screens
-                                } else {
-                                    windowMarginDp // Default margin on compact screens
-                                }
-                            )
-                        }
-                    )
-                }
-            }
 
         val container = Background(
             color = colorScheme.surfaceContainerLowest.copy(alpha = 0.7f),
             contentColor = colorScheme.onSurface,
             shape = ShapeDefaults.Large,
-            margin = margins
+            margin = calculateWindowPaddings()
         )
         return GradientBackground(
             topColor = colorScheme.primaryContainer,
@@ -287,6 +236,59 @@ val RandomizerBackground: GradientBackground
             container = container
         )
     }
+
+@Composable
+private fun calculateWindowPaddings(): PaddingValues {
+    val insets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+
+    val windowIsAtLeastMedium = windowSizeClass.areSidesAtLeastMedium()
+
+    val windowMarginDp = when {
+        windowIsAtLeastMedium -> 24.dp
+        else -> 8.dp
+    }
+
+    return PaddingValues(horizontal = windowMarginDp)
+        .unionWithWindowInsets(insets)
+        // Setting up additional paddings
+        .run {
+            val navigationBarSide = getNavigationBarSide()
+            // Padding to establish vertical symmetry
+            val topPaddingDp = calculateTopPadding()
+
+            if (supportsTransparentNavigationBar()) {
+                if (navigationBarSide == WindowInsetsSides.Bottom) {
+                    this // Keep only navigationBar inset padding at the bottom
+                } else {
+                    // Add topPaddingDp to the bottom to establish vertical
+                    // symmetry when navigation bar is placed horizontally
+                    this.add(PaddingValues(bottom = topPaddingDp))
+                }
+            } else {
+                this.add(
+                    when (navigationBarSide) {
+                        WindowInsetsSides.Start -> PaddingValues(
+                            start = windowMarginDp, bottom = topPaddingDp
+                        )
+
+                        WindowInsetsSides.End -> PaddingValues(
+                            end = windowMarginDp, bottom = topPaddingDp
+                        )
+
+                        // WindowInsetsSides.Bottom
+                        else -> PaddingValues(
+                            bottom = if (windowIsAtLeastMedium) {
+                                topPaddingDp // For vertical symmetry on large screens
+                            } else {
+                                windowMarginDp // Default margin on compact screens
+                            }
+                        )
+                    }
+                )
+            }
+        }
+}
 
 @Composable
 private fun getNavigationBarSide(): WindowInsetsSides {
