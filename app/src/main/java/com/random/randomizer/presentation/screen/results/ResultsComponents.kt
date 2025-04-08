@@ -95,7 +95,7 @@ fun SpinButtons(
     } else {
         SpinButton(
             onClick = onSpinClicked,
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         )
     }
 }
