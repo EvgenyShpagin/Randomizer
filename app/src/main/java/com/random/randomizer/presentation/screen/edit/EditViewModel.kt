@@ -32,6 +32,7 @@ import com.random.randomizer.util.getUniqueFilename
 import com.random.randomizer.util.toByteArray
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -71,6 +72,8 @@ class EditViewModel @Inject constructor(
     private val route = savedStateHandle.toRoute<Destination.Edit>()
     private val wheelSegmentId = route.wheelSegmentId
     private val isWheelSegmentCreated get() = wheelSegmentId != null
+
+    private var isFinishingEdit = false
 
     override val uiState: StateFlow<EditUiState> = combine(
         _title, _description, color, imagePath
@@ -178,12 +181,19 @@ class EditViewModel @Inject constructor(
     }
 
     private fun onFinishEdit(doSave: Boolean) {
+        if (isFinishingEdit) return
+        isFinishingEdit = true
+
         viewModelScope.launch {
             if (doSave) {
                 save()
             }
             deleteCachedImage()
             triggerEffect(EditUiEffect.NavigateBack)
+
+            // To avoid save spamming
+            delay(500)
+            isFinishingEdit = false
         }
     }
 
