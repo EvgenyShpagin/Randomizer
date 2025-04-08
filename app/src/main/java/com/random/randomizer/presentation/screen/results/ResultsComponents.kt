@@ -2,6 +2,8 @@ package com.random.randomizer.presentation.screen.results
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -64,31 +66,83 @@ fun SpinButtons(
     showDeleteButton: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier
-    ) {
-        if (showDeleteButton) {
-            OutlinedButton(
-                onClick = onDeleteAndSpinClicked,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(stringResource(R.string.button_delete_and_spin))
+    if (showDeleteButton) {
+        BoxWithConstraints(modifier = modifier) {
+            if (this.maxWidth < 330.dp) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    DeleteAndSpinButton(
+                        onClick = onDeleteAndSpinClicked,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    SpinButton(
+                        onClick = onSpinClicked,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    DeleteAndSpinButton(
+                        onClick = onDeleteAndSpinClicked,
+                        modifier = Modifier.weight(1f)
+                    )
+                    SpinButton(
+                        onClick = onSpinClicked,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
-
-        Button(
+    } else {
+        SpinButton(
             onClick = onSpinClicked,
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(stringResource(R.string.button_spin))
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun DeleteAndSpinButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Text(stringResource(R.string.button_delete_and_spin))
+    }
+}
+
+@Composable
+private fun SpinButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Text(stringResource(R.string.button_spin))
+    }
+}
+
+@Preview("Both Spin Buttons Horizontal")
+@Composable
+private fun SpinButtonsPreview() {
+    RandomizerTheme {
+        Surface {
+            SpinButtons(
+                onSpinClicked = {},
+                onDeleteAndSpinClicked = {},
+                showDeleteButton = true
+            )
         }
     }
 }
 
-@Preview("Both Spin Buttons")
+@Preview("Both Spin Buttons Vertical", widthDp = 329)
 @Composable
-private fun SpinButtonsPreview() {
+private fun SpinButtonsVerticalPreview() {
     RandomizerTheme {
         Surface {
             SpinButtons(
