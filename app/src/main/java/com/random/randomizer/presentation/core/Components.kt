@@ -41,15 +41,14 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
 import com.random.randomizer.presentation.theme.Background
 import com.random.randomizer.presentation.theme.GradientBackground
 import com.random.randomizer.presentation.theme.LocalBackground
-import com.random.randomizer.presentation.util.add
 import com.random.randomizer.presentation.util.areSidesAtLeastMedium
 import com.random.randomizer.presentation.util.supportsTransparentNavigationBar
-import com.random.randomizer.presentation.util.unionWithWindowInsets
 
 @Composable
 fun WheelSegment(
@@ -246,32 +245,48 @@ private fun calculateWindowPaddings(
 
     val marginDp = if (windowIsAtLeastMedium) 24.dp else 8.dp
 
-    val basePadding = PaddingValues(horizontal = marginDp)
-        .unionWithWindowInsets(insets)
+    val insetsPadding = insets.asPaddingValues()
+    val layoutDirection = LocalLayoutDirection.current
 
-    val topPaddingDp = basePadding.calculateTopPadding()
+    var topPadding = insetsPadding.calculateTopPadding()
+    var bottomPadding = insetsPadding.calculateBottomPadding()
+    var startPadding = insetsPadding.calculateStartPadding(layoutDirection).coerceAtLeast(marginDp)
+    var endPadding = insetsPadding.calculateEndPadding(layoutDirection).coerceAtLeast(marginDp)
+
     val navigationBarSide = getNavigationBarSide()
 
-    return if (supportsTransparentNavigationBar()) {
-        if (navigationBarSide == WindowInsetsSides.Bottom) {
-            basePadding // Keep only navigationBar inset padding at the bottom
-        } else {
+    if (supportsTransparentNavigationBar()) {
+        if (navigationBarSide != WindowInsetsSides.Bottom) {
             // Add topPaddingDp to the bottom to establish vertical
             // symmetry when navigation bar is placed horizontally
-            basePadding.add(PaddingValues(bottom = topPaddingDp))
+            bottomPadding += topPadding
         }
     } else {
-        basePadding.add(
-            when (navigationBarSide) {
-                // Make symmetry on horizontally placed navigation bar
-                WindowInsetsSides.Start -> PaddingValues(start = marginDp, bottom = topPaddingDp)
-                WindowInsetsSides.End -> PaddingValues(end = marginDp, bottom = topPaddingDp)
-                // Only do vertical symmetry on large screens, as the topPaddingDp
-                // above the navigation bar takes up a lot of space on compact screens.
-                else -> PaddingValues(bottom = if (windowIsAtLeastMedium) topPaddingDp else marginDp)
+        when (navigationBarSide) {
+            // Make symmetry on horizontally placed navigation bar
+            WindowInsetsSides.Start -> {
+                startPadding += marginDp
+                bottomPadding += topPadding
             }
-        )
+
+            WindowInsetsSides.End -> {
+                endPadding += marginDp
+                bottomPadding += topPadding
+            }
+
+            // Only do vertical symmetry on large screens, as the topPaddingDp
+            // above the navigation bar takes up a lot of space on compact screens.
+            else -> {
+                bottomPadding += if (windowIsAtLeastMedium) topPadding else marginDp
+            }
+        }
     }
+    return PaddingValues(
+        start = startPadding,
+        top = topPadding,
+        end = endPadding,
+        bottom = bottomPadding,
+    )
 }
 
 @Composable
