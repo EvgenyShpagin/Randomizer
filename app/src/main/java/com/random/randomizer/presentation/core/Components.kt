@@ -37,10 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.R
@@ -236,9 +238,12 @@ val RandomizerBackground: GradientBackground
         )
     }
 
+private val MaxBackgroundWidth = 600.dp
+
 @Composable
 private fun calculateWindowPaddings(
-    insets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+    insets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
+    maxBackgroundWidth: Dp = MaxBackgroundWidth
 ): PaddingValues {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val windowIsAtLeastMedium = windowSizeClass.areSidesAtLeastMedium()
@@ -280,6 +285,12 @@ private fun calculateWindowPaddings(
                 bottomPadding += if (windowIsAtLeastMedium) topPadding else marginDp
             }
         }
+    }
+    if (windowIsAtLeastMedium) {
+        val width = LocalConfiguration.current.screenWidthDp.dp
+        val horizontalPadding = (width - maxBackgroundWidth) / 2
+        startPadding = horizontalPadding
+        endPadding = horizontalPadding
     }
     return PaddingValues(
         start = startPadding,
