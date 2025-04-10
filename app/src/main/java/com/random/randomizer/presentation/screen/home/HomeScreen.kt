@@ -45,6 +45,7 @@ import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
 import com.random.randomizer.presentation.util.areSidesAtLeastMedium
 import com.random.randomizer.presentation.util.unionWithWindowInsets
+import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 fun SharedTransitionScope.HomeScreen(
@@ -70,8 +71,9 @@ fun SharedTransitionScope.HomeScreen(
     )
 }
 
+@VisibleForTesting
 @Composable
-private fun SharedTransitionScope.HomeScreen(
+fun SharedTransitionScope.HomeScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     onClickSpin: () -> Unit,
     onClickAdd: () -> Unit,
