@@ -128,8 +128,9 @@ fun SharedTransitionScope.EditScreen(
     )
 }
 
+@VisibleForTesting
 @Composable
-private fun SharedTransitionScope.EditScreen(
+fun SharedTransitionScope.EditScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     isLoading: Boolean,
     id: Int,
