@@ -35,6 +35,7 @@ import com.random.randomizer.presentation.navigation.SharedContentKeys
 import com.random.randomizer.presentation.util.HandleUiEffects
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.unionPaddingWithInsets
+import org.jetbrains.annotations.VisibleForTesting
 
 @Composable
 fun SharedTransitionScope.ResultsScreen(
@@ -67,8 +68,9 @@ fun SharedTransitionScope.ResultsScreen(
     )
 }
 
+@VisibleForTesting
 @Composable
-private fun SharedTransitionScope.ResultsContent(
+fun SharedTransitionScope.ResultsContent(
     animatedVisibilityScope: AnimatedVisibilityScope,
     winnerWheelSegment: WheelSegmentUiState,
     canDeleteWinner: Boolean,
