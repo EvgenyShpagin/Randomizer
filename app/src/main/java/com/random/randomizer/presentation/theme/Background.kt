@@ -2,7 +2,7 @@ package com.random.randomizer.presentation.theme
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -42,4 +42,4 @@ data class Background(
  *
  * Should be used by screen-level composables.
  */
-val LocalBackground = staticCompositionLocalOf { Background() }
+val LocalBackground = compositionLocalOf { Background() }
