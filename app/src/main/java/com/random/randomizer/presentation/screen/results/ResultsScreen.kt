@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -95,11 +94,7 @@ fun SharedTransitionScope.ResultsContent(
             color = color,
             contentColor = contentColor
         ) {
-            Box(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .fillMaxSize()
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 AnimatedVisibility(
                     visibleState = gradientAnimationState,
                     enter = fadeIn(animationSpec = tween(500)) +
