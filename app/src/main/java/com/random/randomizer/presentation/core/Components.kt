@@ -212,8 +212,6 @@ fun RandomizerBackground(
         modifier = modifier
             .fillMaxSize()
             .background(brush)
-            .padding(gradientBackground.container.margin)
-            .consumeWindowInsets(gradientBackground.container.margin)
     ) {
         CompositionLocalProvider(LocalBackground provides gradientBackground.container) {
             content()
@@ -326,7 +324,10 @@ fun ScreenBackground(
         color = Color.Unspecified,
         contentColor = Color.Unspecified,
         shape = background.shape,
-        modifier = modifier
+        modifier = Modifier
+            .padding(background.margin)
+            .consumeWindowInsets(background.margin)
+            .then(modifier)
     ) {
         content(background.color, background.contentColor)
     }
