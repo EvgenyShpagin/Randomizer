@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.random.randomizer.presentation.core.ScreenBackground
+import com.random.randomizer.presentation.core.RandomizerPane
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.navigation.SharedContentKeys
@@ -90,7 +90,7 @@ fun SharedTransitionScope.ResultsContent(
             .apply { targetState = true }
     }
 
-    ScreenBackground(modifier = modifier) { color, contentColor ->
+    RandomizerPane(modifier = modifier) { color, contentColor ->
         Surface(
             color = color,
             contentColor = contentColor

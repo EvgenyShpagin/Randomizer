@@ -60,7 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
-import com.random.randomizer.presentation.core.ScreenBackground
+import com.random.randomizer.presentation.core.RandomizerPane
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegment
 import com.random.randomizer.presentation.navigation.SharedContentKeys
@@ -158,7 +158,7 @@ fun SharedTransitionScope.EditScreen(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    ScreenBackground(modifier = modifier) { color, contentColor ->
+    RandomizerPane(modifier = modifier) { color, contentColor ->
         Scaffold(
             containerColor = color,
             contentColor = contentColor,

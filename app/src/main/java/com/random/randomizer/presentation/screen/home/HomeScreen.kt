@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
-import com.random.randomizer.presentation.core.ScreenBackground
+import com.random.randomizer.presentation.core.RandomizerPane
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
@@ -86,7 +86,7 @@ fun SharedTransitionScope.HomeScreen(
     topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
-    ScreenBackground(modifier = modifier) { color, contentColor ->
+    RandomizerPane(modifier = modifier) { color, contentColor ->
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             containerColor = color,

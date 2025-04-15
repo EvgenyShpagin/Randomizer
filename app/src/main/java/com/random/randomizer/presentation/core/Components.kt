@@ -315,7 +315,7 @@ private fun getNavigationBarSide(): WindowInsetsSides {
 }
 
 @Composable
-fun ScreenBackground(
+fun RandomizerPane(
     modifier: Modifier = Modifier,
     background: Background = LocalBackground.current,
     content: @Composable (backgroundColor: Color, contentColor: Color) -> Unit
