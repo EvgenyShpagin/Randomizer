@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.random.randomizer.presentation.core.WheelSegment
@@ -61,19 +60,17 @@ fun SpinWheelSegmentList(
 @Composable
 fun TransformableIndicator(
     isLoading: Boolean,
+    initHeight: Dp,
     modifier: Modifier = Modifier,
     indicatorThickness: Dp = TransformIndicatorDefaults.IndicatorThickness,
     transformDurationMillis: Int = TransformIndicatorDefaults.DURATION_MS
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
     val transition = updateTransition(isLoading)
 
     val height by transition.animateDp(
         transitionSpec = { tween(transformDurationMillis) }
     ) { isTargetState ->
-        if (isTargetState) screenHeight else indicatorThickness
+        if (isTargetState) initHeight else indicatorThickness
     }
 
     val color by transition.animateColor(

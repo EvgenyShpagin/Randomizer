@@ -33,7 +33,6 @@ suspend fun LazyListState.measureWheelSegmentSizes(segmentSizes: IntArray) {
 suspend fun LazyListState.smoothScrollToIndex(
     targetIndex: Int,
     segmentSizes: IntArray,
-    screenHeight: Float,
     continueScroll: Boolean,
     durationMillis: Int = getSpinDurationMillis(firstVisibleItemIndex, targetIndex)
 ) {
@@ -42,7 +41,8 @@ suspend fun LazyListState.smoothScrollToIndex(
     val initOffset = layoutInfo.beforeContentPadding + firstVisibleItem.offset
     val targetItemOffset = (firstVisibleItem.index until targetIndex)
         .sumOf { index -> segmentSizes.of(index) + layoutInfo.mainAxisItemSpacing }
-    val centeringOffset = -screenHeight / 2f + segmentSizes.of(targetIndex) / 2f
+    val containerHeight = layoutInfo.viewportSize.height
+    val centeringOffset = -containerHeight / 2f + segmentSizes.of(targetIndex) / 2f
 
     animateScrollBy(
         value = initOffset + targetItemOffset + centeringOffset,
