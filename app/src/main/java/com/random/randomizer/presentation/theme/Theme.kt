@@ -1,8 +1,12 @@
 package com.random.randomizer.presentation.theme
 
+import android.app.UiModeManager
+import android.content.Context
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -246,11 +250,8 @@ fun RandomizerTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && supportsDynamicTheming() -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
+        dynamicColor && supportsDynamicTheming() -> getDynamicColorScheme(darkTheme)
+        supportsContrast() -> getColorSchemeByContrast(darkTheme)
         darkTheme -> darkScheme
         else -> lightScheme
     }
@@ -262,5 +263,29 @@ fun RandomizerTheme(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
+@Composable
+private fun getDynamicColorScheme(isDark: Boolean): ColorScheme {
+    val context = LocalContext.current
+    return if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+}
+
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@Composable
+private fun getColorSchemeByContrast(isDark: Boolean): ColorScheme {
+    val context = LocalContext.current
+    val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+    val contrastLevel = uiModeManager.contrast
+    return when (contrastLevel) {
+        in 0.0f..0.33f -> if (isDark) darkScheme else lightScheme
+        in 0.34f..0.66f -> if (isDark) mediumContrastDarkColorScheme else mediumContrastLightColorScheme
+        in 0.67f..1.0f -> if (isDark) highContrastDarkColorScheme else highContrastLightColorScheme
+        else -> if (isDark) darkScheme else lightScheme
+    }
+}
+
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
 private fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+private fun supportsContrast() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
