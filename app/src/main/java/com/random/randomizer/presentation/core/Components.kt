@@ -29,7 +29,9 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowDpSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -37,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -240,6 +241,7 @@ val RandomizerBackground: GradientBackground
         )
     }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun calculateWindowPaddings(
     insets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -288,7 +290,7 @@ private fun calculateWindowPaddings(
     }
     // Limit the width of the container by adding padding
     if (windowIsAtLeastMedium) {
-        val width = LocalConfiguration.current.screenWidthDp.dp
+        val width = currentWindowDpSize().width
         val horizontalPadding = (width - maxContainerWidth) / 2
         startPadding = horizontalPadding.coerceAtLeast(marginDp)
         endPadding = horizontalPadding.coerceAtLeast(marginDp)
