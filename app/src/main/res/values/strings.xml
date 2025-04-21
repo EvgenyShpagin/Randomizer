@@ -22,4 +22,13 @@
     <string name="label_details">Details</string>
     <string name="button_save">Save</string>
     <string name="label_default_empty_state">No content</string>
+    <string name="settings_title">App theming</string>
+    <string name="label_color_scheme">Color Scheme</string>
+    <string name="color_scheme_static">Static</string>
+    <string name="color_scheme_dynamic">Dynamic</string>
+    <string name="dark_mode_config_light">Light</string>
+    <string name="dark_mode_config_system">System</string>
+    <string name="dark_mode_config_dark">Dark</string>
+    <string name="label_dark_mode_config">Dark Mode Configuration</string>
+    <string name="cd_settings">Settings</string>
 </resources>
