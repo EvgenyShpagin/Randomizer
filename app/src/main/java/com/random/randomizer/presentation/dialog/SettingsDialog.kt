@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,22 +33,22 @@ fun SettingsDialog(
         onDismiss = onDismiss,
         onConfirm = onConfirm,
         isLoading = uiState.isLoading,
-        onClickDarkThemeConfig = { viewModel.onEvent(SettingsUiEvent.SetDarkModeConfig(it)) },
-        colorScheme = uiState.colorScheme,
+        onCheckDarkThemeConfig = { viewModel.onEvent(SettingsUiEvent.SetDarkModeConfig(it)) },
+        currentColorScheme = uiState.colorScheme,
         isColorSchemeEditable = uiState.isColorSchemeEditable,
-        onClickColorScheme = { viewModel.onEvent(SettingsUiEvent.SetColorScheme(it)) },
-        darkModeConfig = uiState.darkModeConfig,
+        onCheckColorScheme = { viewModel.onEvent(SettingsUiEvent.SetColorScheme(it)) },
+        currentDarkModeConfig = uiState.darkModeConfig
     )
 }
 
 @Composable
 private fun SettingsDialog(
     isLoading: Boolean,
-    colorScheme: ThemeOption.ColorScheme,
+    currentColorScheme: ThemeOption.ColorScheme,
     isColorSchemeEditable: Boolean,
-    onClickColorScheme: (ThemeOption.ColorScheme) -> Unit,
-    darkModeConfig: ThemeOption.DarkModeConfig,
-    onClickDarkThemeConfig: (ThemeOption.DarkModeConfig) -> Unit,
+    onCheckColorScheme: (ThemeOption.ColorScheme) -> Unit,
+    currentDarkModeConfig: ThemeOption.DarkModeConfig,
+    onCheckDarkThemeConfig: (ThemeOption.DarkModeConfig) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onConfirm: () -> Unit = onDismiss
@@ -67,21 +64,12 @@ private fun SettingsDialog(
                         stringResource(R.string.label_color_scheme),
                         modifier = Modifier.paddingFromBaseline(bottom = 8.dp)
                     )
-                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        val allColorSchemes = ThemeOption.ColorScheme.entries
-                        allColorSchemes.forEachIndexed { index, colorSchemeEntry ->
-                            SegmentedButton(
-                                selected = colorSchemeEntry == colorScheme,
-                                onClick = { onClickColorScheme(colorSchemeEntry) },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index, allColorSchemes.count()
-                                ),
-                                enabled = isColorSchemeEditable
-                            ) {
-                                Text(colorSchemeEntry.stringResource())
-                            }
-                        }
-                    }
+                    ColorSchemeButtons(
+                        modifier = Modifier.fillMaxWidth(),
+                        checkedColorScheme = currentColorScheme,
+                        onCheckColorScheme = onCheckColorScheme,
+                        isColorSchemeEditable = isColorSchemeEditable
+                    )
 
                     Spacer(Modifier.height(16.dp))
 
@@ -89,20 +77,11 @@ private fun SettingsDialog(
                         stringResource(R.string.label_dark_mode_config),
                         modifier = Modifier.paddingFromBaseline(bottom = 8.dp)
                     )
-                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        val allDarkModeConfigs = ThemeOption.DarkModeConfig.entries
-                        allDarkModeConfigs.forEachIndexed { index, darkThemeConfigEntry ->
-                            SegmentedButton(
-                                selected = darkThemeConfigEntry == darkModeConfig,
-                                onClick = { onClickDarkThemeConfig(darkThemeConfigEntry) },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index, allDarkModeConfigs.count()
-                                )
-                            ) {
-                                Text(darkThemeConfigEntry.stringResource())
-                            }
-                        }
-                    }
+                    DarkModeConfigButtons(
+                        modifier = Modifier.fillMaxWidth(),
+                        checkedDarkModeConfig = currentDarkModeConfig,
+                        onCheckDarkThemeConfig = onCheckDarkThemeConfig
+                    )
                 }
             }
         },
@@ -116,27 +95,16 @@ private fun SettingsDialog(
     )
 }
 
-@Composable
-private fun ThemeOption.stringResource(): String {
-    return when (this) {
-        ThemeOption.ColorScheme.Static -> stringResource(R.string.color_scheme_static)
-        ThemeOption.ColorScheme.Dynamic -> stringResource(R.string.color_scheme_dynamic)
-        ThemeOption.DarkModeConfig.Light -> stringResource(R.string.dark_mode_config_light)
-        ThemeOption.DarkModeConfig.System -> stringResource(R.string.dark_mode_config_system)
-        ThemeOption.DarkModeConfig.Dark -> stringResource(R.string.dark_mode_config_dark)
-    }
-}
-
 @Preview
 @Composable
 private fun SettingsDialogPreview() {
     SettingsDialog(
         isLoading = false,
-        colorScheme = ThemeOption.ColorScheme.Static,
+        currentColorScheme = ThemeOption.ColorScheme.Static,
         isColorSchemeEditable = true,
-        onClickColorScheme = {},
-        darkModeConfig = ThemeOption.DarkModeConfig.System,
-        onClickDarkThemeConfig = {},
+        onCheckColorScheme = {},
+        currentDarkModeConfig = ThemeOption.DarkModeConfig.System,
+        onCheckDarkThemeConfig = {},
         onDismiss = {},
         onConfirm = {}
     )
