@@ -2,10 +2,10 @@ package com.random.randomizer.presentation.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -58,7 +58,10 @@ private fun SettingsDialog(
             Text(stringResource(R.string.settings_title))
         },
         text = {
-            StatefulContent(isLoading = isLoading, modifier = Modifier.fillMaxSize()) {
+            StatefulContent(
+                isLoading = isLoading,
+                modifier = Modifier.wrapContentHeight(unbounded = true)
+            ) {
                 Column {
                     Text(
                         stringResource(R.string.label_color_scheme),
