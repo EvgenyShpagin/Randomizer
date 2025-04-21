@@ -22,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.StatefulContent
-import com.random.randomizer.presentation.core.ThemeOptions
+import com.random.randomizer.data.model.AndroidThemeOption as ThemeOption
 
 @Composable
 fun SettingsDialog(
@@ -47,11 +47,11 @@ fun SettingsDialog(
 @Composable
 private fun SettingsDialog(
     isLoading: Boolean,
-    colorScheme: ThemeOptions.ColorScheme,
+    colorScheme: ThemeOption.ColorScheme,
     isColorSchemeEditable: Boolean,
-    onClickColorScheme: (ThemeOptions.ColorScheme) -> Unit,
-    darkModeConfig: ThemeOptions.DarkModeConfig,
-    onClickDarkThemeConfig: (ThemeOptions.DarkModeConfig) -> Unit,
+    onClickColorScheme: (ThemeOption.ColorScheme) -> Unit,
+    darkModeConfig: ThemeOption.DarkModeConfig,
+    onClickDarkThemeConfig: (ThemeOption.DarkModeConfig) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     onConfirm: () -> Unit = onDismiss
@@ -68,7 +68,7 @@ private fun SettingsDialog(
                         modifier = Modifier.paddingFromBaseline(bottom = 8.dp)
                     )
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        val allColorSchemes = ThemeOptions.ColorScheme.entries
+                        val allColorSchemes = ThemeOption.ColorScheme.entries
                         allColorSchemes.forEachIndexed { index, colorSchemeEntry ->
                             SegmentedButton(
                                 selected = colorSchemeEntry == colorScheme,
@@ -90,7 +90,7 @@ private fun SettingsDialog(
                         modifier = Modifier.paddingFromBaseline(bottom = 8.dp)
                     )
                     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                        val allDarkModeConfigs = ThemeOptions.DarkModeConfig.entries
+                        val allDarkModeConfigs = ThemeOption.DarkModeConfig.entries
                         allDarkModeConfigs.forEachIndexed { index, darkThemeConfigEntry ->
                             SegmentedButton(
                                 selected = darkThemeConfigEntry == darkModeConfig,
@@ -117,19 +117,13 @@ private fun SettingsDialog(
 }
 
 @Composable
-private fun ThemeOptions.ColorScheme.stringResource(): String {
+private fun ThemeOption.stringResource(): String {
     return when (this) {
-        ThemeOptions.ColorScheme.Static -> stringResource(R.string.color_scheme_static)
-        ThemeOptions.ColorScheme.Dynamic -> stringResource(R.string.color_scheme_dynamic)
-    }
-}
-
-@Composable
-private fun ThemeOptions.DarkModeConfig.stringResource(): String {
-    return when (this) {
-        ThemeOptions.DarkModeConfig.Light -> stringResource(R.string.dark_mode_config_light)
-        ThemeOptions.DarkModeConfig.System -> stringResource(R.string.dark_mode_config_system)
-        ThemeOptions.DarkModeConfig.Dark -> stringResource(R.string.dark_mode_config_dark)
+        ThemeOption.ColorScheme.Static -> stringResource(R.string.color_scheme_static)
+        ThemeOption.ColorScheme.Dynamic -> stringResource(R.string.color_scheme_dynamic)
+        ThemeOption.DarkModeConfig.Light -> stringResource(R.string.dark_mode_config_light)
+        ThemeOption.DarkModeConfig.System -> stringResource(R.string.dark_mode_config_system)
+        ThemeOption.DarkModeConfig.Dark -> stringResource(R.string.dark_mode_config_dark)
     }
 }
 
@@ -138,10 +132,10 @@ private fun ThemeOptions.DarkModeConfig.stringResource(): String {
 private fun SettingsDialogPreview() {
     SettingsDialog(
         isLoading = false,
-        colorScheme = ThemeOptions.ColorScheme.Static,
+        colorScheme = ThemeOption.ColorScheme.Static,
         isColorSchemeEditable = true,
         onClickColorScheme = {},
-        darkModeConfig = ThemeOptions.DarkModeConfig.System,
+        darkModeConfig = ThemeOption.DarkModeConfig.System,
         onClickDarkThemeConfig = {},
         onDismiss = {},
         onConfirm = {}

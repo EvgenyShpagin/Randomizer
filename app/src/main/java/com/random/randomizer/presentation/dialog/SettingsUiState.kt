@@ -1,11 +1,11 @@
 package com.random.randomizer.presentation.dialog
 
-import com.random.randomizer.presentation.core.ThemeOptions
 import com.random.randomizer.presentation.core.UiState
+import com.random.randomizer.data.model.AndroidThemeOption as ThemeOption
 
 data class SettingsUiState(
     val isLoading: Boolean = true,
-    val colorScheme: ThemeOptions.ColorScheme = ThemeOptions.ColorScheme.Static,
+    val colorScheme: ThemeOption.ColorScheme = ThemeOption.ColorScheme.Static,
     val isColorSchemeEditable: Boolean = true,
-    val darkModeConfig: ThemeOptions.DarkModeConfig = ThemeOptions.DarkModeConfig.System
+    val darkModeConfig: ThemeOption.DarkModeConfig = ThemeOption.DarkModeConfig.System
 ) : UiState
