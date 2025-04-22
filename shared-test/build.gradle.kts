@@ -25,6 +25,7 @@ android {
 dependencies {
     implementation(project(":app"))    // to replace Hilt modules
     implementation(project(":domain")) // to implement fake repositories
+    implementation(project(":data"))   // to use Android-specific implementations
     implementation(libs.junit)
     implementation(libs.kotlinx.coroutines.test)
     implementation(libs.androidx.runner)
