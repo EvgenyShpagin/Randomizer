@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.dialog
+package com.random.randomizer.presentation.dialog.settings
 
 import androidx.lifecycle.viewModelScope
 import com.random.randomizer.data.model.AndroidThemeOption

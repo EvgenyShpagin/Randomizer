@@ -1,5 +1,6 @@
-package com.random.randomizer.presentation.dialog
+package com.random.randomizer.presentation.dialog.settings
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,8 +42,9 @@ fun SettingsDialog(
     )
 }
 
+@VisibleForTesting
 @Composable
-private fun SettingsDialog(
+fun SettingsDialog(
     isLoading: Boolean,
     currentColorScheme: ThemeOption.ColorScheme,
     isColorSchemeEditable: Boolean,

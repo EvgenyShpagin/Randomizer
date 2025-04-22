@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.dialog
+package com.random.randomizer.presentation.dialog.settings
 
 import com.random.randomizer.data.model.AndroidThemeOption as ThemeOption
 import com.random.randomizer.presentation.core.UiEvent

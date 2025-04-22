@@ -1,4 +1,4 @@
-package com.random.randomizer.presentation.dialog
+package com.random.randomizer.presentation.dialog.settings
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
