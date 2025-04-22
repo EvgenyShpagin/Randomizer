@@ -79,7 +79,10 @@ class HomePreviewsScreenshots {
                 onDeleteWheelSegment = {},
                 wheelSegments = wheelSegments,
                 isLoading = isLoading,
-                showGrid = showGrid
+                showGrid = showGrid,
+                showSettingsDialog = false,
+                onShowSettings = {},
+                onDismissSettings = {}
             )
         }
     }
