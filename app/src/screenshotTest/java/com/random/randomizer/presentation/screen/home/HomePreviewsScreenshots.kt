@@ -35,7 +35,7 @@ class HomePreviewsScreenshots {
         HomeScreen(isLoading = true)
     }
 
-    @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL)
+    @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
     @Composable
     private fun DarkTheme_ContentList_Preview() {
         HomeScreen(wheelSegments = PreviewWheelSegmentList)
