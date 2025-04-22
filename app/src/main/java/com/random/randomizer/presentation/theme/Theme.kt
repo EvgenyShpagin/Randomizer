@@ -14,6 +14,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.random.randomizer.presentation.util.supportsDynamicTheming
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -283,9 +284,6 @@ private fun getColorSchemeByContrast(isDark: Boolean): ColorScheme {
         else -> if (isDark) darkScheme else lightScheme
     }
 }
-
-@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
-private fun supportsDynamicTheming() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 private fun supportsContrast() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE

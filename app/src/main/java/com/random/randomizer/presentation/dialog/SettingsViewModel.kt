@@ -5,6 +5,7 @@ import com.random.randomizer.data.model.AndroidThemeOption
 import com.random.randomizer.domain.usecase.GetThemeOptionsStreamUseCase
 import com.random.randomizer.domain.usecase.SetThemeOptionUseCase
 import com.random.randomizer.presentation.core.ImmutableStateViewModel
+import com.random.randomizer.presentation.util.supportsDynamicTheming
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,7 @@ class SettingsViewModel @Inject constructor(
             val darkModeConfig = themeOptions.find { it is AndroidThemeOption.DarkModeConfig }
             SettingsUiState(
                 isLoading = false,
+                isColorSchemeEditable = supportsDynamicTheming(),
                 colorScheme = colorScheme as AndroidThemeOption.ColorScheme,
                 darkModeConfig = darkModeConfig as AndroidThemeOption.DarkModeConfig
             )
