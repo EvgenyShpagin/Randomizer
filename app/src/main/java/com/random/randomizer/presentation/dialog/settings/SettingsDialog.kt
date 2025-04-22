@@ -1,6 +1,5 @@
 package com.random.randomizer.presentation.dialog.settings
 
-import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.random.randomizer.R
 import com.random.randomizer.presentation.core.StatefulContent
+import org.jetbrains.annotations.VisibleForTesting
 import com.random.randomizer.data.model.AndroidThemeOption as ThemeOption
 
 @Composable
