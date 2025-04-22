@@ -27,6 +27,9 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Devices
@@ -40,6 +43,7 @@ import com.random.randomizer.presentation.core.NoWheelSegmentsPlaceholder
 import com.random.randomizer.presentation.core.RandomizerPane
 import com.random.randomizer.presentation.core.StatefulContent
 import com.random.randomizer.presentation.core.WheelSegmentUiState
+import com.random.randomizer.presentation.dialog.SettingsDialog
 import com.random.randomizer.presentation.screen.home.HomeUiEvent.DeleteSegment
 import com.random.randomizer.presentation.util.PreviewContainer
 import com.random.randomizer.presentation.util.WheelSegmentListParameterProvider
@@ -58,6 +62,8 @@ fun SharedTransitionScope.HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    var showSettingsDialog by rememberSaveable { mutableStateOf(false) }
+
     HomeScreen(
         animatedVisibilityScope = animatedVisibilityScope,
         onClickSpin = { navigateToSpin() },
@@ -67,6 +73,9 @@ fun SharedTransitionScope.HomeScreen(
         wheelSegments = uiState.wheelSegments,
         isLoading = uiState.isLoading,
         showGrid = showGrid,
+        showSettingsDialog = showSettingsDialog,
+        onShowSettings = { showSettingsDialog = true },
+        onDismissSettings = { showSettingsDialog = false },
         modifier = modifier
     )
 }
@@ -82,6 +91,9 @@ fun SharedTransitionScope.HomeScreen(
     wheelSegments: List<WheelSegmentUiState>,
     isLoading: Boolean,
     showGrid: Boolean,
+    showSettingsDialog: Boolean,
+    onShowSettings: () -> Unit,
+    onDismissSettings: () -> Unit,
     modifier: Modifier = Modifier,
     topAppBarState: TopAppBarState = rememberTopAppBarState()
 ) {
@@ -92,7 +104,10 @@ fun SharedTransitionScope.HomeScreen(
             containerColor = color,
             contentColor = contentColor,
             topBar = {
-                HomeTopBar(scrollBehavior = scrollBehavior)
+                HomeTopBar(
+                    scrollBehavior = scrollBehavior,
+                    onClickSettings = onShowSettings
+                )
             },
             floatingActionButton = {
                 AnimatedVisibility(
@@ -130,6 +145,9 @@ fun SharedTransitionScope.HomeScreen(
                     showGrid = showGrid
                 )
             }
+        }
+        if (showSettingsDialog) {
+            SettingsDialog(onDismiss = onDismissSettings)
         }
     }
 }
@@ -185,7 +203,10 @@ private fun HomeScreenLinearPreview(
             onDeleteWheelSegment = {},
             wheelSegments = wheelSegments,
             isLoading = false,
-            showGrid = false
+            showGrid = false,
+            showSettingsDialog = false,
+            onShowSettings = {},
+            onDismissSettings = {}
         )
     }
 }
@@ -206,7 +227,10 @@ private fun HomeScreenGridPreview(
             onDeleteWheelSegment = {},
             wheelSegments = wheelSegments,
             isLoading = false,
-            showGrid = true
+            showGrid = true,
+            showSettingsDialog = false,
+            onShowSettings = {},
+            onDismissSettings = {}
         )
     }
 }

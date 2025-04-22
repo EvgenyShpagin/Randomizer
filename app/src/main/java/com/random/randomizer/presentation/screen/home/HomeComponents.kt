@@ -43,6 +43,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -50,6 +51,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
@@ -110,6 +112,7 @@ fun SpinButton(
 @Composable
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
+    onClickSettings: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Color.Transparent,
     scrolledContainerColor: Color = Color.Unspecified
@@ -122,6 +125,14 @@ fun HomeTopBar(
         title = {
             Text(text = stringResource(R.string.home_screen_title))
         },
+        actions = {
+            IconButton(onClick = onClickSettings) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = stringResource(R.string.cd_settings)
+                )
+            }
+        },
         scrollBehavior = scrollBehavior,
         modifier = modifier
     )
@@ -133,7 +144,10 @@ private fun HomeTopBarPreview() {
     @OptIn(ExperimentalMaterial3Api::class)
     RandomizerTheme {
         Surface {
-            HomeTopBar(scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior())
+            HomeTopBar(
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+                onClickSettings = {}
+            )
         }
     }
 }
