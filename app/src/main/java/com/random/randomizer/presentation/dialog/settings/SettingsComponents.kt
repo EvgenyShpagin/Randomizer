@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.random.randomizer.R
 import com.random.randomizer.presentation.theme.RandomizerTheme
@@ -79,7 +80,11 @@ fun DarkModeConfigButtons(
                 onClick = { onCheckDarkThemeConfig(darkThemeConfig) },
                 shape = SegmentedButtonDefaults.itemShape(index, allDarkModeConfigs.count())
             ) {
-                Text(darkThemeConfig.stringResource())
+                Text(
+                    text = darkThemeConfig.stringResource(),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
         }
     }
