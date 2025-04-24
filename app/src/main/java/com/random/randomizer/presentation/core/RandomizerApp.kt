@@ -5,17 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.random.randomizer.presentation.navigation.RandomizerNavHost
-import com.random.randomizer.presentation.theme.RandomizerTheme
 
 @Composable
 fun RandomizerApp() {
-    RandomizerTheme {
-        RandomizerBackground {
-            val navController = rememberNavController()
-            RandomizerNavHost(
-                navController = navController,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+    RandomizerBackground {
+        val navController = rememberNavController()
+        RandomizerNavHost(
+            navController = navController,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
