@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import com.random.randomizer.data.model.WheelSegment
 import com.random.randomizer.data.util.toByteArray
 import com.random.randomizer.domain.model.Image
 import junit.framework.TestCase.assertEquals

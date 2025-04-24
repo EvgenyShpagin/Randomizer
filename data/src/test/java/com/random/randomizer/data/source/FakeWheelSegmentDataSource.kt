@@ -1,5 +1,6 @@
 package com.random.randomizer.data.source
 
+import com.random.randomizer.data.model.WheelSegment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull

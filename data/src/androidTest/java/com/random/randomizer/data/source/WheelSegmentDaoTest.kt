@@ -3,6 +3,7 @@ package com.random.randomizer.data.source
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.filters.SmallTest
+import com.random.randomizer.data.model.WheelSegment
 import com.random.randomizer.domain.model.Image
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull

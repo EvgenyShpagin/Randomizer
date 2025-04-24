@@ -1,5 +1,6 @@
 package com.random.randomizer.data.source
 
+import com.random.randomizer.data.model.WheelSegment
 import kotlinx.coroutines.flow.Flow
 
 interface WheelSegmentDataSource {

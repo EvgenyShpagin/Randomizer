@@ -2,7 +2,7 @@ package com.random.randomizer.data.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import com.random.randomizer.data.source.WheelSegment as DataSegment
+import com.random.randomizer.data.model.WheelSegment as DataSegment
 import com.random.randomizer.domain.model.WheelSegment as DomainSegment
 
 fun DataSegment.toDomain(): DomainSegment {

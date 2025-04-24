@@ -3,6 +3,7 @@ package com.random.randomizer.data.source
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
+import com.random.randomizer.data.model.WheelSegment
 import com.random.randomizer.data.util.toBitmap
 import com.random.randomizer.domain.model.Image
 import dagger.hilt.android.qualifiers.ApplicationContext
