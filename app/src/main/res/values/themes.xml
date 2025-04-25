@@ -8,4 +8,13 @@
 
     <style name="Theme.Randomizer" parent="NightAdjusted.Theme.Randomizer" />
 
+    <!-- Allows us to override night specific attributes in the values-night folder. -->
+    <style name="NightAdjusted.Theme.Splash" parent="Theme.SplashScreen">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+
+    <style name="Theme.Randomizer.Splash" parent="NightAdjusted.Theme.Splash">
+        <item name="postSplashScreenTheme">@style/Theme.Randomizer</item>
+    </style>
 </resources>

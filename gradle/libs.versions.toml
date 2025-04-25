@@ -1,5 +1,6 @@
 [versions]
 compileSdk = "35"
+splashscreen = "1.0.1"
 datastorePreferences = "1.1.4"
 minSdk = "24"
 targetSdk = "34"
@@ -29,6 +30,7 @@ screenshot = "0.0.1-alpha09"
 [libraries]
 adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -73,5 +75,5 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
