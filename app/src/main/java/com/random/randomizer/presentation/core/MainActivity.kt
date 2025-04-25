@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         // We keep this as a mutable state, so that we can track changes inside the composition.
@@ -75,6 +76,8 @@ class MainActivity : ComponentActivity() {
                     }
             }
         }
+
+        splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.isLoading }
 
         setContent {
             RandomizerTheme(
